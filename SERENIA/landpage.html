@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SERENIA</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background-image: url('bg.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+
+    .launch-btn {
+      background-color: #5B21F5;
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      padding: 28px 100px;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      font-family: 'Nunito', 'Poppins', sans-serif;
+
+      /* Pulse animation */
+      animation: pulse 2.5s ease-in-out infinite;
+
+      /* Shadow glow */
+      box-shadow:
+        0 0 30px rgba(91, 33, 245, 0.6),
+        0 0 60px rgba(91, 33, 245, 0.3),
+        0 8px 32px rgba(0,0,0,0.25);
+
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+    }
+
+    /* Shimmer overlay */
+    .launch-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255,255,255,0.25) 50%,
+        transparent 100%
+      );
+      animation: shimmer 2.8s ease-in-out infinite;
+      border-radius: 60px;
+    }
+
+    /* Ripple on click */
+    .launch-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
+      opacity: 0;
+    }
+
+    .launch-btn:active::after {
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+
+    .launch-btn:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow:
+        0 0 50px rgba(91, 33, 245, 0.8),
+        0 0 100px rgba(91, 33, 245, 0.4),
+        0 12px 40px rgba(0,0,0,0.3);
+      background-color: #6B31FF;
+      animation: none;
+    }
+
+    .launch-btn:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 0 20px rgba(91, 33, 245, 0.5),
+        0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    /* Pulse keyframe */
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 30px rgba(91, 33, 245, 0.6),
+          0 0 60px rgba(91, 33, 245, 0.3),
+          0 8px 32px rgba(0,0,0,0.25);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow:
+          0 0 50px rgba(91, 33, 245, 0.9),
+          0 0 90px rgba(91, 33, 245, 0.5),
+          0 8px 40px rgba(0,0,0,0.3);
+      }
+    }
+
+    /* Shimmer keyframe */
+    @keyframes shimmer {
+      0%   { left: -100%; opacity: 0; }
+      20%  { opacity: 1; }
+      60%  { left: 160%; opacity: 0.8; }
+      100% { left: 160%; opacity: 0; }
+    }
+
+    /* Click launch animation */
+    @keyframes launchGo {
+      0%   { transform: scale(1); opacity: 1; }
+      30%  { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(0) translateY(-80px); opacity: 0; }
+    }
+
+    .launching {
+      animation: launchGo 0.5s ease-in forwards !important;
+    }
+  </style>
+
+  <!-- Google Fonts for the bold label text -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <button class="launch-btn" id="launchBtn" onclick="handleLaunch()">
+    LAUNCH
+  </button>
+
+  <script>
+    function handleLaunch() {
+      const btn = document.getElementById('launchBtn');
+      btn.classList.add('launching');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 520);
+    }
+  </script>
+
+</body>
+</html>

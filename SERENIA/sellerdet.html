@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seller Details – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--blue:#1400cc;--off:#f4f4f8;--text:#0a0030;--card:#fff;--gray:#888}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:var(--off);color:var(--text)}
+
+    .header{background:var(--blue);display:flex;align-items:center;gap:16px;padding:16px 32px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.25)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.07em;text-transform:uppercase;padding:9px 18px;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;letter-spacing:.06em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .id-badge{background:rgba(255,255,255,.18);color:#fff;font-size:.8rem;font-weight:900;letter-spacing:.1em;padding:6px 14px;border-radius:8px;flex-shrink:0}
+
+    .body-wrap{max-width:1000px;margin:0 auto;padding:36px 32px 80px;display:flex;flex-direction:column;gap:24px}
+
+    /* HERO: photo + name */
+    .hero-card{background:var(--card);border-radius:20px;padding:32px 36px;box-shadow:0 4px 24px rgba(20,0,204,.08);display:flex;align-items:center;gap:32px}
+    .hero-avatar{width:120px;height:120px;border-radius:50%;border:4px solid var(--blue);object-fit:cover;background:#e0d8f0;display:flex;align-items:center;justify-content:center;font-size:3.5rem;color:#bbb;overflow:hidden;flex-shrink:0}
+    .hero-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .hero-info h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;color:var(--text);margin-bottom:4px}
+    .hero-info .role-badge{display:inline-block;background:var(--blue);color:#fff;font-size:.8rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:8px;margin-bottom:8px}
+    .hero-info .contact{font-size:.9rem;font-weight:700;color:var(--gray);line-height:1.7}
+
+    /* INFO GRID */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .info-card{background:var(--card);border-radius:16px;padding:24px 28px;box-shadow:0 2px 16px rgba(20,0,204,.07)}
+    .info-card.full{grid-column:1/-1}
+    .info-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.07em;color:var(--blue);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--off)}
+    .detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--off);gap:12px}
+    .detail-row:last-child{border-bottom:none}
+    .detail-key{font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);flex-shrink:0}
+    .detail-val{font-size:.95rem;font-weight:800;color:var(--text);text-align:right}
+    .detail-val.big{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--blue);letter-spacing:.04em}
+
+    /* LINKED PROPERTY */
+    .prop-link-card{background:linear-gradient(135deg,var(--blue) 0%,#2c14ff 100%);border-radius:16px;padding:24px 28px;color:#fff;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(20,0,204,.3)}
+    .prop-link-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 10px 32px rgba(20,0,204,.45)}
+    .prop-link-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.07em;color:rgba(255,255,255,.7);margin-bottom:10px}
+    .prop-link-card .prop-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;margin-bottom:4px}
+    .prop-link-card .prop-sub{font-size:.85rem;font-weight:700;color:rgba(255,255,255,.7)}
+    .prop-link-card .go-arrow{float:right;font-size:1.5rem;margin-top:-30px;opacity:.7}
+
+    /* DOCS */
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:8px}
+    .tag{background:var(--off);color:var(--blue);font-size:.8rem;font-weight:900;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:7px}
+    .tag.submitted{background:#d4edda;color:#155724}
+
+    /* DOC PHOTOS */
+    .doc-photo-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+    .doc-photo-item{width:120px;height:88px;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s}
+    .doc-photo-item:hover{transform:scale(1.05)}
+    .doc-photo-item img{width:100%;height:100%;object-fit:cover}
+
+    /* LIGHTBOX */
+    .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.96);flex-direction:column;align-items:center;justify-content:center;gap:14px}
+    .lightbox.open{display:flex}
+    .lb-img{max-width:92vw;max-height:85vh;object-fit:contain;border-radius:10px}
+    .lb-close{position:fixed;top:18px;right:22px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:1.3rem;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .lb-close:hover{background:rgba(255,255,255,.25)}
+
+    /* STATES */
+    .loading-wrap{display:flex;justify-content:center;padding:100px}
+    .spinner{width:52px;height:52px;border:5px solid rgba(20,0,204,.12);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .not-found{text-align:center;padding:100px 20px;color:var(--gray)}
+    .not-found .em{font-size:4rem;margin-bottom:16px}
+    .not-found p{font-weight:800;font-size:1.2rem;text-transform:uppercase}
+
+    @media(max-width:700px){
+      .info-grid{grid-template-columns:1fr}
+      .info-card.full{grid-column:1}
+      .hero-card{flex-direction:column;text-align:center}
+      .body-wrap{padding:20px 16px 60px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title" id="headerTitle">Loading…</div>
+  <div class="id-badge" id="headerID"></div>
+  <a id="editBtn" href="#" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;flex-shrink:0">✏️ EDIT</a>
+  <a id="waBtn" href="#" target="_blank" style="background:rgba(37,211,102,.2);border:1.5px solid rgba(37,211,102,.4);color:#25d366;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;flex-shrink:0;display:none">💬 WHATSAPP</a>
+  <button onclick="openPortalModal()" style="background:rgba(124,58,237,.2);border:1.5px solid rgba(124,58,237,.35);color:#c4b5fd;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;flex-shrink:0">🔑 PORTAL</button>
+  <button onclick="doDelete()" style="background:rgba(220,38,38,.2);border:1.5px solid rgba(220,38,38,.4);color:#f87171;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;padding:8px 16px;border-radius:10px;cursor:pointer;flex-shrink:0">🗑 DELETE</button>
+</div>
+
+<div class="body-wrap" id="bodyWrap">
+  <div class="loading-wrap"><div class="spinner"></div></div>
+</div>
+
+<!-- Doc lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="document.getElementById('lightbox').classList.remove('open');document.body.style.overflow=''">✕</button>
+  <img class="lb-img" id="lbImg" src="" alt=""/>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const sId    = params.get('id');
+
+  async function load() {
+    if (!sId) { showNotFound(); return; }
+    try {
+      const res     = await fetch('/get_sellers');
+      const sellers = await res.json();
+      const seller  = sellers.find(s => s.id === sId);
+      if (!seller) { showNotFound(); return; }
+
+      // Also fetch linked property if any
+      let linkedProp = null;
+      if (seller.linked_property_id) {
+        const pRes   = await fetch('/get_properties');
+        const props  = await pRes.json();
+        linkedProp   = props.find(p => p.id === seller.linked_property_id) || null;
+      }
+
+      render(seller, linkedProp);
+    } catch { showNotFound(); }
+  }
+
+  function render(s, prop) {
+    document.title = `${s.seller_name||'Seller'} – SERENIA`;
+    document.getElementById('headerTitle').textContent = s.seller_name || 'Seller';
+    document.getElementById('headerID').textContent    = `# ${s.id}`;
+    document.getElementById('editBtn').href = 'editseller.html?id=' + s.id;
+    if (s.phone) {
+      const clean = s.phone.replace(/[^0-9+]/g,'');
+      const waBtn = document.getElementById('waBtn');
+      waBtn.href = `https://wa.me/${clean}?text=Hello%20${encodeURIComponent(s.seller_name||'there')}%2C%20we%20are%20reaching%20out%20from%20SERENIA%20regarding%20your%20property.`;
+      waBtn.style.display = 'inline-flex';
+    }
+
+    const cur   = s.currency === 'INR' ? '₹' : 'AED';
+    const price = s.demanded_price ? `${cur} ${Number(s.demanded_price).toLocaleString()}` : '—';
+    const photoSrc = s.photo_filename
+      ? `/seller_docs/${encodeURIComponent(s.seller_name)}/${s.photo_filename}`
+      : null;
+
+    const heroAvatar = photoSrc
+      ? `<div class="hero-avatar"><img src="${photoSrc}" alt="${esc(s.seller_name)}" onerror="this.parentElement.innerHTML='👤'"/></div>`
+      : `<div class="hero-avatar">👤</div>`;
+
+    const docPhotos  = s.doc_photo_filenames || [];
+    const docPhotosHtml = docPhotos.length
+      ? `<div class="doc-photo-grid">${
+          docPhotos.map(f => `
+            <div class="doc-photo-item" onclick="openLb('/seller_docs/${encodeURIComponent(s.seller_name)}/${f}')">
+              <img src="/seller_docs/${encodeURIComponent(s.seller_name)}/${f}" loading="lazy"/>
+            </div>`).join('')
+        }</div>`
+      : '<span style="color:#aaa;font-size:.85rem;font-weight:700">No document photos uploaded</span>';
+
+    const docs = (s.docs_submitted || []);
+
+    // Linked property block
+    const propBlock = prop
+      ? `<div class="prop-link-card" onclick="window.location.href='propdet.html?id=${esc(prop.id)}'">
+           <h2>Linked Property</h2>
+           <div class="prop-name">${esc(prop.title||'Untitled')}</div>
+           <div class="prop-sub">${esc([prop.property_type,prop.category,prop.city].filter(Boolean).join(' · '))}</div>
+           <div class="go-arrow">→</div>
+         </div>`
+      : s.property_title
+      ? `<div class="info-card full">
+           <h2>Property</h2>
+           <div class="detail-row"><span class="detail-key">Title</span><span class="detail-val">${esc(s.property_title)}</span></div>
+         </div>`
+      : '';
+
+    const infoRows = [
+      ['Phone',        s.phone],
+      ['Email',        s.email],
+      ['Nationality',  s.nationality],
+      ['Role',         s.role],
+      ['Currency',     s.currency],
+      ['Listed On',    s.created_at],
+    ].filter(r=>r[1]).map(([k,v])=>`
+      <div class="detail-row">
+        <span class="detail-key">${k}</span>
+        <span class="detail-val">${esc(v)}</span>
+      </div>`).join('');
+
+    document.getElementById('bodyWrap').innerHTML = `
+      <!-- HERO -->
+      <div class="hero-card">
+        ${heroAvatar}
+        <div class="hero-info">
+          <h2>${esc(s.seller_name||'Unknown')}</h2>
+          <span class="role-badge">${esc(s.role||'Seller')}</span>
+          <div class="contact">
+            ${s.phone ? `📞 ${esc(s.phone)}<br>` : ''}
+            ${s.email ? `✉️ ${esc(s.email)}` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO GRID -->
+      <div class="info-grid">
+        <div class="info-card">
+          <h2>Personal Info</h2>
+          ${infoRows||'<span style="color:#aaa">—</span>'}
+        </div>
+
+        <div class="info-card">
+          <h2>Pricing</h2>
+          <div class="detail-row">
+            <span class="detail-key">Demanded Price</span>
+            <span class="detail-val big">${price}</span>
+          </div>
+          ${s.notes?`<div class="detail-row" style="margin-top:10px"><span class="detail-key">Notes</span><span class="detail-val" style="font-size:.88rem">${esc(s.notes)}</span></div>`:''}
+        </div>
+
+        ${propBlock ? `<div class="info-card full" style="padding:0;background:transparent;box-shadow:none">${propBlock}</div>` : ''}
+
+        ${docs.length?`
+        <div class="info-card full">
+          <h2>Docs Submitted</h2>
+          <div class="tags-wrap">${docs.map(d=>`<span class="tag submitted">✓ ${esc(d)}</span>`).join('')}</div>
+        </div>`:''}
+
+        <div class="info-card full">
+          <h2>Document Photos</h2>
+          ${docPhotosHtml}
+        </div>
+      </div>`;
+  }
+
+  function openLb(src) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  function showNotFound() {
+    document.getElementById('headerTitle').textContent='Not Found';
+    document.getElementById('bodyWrap').innerHTML=`<div class="not-found"><div class="em">🔍</div><p>Seller not found</p></div>`;
+  }
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  async function doDelete() {
+    if (!confirm('Delete this seller? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/delete_seller/' + sId, {method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { alert('Seller deleted.'); window.location.href = 'seller.html'; }
+      else alert('Error: ' + (json.error||'Unknown'));
+    } catch { alert('Server error'); }
+  }
+
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

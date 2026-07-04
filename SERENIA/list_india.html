@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List Property (India) – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { width: 100%; min-height: 100vh; font-family: 'Nunito', sans-serif; }
+
+    body { background: #D9C8E8; }
+
+    /* HEADER */
+    .page-header {
+      background: #D4A8E8;
+      text-align: center;
+      padding: 28px 20px 22px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(91,33,245,0.12);
+    }
+    .page-header h1 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: #1a1a2e;
+      text-transform: uppercase;
+    }
+    .page-header .subtitle {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #5B21F5;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    .back-btn {
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #5B21F5;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 22px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .back-btn:hover { background: #6B31FF; transform: translateY(-50%) scale(1.05); }
+
+    /* SCROLL CONTAINER */
+    .scroll-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* CARDS */
+    .card {
+      background: #9B6DBF;
+      border-radius: 24px;
+      padding: 36px 40px;
+      box-shadow: 0 8px 32px rgba(91,33,245,0.18);
+      animation: fadeUp 0.5s ease both;
+    }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORM ROWS */
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .form-row:last-child { margin-bottom: 0; }
+
+    .form-row label {
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-width: 240px;
+      flex-shrink: 0;
+    }
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      flex: 1;
+      background: #E8DFF0;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 22px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      outline: none;
+      transition: box-shadow 0.2s, background 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-row textarea {
+      border-radius: 18px;
+      resize: vertical;
+      min-height: 54px;
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus {
+      box-shadow: 0 0 0 3px rgba(91,33,245,0.35);
+      background: #f0e8ff;
+    }
+
+    /* Input with prefix (₹ / +91) */
+    .input-prefix-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #E8DFF0;
+      border-radius: 50px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .input-prefix-wrap:focus-within {
+      box-shadow: 0 0 0 3px rgba(91,33,245,0.35);
+      background: #f0e8ff;
+    }
+    .input-prefix-wrap .prefix {
+      padding: 14px 16px 14px 22px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.05rem;
+      color: #7B4FA0;
+      white-space: nowrap;
+      user-select: none;
+      background: transparent;
+    }
+    .input-prefix-wrap input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 14px 22px 14px 4px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      outline: none;
+      appearance: none;
+    }
+
+    /* Custom select wrapper */
+    .select-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .select-wrap select {
+      width: 100%;
+      padding-right: 50px;
+      cursor: pointer;
+    }
+    .select-wrap .arrow {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #7B4FA0;
+      font-size: 1.1rem;
+    }
+
+    /* CHECKBOXES */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .check-panel {
+      background: #E8DFF0;
+      border-radius: 18px;
+      padding: 24px 28px;
+    }
+    .check-panel h3 {
+      font-weight: 900;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #5B21F5;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-item span {
+      font-weight: 800;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #5B21F5;
+    }
+
+    /* ADD BUTTONS */
+    .add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 22px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 6px;
+    }
+    .add-btn:hover { background: #333; transform: scale(1.04); }
+    .add-btn .plus {
+      width: 24px; height: 24px;
+      background: #9B6DBF;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 900;
+    }
+
+    /* FILE UPLOAD */
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .file-row label {
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-width: 180px;
+    }
+    .file-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      margin-left: 200px;
+    }
+    .file-thumb {
+      background: #E8DFF0;
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .file-thumb .remove { cursor: pointer; color: #c00; font-weight: 900; }
+
+    /* SUBMIT */
+    .submit-wrap { text-align: center; padding: 10px 0 20px; }
+    .submit-btn {
+      background: #5B21F5;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 60px;
+      padding: 22px 100px;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(91,33,245,0.5), 0 6px 24px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .submit-btn:hover {
+      background: #6B31FF;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 50px rgba(91,33,245,0.75), 0 10px 32px rgba(0,0,0,0.25);
+    }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 16px 36px;
+      border-radius: 60px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), opacity 0.4s;
+      opacity: 0;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* MODALS */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #9B6DBF;
+      border-radius: 20px;
+      padding: 32px 36px;
+      min-width: 320px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-box h3 { color: #fff; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; }
+    .modal-box input {
+      background: #E8DFF0;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      outline: none;
+      color: #1a1a2e;
+    }
+    .modal-btns { display: flex; gap: 12px; }
+    .modal-btns button {
+      flex: 1; border: none; border-radius: 50px; padding: 12px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer;
+    }
+    .modal-btns .confirm { background: #5B21F5; color: #fff; }
+    .modal-btns .cancel  { background: #E8DFF0; color: #1a1a2e; }
+
+    @media (max-width: 640px) {
+      .two-col { grid-template-columns: 1fr; }
+      .form-row { flex-direction: column; align-items: flex-start; }
+      .form-row label { min-width: unset; }
+      .page-header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <button class="back-btn" onclick="window.location.href='prop.html'">← BACK</button>
+  <h1>LIST PROPERTIES</h1>
+  <div class="subtitle">🇮🇳 India</div>
+</div>
+
+<div class="scroll-wrap">
+
+  <!-- CARD 1: Basic Info -->
+  <div class="card">
+    <div class="form-row">
+      <label>Property Type:</label>
+      <div class="select-wrap">
+        <select id="propType" onchange="handleCustomSelect(this,'propTypeModal','propTypeCustomInput')">
+          <option value="">— Select —</option>
+          <option>Apartment / Flat</option>
+          <option>Independent House</option>
+          <option>Villa</option>
+          <option>Bungalow</option>
+          <option>Penthouse</option>
+          <option>Studio Apartment</option>
+          <option>Duplex</option>
+          <option>Row House</option>
+          <option>Farmhouse</option>
+          <option>Plot / Land</option>
+          <option>Commercial Office</option>
+          <option>Shop / Showroom</option>
+          <option>Warehouse / Godown</option>
+          <option>Other</option>
+          <option value="__custom__">+ Custom…</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Category:</label>
+      <div class="select-wrap">
+        <select id="category" onchange="handleCustomSelect(this,'categoryModal','categoryCustomInput')">
+          <option value="">— Select —</option>
+          <option>Rent</option>
+          <option>Buy / Own</option>
+          <option>Lease</option>
+          <option>PG / Hostel</option>
+          <option>Commercial Rent</option>
+          <option>Commercial Buy</option>
+          <option>Other</option>
+          <option value="__custom__">+ Custom…</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row"><label>Title:</label><input type="text" id="title" placeholder="Property title…"/></div>
+    <div class="form-row"><label>Full Address:</label><input type="text" id="address" placeholder="House no., street, area…"/></div>
+    <div class="form-row"><label>City:</label><input type="text" id="city" placeholder="e.g. Mumbai, Delhi…"/></div>
+    <div class="form-row"><label>State:</label><input type="text" id="state" placeholder="e.g. Maharashtra…"/></div>
+    <div class="form-row"><label>PIN Code:</label><input type="text" id="pincode" placeholder="e.g. 400001" maxlength="6"/></div>
+    <div class="form-row"><label>Bedrooms (BHK):</label><input type="number" id="bedrooms" min="0" placeholder="e.g. 3"/></div>
+    <div class="form-row"><label>Bathrooms:</label><input type="number" id="bathrooms" min="0" placeholder="e.g. 2"/></div>
+    <div class="form-row"><label>Area (sq ft):</label><input type="number" id="area" min="0" placeholder="e.g. 1200"/></div>
+    <div class="form-row"><label>Carpet Area (sq ft):</label><input type="number" id="carpetArea" min="0" placeholder="e.g. 950"/></div>
+    <div class="form-row">
+      <label>Floor:</label>
+      <input type="text" id="floor" placeholder="e.g. 5th of 12"/>
+    </div>
+    <div class="form-row">
+      <label>Latitude:</label>
+      <input type="number" id="lat" step="any" placeholder="e.g. 19.0760"/>
+    </div>
+    <div class="form-row">
+      <label>Longitude:</label>
+      <input type="number" id="lng" step="any" placeholder="e.g. 72.8777"/>
+    </div>
+    <div class="form-row">
+      <label></label>
+      <div style="flex:1;display:flex;gap:10px;align-items:center">
+        <button type="button" onclick="getMyLocation()" style="background:#5B21F5;color:#fff;border:none;border-radius:50px;padding:11px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:background .2s;white-space:nowrap" onmouseover="this.style.background='#6B31FF'" onmouseout="this.style.background='#5B21F5'">📍 Use My Location</button>
+        <span id="locStatus" style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.6)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Pricing & Seller -->
+  <div class="card">
+    <!-- Sale Price -->
+    <div class="form-row">
+      <label>Sale Price (₹):</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">₹</span>
+        <input type="number" id="salePrice" min="0" placeholder="e.g. 85,00,000"/>
+      </div>
+    </div>
+
+    <!-- Per Sqft Price -->
+    <div class="form-row">
+      <label>Per Sq Ft Price (₹):</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">₹</span>
+        <input type="number" id="perSqftPrice" min="0" placeholder="e.g. 7083"/>
+      </div>
+    </div>
+
+    <!-- Monthly Rent -->
+    <div class="form-row">
+      <label>Monthly Rent (₹):</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">₹</span>
+        <input type="number" id="monthlyRent" min="0" placeholder="e.g. 25000"/>
+      </div>
+    </div>
+
+    <!-- Security Deposit -->
+    <div class="form-row">
+      <label>Security Deposit (₹):</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">₹</span>
+        <input type="number" id="securityDeposit" min="0" placeholder="e.g. 75000"/>
+      </div>
+    </div>
+
+    <!-- Maintenance -->
+    <div class="form-row">
+      <label>Maintenance / Month (₹):</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">₹</span>
+        <input type="number" id="maintenance" min="0" placeholder="e.g. 3000"/>
+      </div>
+    </div>
+
+    <!-- Seller Name -->
+    <div class="form-row"><label>Seller / Owner Name:</label><input type="text" id="sellerName" placeholder="Full name…"/></div>
+
+    <!-- Seller Phone -->
+    <div class="form-row">
+      <label>Seller Phone:</label>
+      <div class="input-prefix-wrap">
+        <span class="prefix">+91</span>
+        <input type="tel" id="sellerPhone" placeholder="98765 43210" maxlength="10"/>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-row">
+      <label>Description:</label>
+      <textarea id="description" rows="3" placeholder="Property description…"></textarea>
+    </div>
+
+    <!-- Photos -->
+    <div class="file-row">
+      <label>Add Photos:</label>
+      <button class="add-btn" onclick="document.getElementById('photoInput').click()">Add <span class="plus">+</span></button>
+      <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this,'photoList','photo')"/>
+    </div>
+    <div class="file-preview" id="photoList"></div>
+
+    <!-- Videos -->
+    <div class="file-row" style="margin-top:10px;">
+      <label>Add Videos:</label>
+      <button class="add-btn" onclick="document.getElementById('videoInput').click()">Add <span class="plus">+</span></button>
+      <input type="file" id="videoInput" accept="video/*" multiple style="display:none" onchange="handleFiles(this,'videoList','video')"/>
+    </div>
+    <div class="file-preview" id="videoList"></div>
+  </div>
+
+  <!-- CARD 3: Amenities & Docs -->
+  <div class="card">
+    <div class="two-col">
+
+      <!-- AMENITIES (same as UAE version) -->
+      <div class="check-panel">
+        <h3>Amenities</h3>
+        <div class="check-list" id="amenitiesList">
+          <label class="check-item"><input type="checkbox" value="Elevator"/><span>Elevator</span></label>
+          <label class="check-item"><input type="checkbox" value="Parking"/><span>Parking</span></label>
+          <label class="check-item"><input type="checkbox" value="Playground"/><span>Playground</span></label>
+          <label class="check-item"><input type="checkbox" value="Swimming Pool"/><span>Swimming Pool</span></label>
+          <label class="check-item"><input type="checkbox" value="Helipad"/><span>Helipad</span></label>
+          <label class="check-item"><input type="checkbox" value="Library"/><span>Library</span></label>
+          <label class="check-item"><input type="checkbox" value="Temple"/><span>Temple</span></label>
+          <label class="check-item"><input type="checkbox" value="Club"/><span>Club</span></label>
+          <label class="check-item"><input type="checkbox" value="Gym"/><span>Gym</span></label>
+        </div>
+        <button class="add-btn" onclick="openAddModal('amenities')">Add <span class="plus">+</span></button>
+      </div>
+
+      <!-- DOCS REQUIRED — India specific -->
+      <div class="check-panel">
+        <h3>Docs Required</h3>
+        <div class="check-list" id="docsList">
+          <label class="check-item"><input type="checkbox" value="Aadhaar Card"/><span>Aadhaar Card</span></label>
+          <label class="check-item"><input type="checkbox" value="PAN Card"/><span>PAN Card</span></label>
+          <label class="check-item"><input type="checkbox" value="Passport Copy"/><span>Passport Copy</span></label>
+          <label class="check-item"><input type="checkbox" value="Sale Deed"/><span>Sale Deed</span></label>
+          <label class="check-item"><input type="checkbox" value="Agreement to Sale"/><span>Agreement to Sale</span></label>
+          <label class="check-item"><input type="checkbox" value="Encumbrance Certificate"/><span>Encumbrance Cert.</span></label>
+          <label class="check-item"><input type="checkbox" value="Khata Certificate"/><span>Khata Certificate</span></label>
+          <label class="check-item"><input type="checkbox" value="Property Tax Receipt"/><span>Property Tax Receipt</span></label>
+          <label class="check-item"><input type="checkbox" value="NOC"/><span>NOC</span></label>
+          <label class="check-item"><input type="checkbox" value="OC / CC"/><span>OC / CC</span></label>
+          <label class="check-item"><input type="checkbox" value="Building Plan Approval"/><span>Building Plan Approval</span></label>
+          <label class="check-item"><input type="checkbox" value="Loan Sanction Letter"/><span>Loan Sanction Letter</span></label>
+        </div>
+        <button class="add-btn" onclick="openAddModal('docs')">Add <span class="plus">+</span></button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" id="saveBtn" onclick="submitProperty()">SAVE PROPERTY</button>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- Property Type Custom Modal -->
+<div class="modal-overlay" id="propTypeModal">
+  <div class="modal-box">
+    <h3>Custom Property Type</h3>
+    <input type="text" id="propTypeCustomInput" placeholder="e.g. Chawl, Heritage Bungalow…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeCustomModal('propTypeModal','propType')">Cancel</button>
+      <button class="confirm" onclick="saveCustomOption('propTypeModal','propType','propTypeCustomInput')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Custom Modal -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal-box">
+    <h3>Custom Category</h3>
+    <input type="text" id="categoryCustomInput" placeholder="e.g. Co-Living…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeCustomModal('categoryModal','category')">Cancel</button>
+      <button class="confirm" onclick="saveCustomOption('categoryModal','category','categoryCustomInput')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Amenity / Doc Modal -->
+<div class="modal-overlay" id="addCheckModal">
+  <div class="modal-box">
+    <h3 id="addCheckTitle">Add Item</h3>
+    <input type="text" id="addCheckInput" placeholder="Enter name…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="document.getElementById('addCheckModal').classList.remove('open')">Cancel</button>
+      <button class="confirm" onclick="saveCheckItem()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Custom Select ──
+  let _prevVal = {};
+
+  function handleCustomSelect(sel, modalId, inputId) {
+    if (sel.value === '__custom__') {
+      sel.value = _prevVal[sel.id] || '';
+      document.getElementById(inputId).value = '';
+      document.getElementById(modalId).classList.add('open');
+    } else {
+      _prevVal[sel.id] = sel.value;
+    }
+  }
+  function closeCustomModal(modalId, selectId) {
+    document.getElementById(modalId).classList.remove('open');
+    const sel = document.getElementById(selectId);
+    if (!sel.value || sel.value === '__custom__') sel.value = '';
+  }
+  function saveCustomOption(modalId, selectId, inputId) {
+    const val = document.getElementById(inputId).value.trim();
+    if (!val) return;
+    const sel = document.getElementById(selectId);
+    if (![...sel.options].some(o => o.value === val)) {
+      sel.insertBefore(new Option(val, val), sel.querySelector('option[value="__custom__"]'));
+    }
+    sel.value = val;
+    _prevVal[selectId] = val;
+    document.getElementById(modalId).classList.remove('open');
+  }
+
+  // ── Checkbox Add ──
+  let _addTarget = '';
+  function openAddModal(target) {
+    _addTarget = target;
+    document.getElementById('addCheckTitle').textContent =
+      target === 'amenities' ? 'Add Custom Amenity' : 'Add Custom Document';
+    document.getElementById('addCheckInput').value = '';
+    document.getElementById('addCheckModal').classList.add('open');
+  }
+  function saveCheckItem() {
+    const val = document.getElementById('addCheckInput').value.trim();
+    if (!val) return;
+    const listId = _addTarget === 'amenities' ? 'amenitiesList' : 'docsList';
+    const label = document.createElement('label');
+    label.className = 'check-item';
+    label.innerHTML = `<input type="checkbox" value="${val}" checked/><span>${val.toUpperCase()}</span>`;
+    document.getElementById(listId).appendChild(label);
+    document.getElementById('addCheckModal').classList.remove('open');
+  }
+
+  // ── File Handling ──
+  const _files = { photo: [], video: [] };
+  function handleFiles(input, listId, type) {
+    Array.from(input.files).forEach(f => {
+      if (!_files[type].find(x => x.name === f.name)) _files[type].push(f);
+    });
+    renderPreviews(listId, type);
+    input.value = '';
+  }
+  function renderPreviews(listId, type) {
+    const c = document.getElementById(listId);
+    c.innerHTML = '';
+    _files[type].forEach((f, i) => {
+      const d = document.createElement('div');
+      d.className = 'file-thumb';
+      d.innerHTML = `${f.name} <span class="remove" onclick="removeFile('${type}',${i},'${listId}')">✕</span>`;
+      c.appendChild(d);
+    });
+  }
+  function removeFile(type, i, listId) {
+    _files[type].splice(i, 1);
+    renderPreviews(listId, type);
+  }
+
+  // ── Helpers ──
+  function getChecked(listId) {
+    return [...document.querySelectorAll(`#${listId} input[type="checkbox"]:checked`)].map(cb => cb.value);
+  }
+  function showToast(msg, duration = 3500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  // ── Get Location ──
+  function getMyLocation() {
+    const status = document.getElementById('locStatus');
+    if (!navigator.geolocation) { status.textContent = '❌ Not supported'; return; }
+    status.textContent = '⏳ Getting location…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        document.getElementById('lat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('lng').value = pos.coords.longitude.toFixed(6);
+        status.textContent = '✅ Location set!';
+        setTimeout(() => status.textContent = '', 3000);
+      },
+      () => { status.textContent = '❌ Location denied'; }
+    );
+  }
+
+  // ── Submit ──
+  async function submitProperty() {
+    const phone = document.getElementById('sellerPhone').value.trim();
+
+    const data = {
+      region:             'India',
+      currency:           'INR',
+      property_type:      document.getElementById('propType').value,
+      category:           document.getElementById('category').value,
+      title:              document.getElementById('title').value.trim(),
+      address:            document.getElementById('address').value.trim(),
+      city:               document.getElementById('city').value.trim(),
+      state:              document.getElementById('state').value.trim(),
+      pincode:            document.getElementById('pincode').value.trim(),
+      bedrooms:           document.getElementById('bedrooms').value,
+      bathrooms:          document.getElementById('bathrooms').value,
+      area_sqft:          document.getElementById('area').value,
+      carpet_area_sqft:   document.getElementById('carpetArea').value,
+      floor:              document.getElementById('floor').value.trim(),
+      lat:                document.getElementById('lat').value,
+      lng:                document.getElementById('lng').value,
+      sale_price_inr:     document.getElementById('salePrice').value,
+      per_sqft_price_inr: document.getElementById('perSqftPrice').value,
+      monthly_rent_inr:   document.getElementById('monthlyRent').value,
+      security_deposit_inr: document.getElementById('securityDeposit').value,
+      maintenance_inr:    document.getElementById('maintenance').value,
+      seller_name:        document.getElementById('sellerName').value.trim(),
+      seller_phone:       phone ? `+91${phone}` : '',
+      description:        document.getElementById('description').value.trim(),
+      amenities:          getChecked('amenitiesList'),
+      docs_required:      getChecked('docsList'),
+    };
+
+    if (!data.title)         { showToast('⚠️ Please enter a title.'); return; }
+    if (!data.property_type) { showToast('⚠️ Please select a property type.'); return; }
+    if (!data.category)      { showToast('⚠️ Please select a category.'); return; }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'SAVING…';
+
+    const fd = new FormData();
+    fd.append('data', JSON.stringify(data));
+    _files.photo.forEach(f => fd.append('photos', f));
+    _files.video.forEach(f => fd.append('videos', f));
+
+    try {
+      const res  = await fetch('/save_property', { method: 'POST', body: fd });
+      const json = await res.json();
+      if (json.success) {
+        showToast(`✅ Property saved! ID: ${json.id}`, 4000);
+        setTimeout(() => window.location.href = 'prop.html', 1800);
+      } else {
+        showToast('❌ Error: ' + (json.error || 'Unknown'));
+        btn.disabled = false; btn.textContent = 'SAVE PROPERTY';
+      }
+    } catch (e) {
+      showToast('❌ Could not connect to server.');
+      btn.disabled = false; btn.textContent = 'SAVE PROPERTY';
+    }
+  }
+</script>
+
+</body>
+</html>

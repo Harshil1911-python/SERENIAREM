@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Viewings – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-h{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+    .add-btn-h:hover{background:#e8e0ff}
+
+    /* TABS */
+    .tabs{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);display:flex;padding:0 24px;gap:0}
+    .tab{font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.07em;text-transform:uppercase;padding:12px 20px;cursor:pointer;color:rgba(255,255,255,.4);border-bottom:2px solid transparent;transition:all .2s}
+    .tab:hover{color:#fff}
+    .tab.active{color:#818cf8;border-bottom-color:#818cf8}
+
+    /* STATS */
+    .stats-row{display:flex;gap:0;background:#0f0f23}
+    .stat-pill{flex:1;text-align:center;padding:10px 8px;border-right:1px solid rgba(255,255,255,.06)}
+    .stat-pill:last-child{border-right:none}
+    .sp-val{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;line-height:1}
+    .sp-label{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em}
+
+    /* CALENDAR VIEW */
+    .cal-wrap{padding:20px 24px}
+    .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .cal-month{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#fff;letter-spacing:.06em}
+    .cal-nav-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;transition:background .2s}
+    .cal-nav-btn:hover{background:rgba(255,255,255,.15)}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+    .cal-dow{text-align:center;font-size:.68rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em;padding:6px 0}
+    .cal-day{min-height:80px;background:#1e1e3a;border-radius:10px;padding:6px;cursor:pointer;border:1.5px solid transparent;transition:all .18s;position:relative}
+    .cal-day:hover{border-color:rgba(129,140,248,.3);background:#252545}
+    .cal-day.other-month{opacity:.3}
+    .cal-day.today{border-color:#1400cc;background:rgba(20,0,204,.15)}
+    .cal-day.has-viewings{border-color:rgba(129,140,248,.2)}
+    .day-num{font-size:.78rem;font-weight:900;color:rgba(255,255,255,.5);margin-bottom:4px}
+    .cal-day.today .day-num{color:#818cf8;font-size:.85rem}
+    .cal-event{background:#1400cc;border-radius:4px;padding:2px 5px;font-size:.62rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;cursor:pointer}
+    .cal-event.confirmed{background:#16a34a}
+    .cal-event.cancelled{background:#dc2626}
+    .cal-event.completed{background:#4b5563}
+
+    /* LIST VIEW */
+    .list-wrap{max-width:820px;margin:0 auto;padding:16px 20px 80px;display:flex;flex-direction:column;gap:10px}
+    .viewing-card{background:#1e1e3a;border-radius:14px;padding:16px 18px;border:1.5px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;gap:14px;transition:all .2s}
+    .viewing-card:hover{border-color:rgba(129,140,248,.25);background:#22224a}
+    .viewing-card.cancelled{opacity:.5;border-left:3px solid #dc2626}
+    .viewing-card.completed{border-left:3px solid #4ade80}
+
+    .vc-date{background:rgba(20,0,204,.3);border-radius:10px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:58px}
+    .vc-day{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;line-height:1}
+    .vc-mon{font-size:.65rem;font-weight:900;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em}
+    .vc-time{font-size:.72rem;font-weight:900;color:#818cf8;margin-top:3px}
+
+    .vc-body{flex:1;min-width:0}
+    .vc-title{font-weight:800;font-size:.95rem;color:#fff;margin-bottom:4px}
+    .vc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+    .vc-tag{font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .vc-tag.prop{background:rgba(20,0,204,.25);color:#818cf8}
+    .vc-tag.buyer{background:rgba(10,124,62,.2);color:#4ade80}
+    .vc-tag.agent{background:rgba(217,119,6,.2);color:#fbbf24}
+    .vc-notes{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.4)}
+
+    .vc-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .status-badge{font-size:.68rem;font-weight:900;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em}
+    .status-badge.scheduled{background:rgba(129,140,248,.2);color:#818cf8}
+    .status-badge.confirmed{background:rgba(22,163,74,.2);color:#4ade80}
+    .status-badge.completed{background:rgba(75,85,99,.3);color:#9ca3af}
+    .status-badge.cancelled{background:rgba(220,38,38,.2);color:#f87171}
+    .status-badge.no-show{background:rgba(217,119,6,.2);color:#fbbf24}
+    .vc-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+    .vc-action{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45);font-family:'Nunito',sans-serif;font-weight:800;font-size:.68rem;padding:4px 8px;cursor:pointer;transition:all .2s}
+    .vc-action:hover{background:rgba(255,255,255,.13);color:#fff}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:#fff;margin-bottom:20px}
+    .field{margin-bottom:14px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none;resize:vertical}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .field textarea{min-height:60px}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-btns{display:flex;gap:10px;margin-top:8px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+  <div class="header-title">🏠 VIEWING SCHEDULER</div>
+  <button class="add-btn-h" onclick="openAdd()">+ BOOK VIEWING</button>
+</div>
+
+<div class="stats-row">
+  <div class="stat-pill"><div class="sp-val" id="sTotal">—</div><div class="sp-label">Total</div></div>
+  <div class="stat-pill"><div class="sp-val" style="color:#818cf8" id="sScheduled">—</div><div class="sp-label">Scheduled</div></div>
+  <div class="stat-pill"><div class="sp-val" style="color:#4ade80" id="sConfirmed">—</div><div class="sp-label">Confirmed</div></div>
+  <div class="stat-pill"><div class="sp-val" style="color:#9ca3af" id="sCompleted">—</div><div class="sp-label">Completed</div></div>
+  <div class="stat-pill"><div class="sp-val" style="color:#f87171" id="sCancelled">—</div><div class="sp-label">Cancelled</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('list',this)">📋 List</div>
+  <div class="tab" onclick="switchTab('calendar',this)">📅 Calendar</div>
+</div>
+
+<div id="listView">
+  <div class="list-wrap" id="listWrap"><div class="empty">Loading…</div></div>
+</div>
+<div id="calView" style="display:none">
+  <div class="cal-wrap">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="prevMonth()">← Prev</button>
+      <div class="cal-month" id="calMonth"></div>
+      <button class="cal-nav-btn" onclick="nextMonth()">Next →</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Book Viewing</div>
+    <input type="hidden" id="editId"/>
+    <div class="field"><label>Property *</label>
+      <select id="vProp"><option value="">— Select property —</option></select>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Buyer</label>
+        <select id="vBuyer"><option value="">— Select buyer —</option></select>
+      </div>
+      <div class="field"><label>Agent</label>
+        <select id="vAgent"><option value="">— Select agent —</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Date *</label><input type="date" id="vDate"/></div>
+      <div class="field"><label>Time *</label><input type="time" id="vTime"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Duration</label>
+        <select id="vDuration">
+          <option value="30">30 min</option><option value="60" selected>1 hour</option>
+          <option value="90">1.5 hours</option><option value="120">2 hours</option>
+        </select>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="vStatus">
+          <option>Scheduled</option><option>Confirmed</option>
+          <option>Completed</option><option>Cancelled</option><option>No Show</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="vNotes" placeholder="Parking instructions, access code, special requests…"></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveViewing()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _viewings=[], _props=[], _buyers=[], _emps=[];
+  let _calYear = new Date().getFullYear(), _calMonth = new Date().getMonth();
+  const today = new Date().toISOString().slice(0,10);
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  async function load() {
+    try {
+      const [vr,pr,br,er] = await Promise.all([fetch('/get_viewings'),fetch('/get_properties'),fetch('/get_buyers'),fetch('/get_employees')]);
+      _viewings=await vr.json(); _props=await pr.json(); _buyers=await br.json(); _emps=await er.json();
+      updateStats(); renderList(); renderCalendar();
+    } catch { document.getElementById('listWrap').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function updateStats() {
+    document.getElementById('sTotal').textContent     = _viewings.length;
+    document.getElementById('sScheduled').textContent = _viewings.filter(v=>v.status==='Scheduled').length;
+    document.getElementById('sConfirmed').textContent = _viewings.filter(v=>v.status==='Confirmed').length;
+    document.getElementById('sCompleted').textContent = _viewings.filter(v=>v.status==='Completed').length;
+    document.getElementById('sCancelled').textContent = _viewings.filter(v=>v.status==='Cancelled').length;
+  }
+
+  function renderList() {
+    const sorted = [..._viewings].sort((a,b)=>b.date.localeCompare(a.date));
+    const wrap   = document.getElementById('listWrap');
+    if (!sorted.length) { wrap.innerHTML='<div class="empty">No viewings yet</div>'; return; }
+
+    wrap.innerHTML = sorted.map(v => {
+      const prop  = _props.find(p=>p.id===v.property_id);
+      const buyer = _buyers.find(b=>b.id===v.buyer_id);
+      const agent = _emps.find(e=>e.id===v.agent_id);
+      const d     = new Date(v.date+'T00:00:00');
+      const day   = d.getDate(), mon = MONTHS[d.getMonth()].slice(0,3).toUpperCase();
+      const sc    = (v.status||'Scheduled').toLowerCase().replace(' ','-');
+
+      return `<div class="viewing-card ${sc}">
+        <div class="vc-date">
+          <div class="vc-day">${day}</div>
+          <div class="vc-mon">${mon}</div>
+          <div class="vc-time">${v.time||'—'}</div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-title">${prop?esc(prop.title||prop.id):'No Property'}</div>
+          <div class="vc-tags">
+            ${prop?`<span class="vc-tag prop">🏠 ${esc(prop.city||'')}</span>`:''}
+            ${buyer?`<span class="vc-tag buyer">👤 ${esc(buyer.buyer_name)}</span>`:''}
+            ${agent?`<span class="vc-tag agent">👔 ${esc(agent.emp_name)}</span>`:''}
+            ${v.duration?`<span class="vc-tag" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)">⏱ ${v.duration}min</span>`:''}
+          </div>
+          ${v.notes?`<div class="vc-notes">${esc(v.notes)}</div>`:''}
+        </div>
+        <div class="vc-right">
+          <span class="status-badge ${sc}">${v.status||'Scheduled'}</span>
+          <div class="vc-actions">
+            <button class="vc-action" onclick="openEdit('${v.id}')">✏️</button>
+            ${v.status!=='Completed'?`<button class="vc-action" onclick="setStatus('${v.id}','Completed')" title="Mark Complete">✅</button>`:''}
+            ${v.status!=='Cancelled'?`<button class="vc-action" onclick="setStatus('${v.id}','Cancelled')" title="Cancel">❌</button>`:''}
+            <button class="vc-action" onclick="deleteV('${v.id}')" style="color:#f87171">✕</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCalendar() {
+    document.getElementById('calMonth').textContent = `${MONTHS[_calMonth]} ${_calYear}`;
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = DAYS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+    const first = new Date(_calYear, _calMonth, 1).getDay();
+    const last  = new Date(_calYear, _calMonth+1, 0).getDate();
+
+    // Prev month padding
+    const prevLast = new Date(_calYear, _calMonth, 0).getDate();
+    for (let i = first-1; i >= 0; i--) {
+      grid.insertAdjacentHTML('beforeend',`<div class="cal-day other-month"><div class="day-num">${prevLast-i}</div></div>`);
+    }
+    // Current month days
+    for (let d = 1; d <= last; d++) {
+      const dateStr = `${_calYear}-${String(_calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dayViewings = _viewings.filter(v => v.date === dateStr);
+      const isToday = dateStr === today;
+      grid.insertAdjacentHTML('beforeend',`
+        <div class="cal-day ${isToday?'today':''} ${dayViewings.length?'has-viewings':''}" onclick="openAdd('${dateStr}')">
+          <div class="day-num">${d}</div>
+          ${dayViewings.slice(0,2).map(v => {
+            const p = _props.find(x=>x.id===v.property_id);
+            const sc = (v.status||'').toLowerCase().replace(' ','-');
+            return `<div class="cal-event ${sc}" onclick="event.stopPropagation();openEdit('${v.id}')" title="${esc(p?p.title:'')} · ${v.time||''}">${v.time||''} ${esc(p?p.title||'Prop':'Prop')}</div>`;
+          }).join('')}
+          ${dayViewings.length>2?`<div style="font-size:.6rem;color:rgba(255,255,255,.3);font-weight:800">+${dayViewings.length-2} more</div>`:''}
+        </div>`);
+    }
+    // Next month padding to fill row
+    const remaining = (7 - ((first + last) % 7)) % 7;
+    for (let i = 1; i <= remaining; i++) {
+      grid.insertAdjacentHTML('beforeend',`<div class="cal-day other-month"><div class="day-num">${i}</div></div>`);
+    }
+  }
+
+  function prevMonth() { _calMonth--; if(_calMonth<0){_calMonth=11;_calYear--;} renderCalendar(); }
+  function nextMonth() { _calMonth++; if(_calMonth>11){_calMonth=0;_calYear++;} renderCalendar(); }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); btn.classList.add('active');
+    document.getElementById('listView').style.display  = tab==='list'?'':'none';
+    document.getElementById('calView').style.display   = tab==='calendar'?'':'none';
+  }
+
+  function populateDropdowns() {
+    const ps = document.getElementById('vProp');
+    const bs = document.getElementById('vBuyer');
+    const as = document.getElementById('vAgent');
+    const cvP=ps.value, cvB=bs.value, cvA=as.value;
+    ps.innerHTML = '<option value="">— Select property —</option>'+_props.map(p=>`<option value="${p.id}">${esc(p.title||p.id)} · ${esc(p.city||'')}</option>`).join('');
+    bs.innerHTML = '<option value="">— Select buyer —</option>'+_buyers.map(b=>`<option value="${b.id}">${esc(b.buyer_name)}</option>`).join('');
+    as.innerHTML = '<option value="">— Select agent —</option>'+_emps.map(e=>`<option value="${e.id}">${esc(e.emp_name)} (${esc(e.role||'Agent')})</option>`).join('');
+    ps.value=cvP; bs.value=cvB; as.value=cvA;
+  }
+
+  function openAdd(dateStr='') {
+    document.getElementById('editId').value='';
+    document.getElementById('modalTitle').textContent='Book Viewing';
+    populateDropdowns();
+    document.getElementById('vProp').value=''; document.getElementById('vBuyer').value=''; document.getElementById('vAgent').value='';
+    document.getElementById('vDate').value=dateStr||today; document.getElementById('vTime').value='10:00';
+    document.getElementById('vDuration').value='60'; document.getElementById('vStatus').value='Scheduled';
+    document.getElementById('vNotes').value='';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function openEdit(id) {
+    const v=_viewings.find(x=>x.id===id); if(!v) return;
+    document.getElementById('editId').value=id;
+    document.getElementById('modalTitle').textContent='Edit Viewing';
+    populateDropdowns();
+    document.getElementById('vProp').value=v.property_id||''; document.getElementById('vBuyer').value=v.buyer_id||'';
+    document.getElementById('vAgent').value=v.agent_id||''; document.getElementById('vDate').value=v.date||'';
+    document.getElementById('vTime').value=v.time||''; document.getElementById('vDuration').value=v.duration||'60';
+    document.getElementById('vStatus').value=v.status||'Scheduled'; document.getElementById('vNotes').value=v.notes||'';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  async function saveViewing() {
+    const propId = document.getElementById('vProp').value;
+    const date   = document.getElementById('vDate').value;
+    if (!propId) { showToast('⚠️ Select a property'); return; }
+    if (!date)   { showToast('⚠️ Select a date'); return; }
+    const editId = document.getElementById('editId').value;
+    const data = {
+      property_id: propId,
+      buyer_id:    document.getElementById('vBuyer').value,
+      agent_id:    document.getElementById('vAgent').value,
+      date, time: document.getElementById('vTime').value,
+      duration:    document.getElementById('vDuration').value,
+      status:      document.getElementById('vStatus').value,
+      notes:       document.getElementById('vNotes').value.trim(),
+    };
+    try {
+      const url = editId ? `/update_viewing/${editId}` : '/save_viewing';
+      const res  = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json = await res.json();
+      if (json.success) { closeModal(); await load(); showToast(editId?'✅ Updated!':'✅ Viewing booked!'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function setStatus(id, status) {
+    try {
+      const res  = await fetch(`/update_viewing_status/${id}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+      const json = await res.json();
+      if (json.success) { await load(); showToast(`✅ ${status}`); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function deleteV(id) {
+    if (!confirm('Delete this viewing?')) return;
+    try {
+      const res  = await fetch(`/delete_viewing/${id}`,{method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Deleted'); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Leaderboard – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    /* FILTERS */
+    .filter-bar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .filter-label{color:rgba(255,255,255,.4);font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .fsel{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none;appearance:none}
+    .fsel option{background:#0f0f23}
+    .apply-btn{background:#1400cc;color:#fff;border:none;border-radius:9px;padding:8px 20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;cursor:pointer;transition:background .2s}
+    .apply-btn:hover{background:#2c14ff}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    /* TOP 3 PODIUM */
+    .podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:14px;align-items:flex-end;margin-bottom:4px}
+    .podium-card{background:#1e1e3a;border-radius:18px;padding:20px 16px;border:1.5px solid rgba(255,255,255,.07);text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;overflow:hidden;transition:transform .2s}
+    .podium-card:hover{transform:translateY(-4px)}
+    .podium-card.rank-1{background:linear-gradient(160deg,#1e1e3a,#2a2040);border-color:rgba(251,191,36,.3)}
+    .podium-card.rank-2{background:linear-gradient(160deg,#1e1e3a,#1e2035);border-color:rgba(148,163,184,.2)}
+    .podium-card.rank-3{background:linear-gradient(160deg,#1e1e3a,#221e1e);border-color:rgba(217,119,6,.2)}
+    .medal{font-size:1.8rem;line-height:1}
+    .podium-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;text-transform:uppercase;border:3px solid rgba(255,255,255,.15)}
+    .podium-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.05em;color:#fff}
+    .podium-role{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em}
+    .podium-score{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;line-height:1}
+    .podium-score-label{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em}
+    .podium-stats{display:flex;gap:12px;justify-content:center;margin-top:4px}
+    .ps{text-align:center}
+    .ps-v{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#fff}
+    .ps-l{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.05em}
+    .crown{position:absolute;top:-2px;left:50%;transform:translateX(-50%);font-size:1.4rem}
+
+    /* FULL LEADERBOARD TABLE */
+    .lb-card{background:#1e1e3a;border-radius:18px;border:1px solid rgba(255,255,255,.07);overflow:hidden}
+    .lb-header{padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
+    .lb-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;color:#818cf8}
+
+    /* METRIC TABS */
+    .metric-tabs{display:flex;gap:6px}
+    .mt{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .mt:hover{color:#fff}.mt.active{background:#1400cc;border-color:#1400cc;color:#fff}
+
+    .lb-table{width:100%;border-collapse:collapse}
+    .lb-table th{text-align:left;padding:10px 16px;font-size:.68rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.09em;border-bottom:1px solid rgba(255,255,255,.06)}
+    .lb-table tr:hover td{background:rgba(255,255,255,.02)}
+    .lb-table td{padding:12px 16px;font-size:.88rem;font-weight:700;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+    .lb-table tr:last-child td{border-bottom:none}
+
+    .rank-cell{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:rgba(255,255,255,.25);width:40px;text-align:center}
+    .rank-cell.top{color:#fbbf24}
+    .agent-cell{display:flex;align-items:center;gap:10px}
+    .agent-av{width:34px;height:34px;border-radius:50%;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff;text-transform:uppercase;flex-shrink:0}
+    .agent-name{font-weight:800;color:#fff}
+    .agent-dept{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.35)}
+
+    .score-bar-wrap{width:120px;background:rgba(255,255,255,.06);border-radius:50px;height:6px;overflow:hidden}
+    .score-bar{height:100%;border-radius:50px;transition:width .8s ease}
+
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:1rem}
+    .stat-val.gold{color:#fbbf24}
+    .stat-val.green{color:#4ade80}
+    .stat-val.blue{color:#818cf8}
+    .stat-val.teal{color:#22d3ee}
+
+    .badge{font-size:.65rem;font-weight:900;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .badge.gold{background:rgba(251,191,36,.15);color:#fbbf24}
+    .badge.silver{background:rgba(148,163,184,.12);color:#94a3b8}
+    .badge.bronze{background:rgba(217,119,6,.12);color:#d97706}
+
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:700}
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    @media(max-width:700px){.podium{grid-template-columns:1fr 1fr}.podium-card:nth-child(1){grid-column:1/-1}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">🏆 AGENT LEADERBOARD</div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Period:</span>
+  <select class="fsel" id="fMonth"><option value="">All Time</option></select>
+  <select class="fsel" id="fYear"><option value="">All Years</option></select>
+  <button class="apply-btn" onclick="applyFilters()">Apply</button>
+</div>
+
+<div class="wrap" id="wrap">
+  <div class="empty">Loading…</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _emps=[], _deals=[], _viewings=[], _tasks=[], _leads=[];
+  let _metric = 'commission';
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const COLORS=['#818cf8','#4ade80','#fbbf24','#22d3ee','#f472b6','#fb923c','#a78bfa','#34d399'];
+
+  async function load() {
+    try {
+      const [er,dr,vr,tr,lr]=await Promise.all([
+        fetch('/get_employees'),fetch('/get_deals'),
+        fetch('/get_viewings'),fetch('/get_tasks'),fetch('/get_leads'),
+      ]);
+      _emps=await er.json(); _deals=await dr.json();
+      _viewings=await vr.json(); _tasks=await tr.json(); _leads=await lr.json();
+      populateFilters();
+      applyFilters();
+    } catch { document.getElementById('wrap').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function populateFilters() {
+    const ysel=document.getElementById('fYear');
+    const msel=document.getElementById('fMonth');
+    const years=[..new Set(_deals.map(d=>(d.updated_at||'').slice(0,4)).filter(Boolean))].sort().reverse();
+    years.forEach(y=>ysel.insertAdjacentHTML('beforeend',`<option value="${y}">${y}</option>`));
+    MONTHS.forEach((m,i)=>msel.insertAdjacentHTML('beforeend',`<option value="${i+1}">${m}</option>`));
+    const now=new Date();
+    msel.value=now.getMonth()+1;
+    ysel.value=now.getFullYear();
+  }
+
+  function applyFilters() {
+    const month=document.getElementById('fMonth').value;
+    const year=document.getElementById('fYear').value;
+
+    const filteredDeals=_deals.filter(d=>{
+      const dt=d.updated_at||d.created_at||'';
+      if(year&&!dt.startsWith(year))return false;
+      if(month&&dt.slice(5,7)!==String(month).padStart(2,'0'))return false;
+      return true;
+    });
+
+    // Build per-agent stats
+    const stats={};
+    _emps.forEach(e=>{
+      stats[e.id]={emp:e,deals:0,commission:0,viewings:0,tasks:0,leads_converted:0,deal_value:0};
+    });
+    // unassigned bucket
+    stats['__unassigned__']={emp:{emp_name:'Unassigned',role:'—',id:'__unassigned__'},deals:0,commission:0,viewings:0,tasks:0,leads_converted:0,deal_value:0};
+
+    filteredDeals.forEach(d=>{
+      const key=d.agent_id||'__unassigned__';
+      if(!stats[key])return;
+      if(d.stage==='Closed Won'){
+        stats[key].deals++;
+        stats[key].deal_value+=(+d.value||0);
+        const comm=d.commission_amount?+d.commission_amount:(d.commission_pct&&d.value?+d.value*+d.commission_pct/100:0);
+        stats[key].commission+=comm;
+      }
+    });
+    _viewings.forEach(v=>{
+      const key=v.agent_id||'__unassigned__';
+      if(stats[key])stats[key].viewings++;
+    });
+    _leads.filter(l=>l.status==='Converted').forEach(l=>{
+      // leads don't have agent_id, count globally for now
+    });
+
+    const rows=Object.values(stats).filter(s=>s.deals>0||s.viewings>0);
+    rows.sort((a,b)=>b[_metric]-a[_metric]);
+
+    renderBoard(rows);
+  }
+
+  function renderBoard(rows) {
+    if(!rows.length){document.getElementById('wrap').innerHTML='<div class="empty">No activity found for this period</div>';return;}
+    const maxVal=Math.max(...rows.map(r=>r[_metric]),1);
+    const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':Math.round(n);
+
+    // Top 3 podium
+    const top=rows.slice(0,3);
+    // Reorder: 2nd, 1st, 3rd
+    const podiumOrder=[top[1],top[0],top[2]].filter(Boolean);
+    const medals=['🥈','🥇','🥉'];
+    const ranks=[2,1,3];
+    const podiumHtml=`<div class="podium">
+      ${podiumOrder.map((r,i)=>{
+        const emp=r.emp;
+        const rank=ranks[i];
+        const medal=medals[i];
+        const color=COLORS[rows.indexOf(r)%COLORS.length];
+        return `<div class="podium-card rank-${rank}">
+          ${rank===1?'<div class="crown">👑</div>':''}
+          <div class="medal">${medal}</div>
+          <div class="podium-avatar" style="background:${color}">${(emp.emp_name||'?').slice(0,2).toUpperCase()}</div>
+          <div class="podium-name">${esc(emp.emp_name)}</div>
+          <div class="podium-role">${esc(emp.role||'Agent')}</div>
+          <div class="podium-score" style="color:${color}">${fmt(r[_metric])}</div>
+          <div class="podium-score-label">${metricLabel()}</div>
+          <div class="podium-stats">
+            <div class="ps"><div class="ps-v">${r.deals}</div><div class="ps-l">Deals</div></div>
+            <div class="ps"><div class="ps-v">${r.viewings}</div><div class="ps-l">Views</div></div>
+            <div class="ps"><div class="ps-v">${r.commission>0?fmt(r.commission):'—'}</div><div class="ps-l">Comm</div></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+    // Full table
+    const tableHtml=`<div class="lb-card">
+      <div class="lb-header">
+        <div class="lb-title">Full Rankings</div>
+        <div class="metric-tabs">
+          ${[['commission','💰 Commission'],['deals','🤝 Deals'],['viewings','🏠 Viewings'],['deal_value','💎 Deal Value']].map(([key,label])=>
+            `<button class="mt ${_metric===key?'active':''}" onclick="_metric='${key}';applyFilters()">${label}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <table class="lb-table">
+        <thead><tr>
+          <th>#</th><th>Agent</th><th>${metricLabel()}</th>
+          <th>Deals Closed</th><th>Deal Value</th><th>Viewings</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map((r,i)=>{
+            const emp=r.emp;
+            const color=COLORS[i%COLORS.length];
+            const pct=Math.round(r[_metric]/maxVal*100);
+            const badgeCls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+            return `<tr>
+              <td class="rank-cell ${i<3?'top':''}">${i+1}</td>
+              <td><div class="agent-cell">
+                <div class="agent-av" style="background:${color}">${(emp.emp_name||'?').slice(0,2).toUpperCase()}</div>
+                <div>
+                  <div class="agent-name">${esc(emp.emp_name)}
+                    ${badgeCls?`<span class="badge ${badgeCls}">${i===0?'#1':i===1?'#2':'#3'}</span>`:''}
+                  </div>
+                  <div class="agent-dept">${esc(emp.role||'')} ${emp.department?'· '+esc(emp.department):''}</div>
+                </div>
+              </div></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="stat-val ${i===0?'gold':i===1?'silver':''}">${fmt(r[_metric])}</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:${pct}%;background:${color}"></div></div>
+                </div>
+              </td>
+              <td><span class="stat-val green">${r.deals}</span></td>
+              <td><span class="stat-val blue">${fmt(r.deal_value)}</span></td>
+              <td><span class="stat-val teal">${r.viewings}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+    document.getElementById('wrap').innerHTML = podiumHtml + tableHtml;
+  }
+
+  function metricLabel(){
+    return {commission:'Commission Earned',deals:'Deals Closed',viewings:'Viewings Done',deal_value:'Total Deal Value'}[_metric]||_metric;
+  }
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

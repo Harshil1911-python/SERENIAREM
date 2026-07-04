@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Messaging – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f4f4f8;color:#1a1a2e}
+
+    /* HEADER */
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.35)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .settings-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s;letter-spacing:.05em;text-transform:uppercase}
+    .settings-btn:hover{background:rgba(255,255,255,.22)}
+    .settings-status{font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:6px}
+    .settings-status.ok{background:rgba(74,222,128,.2);color:#16a34a;border:1px solid rgba(74,222,128,.3)}
+    .settings-status.bad{background:rgba(248,113,113,.2);color:#dc2626;border:1px solid rgba(248,113,113,.3)}
+
+    /* TAB BAR */
+    .tabs{background:#fff;border-bottom:2px solid #e8e0ff;display:flex;padding:0 24px;gap:0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .tab{font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.07em;text-transform:uppercase;padding:13px 20px;cursor:pointer;color:#888;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .2s}
+    .tab:hover{color:#1400cc}
+    .tab.active{color:#1400cc;border-bottom-color:#1400cc}
+
+    /* LAYOUT */
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+
+    /* ── COMPOSE TAB ── */
+    .compose-layout{max-width:1200px;margin:0 auto;padding:20px 20px 80px;display:grid;grid-template-columns:360px 1fr;gap:20px}
+    @media(max-width:900px){.compose-layout{grid-template-columns:1fr}}
+
+    /* CARDS */
+    .card{background:#fff;border-radius:16px;padding:22px 24px;border:1.5px solid #e8e0ff;box-shadow:0 2px 12px rgba(20,0,204,.06)}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;color:#1400cc;margin-bottom:16px;padding-bottom:10px;border-bottom:1.5px solid #e8e0ff}
+
+    /* RECIPIENT FILTERS */
+    .recip-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .filter-chip{background:#f4f4f8;border:1.5px solid #e0d8f8;color:#666;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .filter-chip:hover{border-color:#1400cc;color:#1400cc}
+    .filter-chip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+
+    .recip-search{width:100%;background:#f4f4f8;border:1.5px solid #e0d8f8;border-radius:9px;padding:9px 14px;color:#1a1a2e;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none;margin-bottom:8px;transition:border-color .2s}
+    .recip-search:focus{border-color:#1400cc;background:#fff}
+    .recip-search::placeholder{color:#aaa}
+
+    .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .select-all-row span{font-size:.72rem;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:.06em}
+    .select-all-btn{background:none;border:none;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}
+
+    .recip-list{max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;scrollbar-width:thin;scrollbar-color:#d0c8f0 transparent}
+
+    .recip-item{display:flex;align-items:center;gap:10px;background:#f9f7ff;border:1.5px solid transparent;border-radius:10px;padding:9px 12px;cursor:pointer;transition:all .18s}
+    .recip-item:hover{background:#f0ebff;border-color:#d0c0f8}
+    .recip-item.selected{background:#ebe5ff;border-color:#1400cc}
+    .recip-item input[type="checkbox"]{width:15px;height:15px;accent-color:#1400cc;cursor:pointer;flex-shrink:0}
+    .recip-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff;flex-shrink:0;text-transform:uppercase}
+    .recip-avatar.seller{background:#1400cc}
+    .recip-avatar.buyer{background:#0a7c3e}
+    .recip-info{flex:1;min-width:0}
+    .recip-name{font-size:.88rem;font-weight:800;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .recip-email{font-size:.72rem;font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .recip-email.has{color:#1400cc}
+    .recip-email.missing{color:#dc2626}
+    .recip-badge{font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+    .recip-badge.seller{background:rgba(20,0,204,.1);color:#1400cc}
+    .recip-badge.buyer{background:rgba(10,124,62,.1);color:#0a7c3e}
+
+    /* EDIT EMAIL INLINE */
+    .edit-email-btn{background:none;border:none;color:#aaa;font-size:.7rem;cursor:pointer;padding:0 0 0 4px;transition:color .2s;flex-shrink:0}
+    .edit-email-btn:hover{color:#1400cc}
+    .inline-email-form{display:none;margin-top:6px;gap:5px}
+    .inline-email-form.show{display:flex}
+    .inline-email-input{flex:1;background:#f4f4f8;border:1.5px solid #d0c8f0;border-radius:7px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;color:#1a1a2e;outline:none}
+    .inline-email-input:focus{border-color:#1400cc}
+    .inline-email-save{background:#1400cc;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;cursor:pointer}
+
+    /* SELECTED CHIPS */
+    .selected-summary{background:#f4f4f8;border-radius:10px;padding:12px 14px;margin-top:10px;border:1.5px solid #e0d8f8}
+    .sel-count{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#1400cc}
+    .sel-label{font-size:.72rem;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:.06em}
+    .sel-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+    .sel-chip{display:flex;align-items:center;gap:4px;background:#1400cc;color:#fff;border-radius:5px;padding:3px 9px;font-size:.72rem;font-weight:800}
+    .sel-chip .rm{cursor:pointer;opacity:.7}.sel-chip .rm:hover{opacity:1}
+
+    /* COMPOSE */
+    .field{margin-bottom:16px}
+    .field label{display:block;color:#555;font-size:.72rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;background:#f9f7ff;border:1.5px solid #e0d8f8;border-radius:10px;padding:11px 14px;color:#1a1a2e;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;outline:none;transition:all .2s;resize:vertical;appearance:none}
+    .field input::placeholder,.field textarea::placeholder{color:#bbb}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#1400cc;background:#fff;box-shadow:0 0 0 3px rgba(20,0,204,.06)}
+    .field select option{background:#fff;color:#1a1a2e}
+    .field textarea{min-height:150px;line-height:1.65}
+
+    /* VARIABLES */
+    .vars-bar{background:#f4f4f8;border:1.5px solid #e0d8f8;border-radius:10px;padding:11px 14px;margin-bottom:16px}
+    .vars-label{font-size:.68rem;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+    .vars-list{display:flex;flex-wrap:wrap;gap:6px}
+    .var-tag{background:#fff;border:1.5px solid #d0c8f0;color:#1400cc;font-family:monospace;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer;transition:all .18s}
+    .var-tag:hover{background:#1400cc;color:#fff;border-color:#1400cc}
+
+    /* TEMPLATES */
+    .template-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+    .tpl-btn{background:#f4f4f8;border:1.5px solid #e0d8f8;color:#555;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;padding:6px 12px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .tpl-btn:hover{background:#ebe5ff;border-color:#1400cc;color:#1400cc}
+
+    /* PREVIEW */
+    .preview-box{background:#f9f7ff;border:1.5px solid #e0d8f8;border-radius:10px;padding:14px;min-height:80px;font-size:.85rem;font-weight:700;color:#444;line-height:1.7;white-space:pre-wrap}
+    .preview-subject{font-weight:800;color:#1400cc;font-size:.9rem;margin-bottom:6px}
+
+    /* SEND BUTTONS */
+    .send-row{display:flex;gap:10px;margin-top:4px}
+    .send-btn{flex:1;background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;letter-spacing:.07em;text-transform:uppercase;border:none;border-radius:12px;padding:15px;cursor:pointer;box-shadow:0 4px 18px rgba(20,0,204,.3);transition:all .2s}
+    .send-btn:hover{background:#2c14ff;transform:translateY(-2px)}
+    .send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .wa-btn{flex:1;background:#075e54;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;letter-spacing:.07em;text-transform:uppercase;border:none;border-radius:12px;padding:15px;cursor:pointer;box-shadow:0 4px 18px rgba(7,94,84,.25);transition:all .2s}
+    .wa-btn:hover{background:#128c7e;transform:translateY(-2px)}
+
+    /* ── HISTORY TAB ── */
+    .history-wrap{max-width:900px;margin:0 auto;padding:20px 20px 80px}
+    .history-item{background:#fff;border-radius:12px;padding:16px 18px;border:1.5px solid #e8e0ff;margin-bottom:10px;box-shadow:0 2px 8px rgba(20,0,204,.04)}
+    .hi-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .hi-icon{width:36px;height:36px;border-radius:50%;background:#ebe5ff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .hi-subject{font-weight:800;font-size:.92rem;color:#1a1a2e;flex:1}
+    .hi-time{font-size:.72rem;font-weight:700;color:#999}
+    .hi-stats{display:flex;gap:10px}
+    .hi-stat{font-size:.75rem;font-weight:800;padding:3px 10px;border-radius:6px}
+    .hi-stat.sent{background:rgba(22,163,74,.1);color:#16a34a}
+    .hi-stat.failed{background:rgba(220,38,38,.1);color:#dc2626}
+    .hi-stat.total{background:rgba(20,0,204,.08);color:#1400cc}
+    .hi-body{font-size:.8rem;font-weight:700;color:#888;line-height:1.5;margin-top:6px;border-top:1px solid #f0ebff;padding-top:8px;max-height:60px;overflow:hidden;text-overflow:ellipsis}
+
+    /* MODALS */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#fff;border-radius:20px;padding:28px 32px;width:100%;max-width:480px;box-shadow:0 12px 48px rgba(0,0,0,.15);display:flex;flex-direction:column;gap:14px;border:1.5px solid #e0d8f8}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:#1400cc}
+    .modal-note{background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:10px 14px;font-size:.78rem;font-weight:700;color:#b45309;line-height:1.5}
+    .mfield label{display:block;color:#666;font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .mfield input{width:100%;background:#f9f7ff;border:1.5px solid #e0d8f8;border-radius:9px;padding:10px 14px;color:#1a1a2e;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s}
+    .mfield input:focus{border-color:#1400cc}
+    .pw-wrap{position:relative}
+    .pw-wrap input{padding-right:44px}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#bbb;cursor:pointer;font-size:1rem}
+    .pw-toggle:hover{color:#1400cc}
+    .modal-btns{display:flex;gap:10px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff;transition:background .2s}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:#f4f4f8;color:#666}
+
+    /* PROGRESS MODAL */
+    .prog-box{background:#fff;border-radius:20px;padding:28px 32px;width:100%;max-width:440px;box-shadow:0 12px 48px rgba(0,0,0,.15);border:1.5px solid #e0d8f8;display:flex;flex-direction:column;gap:14px}
+    .prog-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.06em;color:#1400cc}
+    .prog-bar-wrap{background:#e0d8f8;border-radius:50px;height:10px;overflow:hidden}
+    .prog-bar{height:100%;background:#1400cc;border-radius:50px;transition:width .4s ease;width:0%}
+    .prog-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+    .ps-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1}
+    .ps-val.green{color:#16a34a}.ps-val.red{color:#dc2626}.ps-val.blue{color:#1400cc}
+    .ps-label{font-size:.65rem;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:.07em}
+    .prog-status{font-size:.82rem;font-weight:700;color:#666;text-align:center}
+    .prog-errors{background:#fff5f5;border:1px solid #fecaca;border-radius:8px;padding:10px;max-height:120px;overflow-y:auto;font-size:.75rem;font-weight:700;color:#dc2626;display:none;line-height:1.6}
+    .prog-done-btn{display:none;background:#1400cc;color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .prog-done-btn:hover{background:#2c14ff}
+
+    /* WA MODAL */
+    .wa-list{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin}
+    .wa-link{display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:9px;padding:10px 14px;text-decoration:none;transition:background .18s}
+    .wa-link:hover{background:#dcfce7}
+    .wa-name{font-size:.85rem;font-weight:800;color:#1a1a2e}
+    .wa-phone{font-size:.72rem;font-weight:700;color:#666}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;box-shadow:0 6px 24px rgba(0,0,0,.2);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    .empty{text-align:center;padding:40px;color:#bbb;font-weight:700;font-size:.9rem}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='clients.html'">← BACK</button>
+  <div class="header-title">📨 MESSAGING</div>
+  <span class="settings-status" id="settingsStatus">⚙️ Not configured</span>
+  <button class="settings-btn" onclick="openSettings()">⚙️ Gmail Settings</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('compose',this)">✉️ Compose & Send</div>
+  <div class="tab" onclick="switchTab('history',this)">📋 Send History</div>
+</div>
+
+<!-- ════ COMPOSE TAB ════ -->
+<div class="tab-content active" id="tab-compose">
+<div class="compose-layout">
+
+  <!-- LEFT: Recipients -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="card-title">Recipients</div>
+
+      <div class="recip-filters">
+        <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('seller',this)">Sellers</button>
+        <button class="filter-chip" onclick="setFilter('buyer',this)">Buyers</button>
+        <button class="filter-chip" onclick="setFilter('has-email',this)">✉️ Has Email</button>
+        <button class="filter-chip" onclick="setFilter('no-email',this)">⚠️ No Email</button>
+      </div>
+
+      <input type="text" class="recip-search" id="recipSearch" placeholder="🔍 Search name, email, phone…" oninput="renderRecipients()"/>
+
+      <div class="select-all-row">
+        <span id="recipCount">0 shown</span>
+        <button class="select-all-btn" onclick="toggleSelectAll()">SELECT ALL</button>
+      </div>
+
+      <div class="recip-list" id="recipList">
+        <div class="empty">Loading clients…</div>
+      </div>
+    </div>
+
+    <!-- Selected summary -->
+    <div class="selected-summary">
+      <div style="display:flex;align-items:baseline;gap:6px">
+        <span class="sel-count" id="selectedCount">0</span>
+        <span class="sel-label">selected</span>
+        <span style="margin-left:auto;font-size:.7rem;font-weight:800;color:#999" id="emailCount">0 with email</span>
+      </div>
+      <div class="sel-chips" id="selectedChips"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Compose -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+
+    <!-- Templates -->
+    <div class="card">
+      <div class="card-title">Quick Templates</div>
+      <div class="template-row">
+        <button class="tpl-btn" onclick="loadTemplate('property')">🏠 Property Offer</button>
+        <button class="tpl-btn" onclick="loadTemplate('followup')">📞 Follow Up</button>
+        <button class="tpl-btn" onclick="loadTemplate('viewing')">👀 Viewing Invite</button>
+        <button class="tpl-btn" onclick="loadTemplate('deal')">🤝 Deal Update</button>
+        <button class="tpl-btn" onclick="loadTemplate('welcome')">👋 Welcome</button>
+      </div>
+    </div>
+
+    <!-- Compose -->
+    <div class="card">
+      <div class="card-title">Compose Message</div>
+
+      <div class="field">
+        <label>Subject Line</label>
+        <input type="text" id="subject" placeholder="e.g. Exclusive Property for {{name}}…" oninput="updatePreview()"/>
+      </div>
+
+      <div class="vars-bar">
+        <div class="vars-label">Click to insert personalization variable</div>
+        <div class="vars-list">
+          <span class="var-tag" onclick="insertVar('{{name}}')">{{name}}</span>
+          <span class="var-tag" onclick="insertVar('{{type}}')">{{type}}</span>
+          <span class="var-tag" onclick="insertVar('{{role}}')">{{role}}</span>
+          <span class="var-tag" onclick="insertVar('{{email}}')">{{email}}</span>
+          <span class="var-tag" onclick="insertVar('{{phone}}')">{{phone}}</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Message Body</label>
+        <textarea id="msgBody" rows="10" placeholder="Dear {{name}},&#10;&#10;We have an exciting property for you…" oninput="updatePreview()"></textarea>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="card">
+      <div class="card-title">Live Preview <span style="font-size:.72rem;font-weight:700;color:#999;text-transform:none;letter-spacing:0">(first selected recipient)</span></div>
+      <div class="preview-subject" id="previewSubject">—</div>
+      <div class="preview-box" id="previewBody">Write your message above…</div>
+    </div>
+
+    <!-- Send -->
+    <div class="card">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:.75rem;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Sending to</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:#1400cc" id="sendCount">0 recipients</div>
+        <div style="font-size:.72rem;font-weight:700;color:#999;margin-top:2px" id="emailWarning"></div>
+      </div>
+      <div class="send-row">
+        <button class="send-btn" id="sendBtn" onclick="startSend()">📤 SEND EMAILS</button>
+        <button class="wa-btn" onclick="openWABulk()">💬 WHATSAPP</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ════ HISTORY TAB ════ -->
+<div class="tab-content" id="tab-history">
+  <div class="history-wrap">
+    <div id="historyList"><div class="empty">Loading history…</div></div>
+  </div>
+</div>
+
+<!-- Gmail Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-box">
+    <div class="modal-title">⚙️ Gmail Settings</div>
+    <div class="modal-note">
+      ⚠️ Use a <strong>Gmail App Password</strong>, not your regular password.<br>
+      Google Account → Security → 2-Step Verification → App Passwords → Generate for "Mail"
+    </div>
+    <div class="mfield">
+      <label>Gmail Address</label>
+      <input type="email" id="sGmail" placeholder="yourname@gmail.com"/>
+    </div>
+    <div class="mfield">
+      <label>App Password (16 chars)</label>
+      <div class="pw-wrap">
+        <input type="password" id="sAppPw" placeholder="xxxx xxxx xxxx xxxx"/>
+        <button class="pw-toggle" onclick="document.getElementById('sAppPw').type=document.getElementById('sAppPw').type==='password'?'text':'password'">👁</button>
+      </div>
+    </div>
+    <div class="mfield">
+      <label>Sender Name</label>
+      <input type="text" id="sSenderName" placeholder="e.g. SERENIA Real Estate"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="document.getElementById('settingsModal').classList.remove('open')">Cancel</button>
+      <button class="btn-save" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Progress Modal -->
+<div class="modal-overlay" id="progressModal">
+  <div class="prog-box">
+    <div class="prog-title">📨 Sending…</div>
+    <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+    <div class="prog-stats">
+      <div><div class="ps-val blue" id="pTotal">0</div><div class="ps-label">Total</div></div>
+      <div><div class="ps-val green" id="pSent">0</div><div class="ps-label">Sent</div></div>
+      <div><div class="ps-val red" id="pFailed">0</div><div class="ps-label">Failed</div></div>
+    </div>
+    <div class="prog-status" id="progStatus">Starting…</div>
+    <div class="prog-errors" id="progErrors"></div>
+    <button class="prog-done-btn" id="progDoneBtn" onclick="closeProgress()">✓ Done</button>
+  </div>
+</div>
+
+<!-- WhatsApp Modal -->
+<div class="modal-overlay" id="waModal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-title">💬 WhatsApp Links</div>
+    <p style="font-size:.78rem;font-weight:700;color:#666;line-height:1.6">Click each link to open WhatsApp with your message pre-filled for each recipient.</p>
+    <div class="wa-list" id="waList"></div>
+    <button class="btn-cancel" onclick="document.getElementById('waModal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _all=[], _filtered=[], _selected=new Set(), _filter='all', _settings={}, _pollInterval=null;
+  let _history = [];
+
+  // ── TEMPLATES ──
+  const TEMPLATES = {
+    property: {
+      subject: 'Exclusive Property Opportunity for {{name}}',
+      body: `Dear {{name}},\n\nWe hope this message finds you well.\n\nWe have identified an exclusive property that perfectly matches your requirements. Given your interest in real estate, we believe this could be an excellent opportunity for you.\n\nPlease reply to this email or call us to schedule a viewing at your earliest convenience.\n\nWarm regards,\nSERENA Real Estate Team`
+    },
+    followup: {
+      subject: 'Following Up — {{name}}',
+      body: `Dear {{name}},\n\nI wanted to follow up on our previous conversation regarding your property requirements.\n\nWe have some exciting new listings that may interest you. Could we schedule a brief call to discuss your needs?\n\nLooking forward to hearing from you.\n\nBest regards,\nSERENA Real Estate`
+    },
+    viewing: {
+      subject: 'Property Viewing Invitation — {{name}}',
+      body: `Dear {{name}},\n\nWe are delighted to invite you for a property viewing.\n\nWe have arranged a special viewing session for our select clients. This is a wonderful opportunity to explore properties that match your preferences.\n\nPlease confirm your availability by replying to this email.\n\nBest regards,\nSERENA Real Estate Team`
+    },
+    deal: {
+      subject: 'Update on Your Property Deal — {{name}}',
+      body: `Dear {{name}},\n\nWe wanted to provide you with an update on your ongoing property transaction.\n\nOur team is actively working to ensure a smooth process for you. If you have any questions or require any clarification, please do not hesitate to reach out.\n\nThank you for your trust in SERENIA.\n\nBest regards,\nSERENA Real Estate`
+    },
+    welcome: {
+      subject: 'Welcome to SERENIA Real Estate, {{name}}!',
+      body: `Dear {{name}},\n\nWelcome to SERENIA Real Estate!\n\nWe are thrilled to have you as our valued client. Our dedicated team is here to assist you in finding your perfect property.\n\nAs a {{type}}, we have curated special listings that align with your needs. Please feel free to reach out anytime.\n\nWarm regards,\nSERENA Real Estate Team`
+    }
+  };
+
+  function loadTemplate(key) {
+    const t = TEMPLATES[key];
+    if (!t) return;
+    document.getElementById('subject').value  = t.subject;
+    document.getElementById('msgBody').value  = t.body;
+    updatePreview();
+    showToast('✅ Template loaded');
+  }
+
+  // ── TABS ──
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+tab).classList.add('active');
+    if (tab === 'history') renderHistory();
+  }
+
+  // ── LOAD ──
+  async function loadAll() {
+    try {
+      const [rr, sr] = await Promise.all([fetch('/get_recipients'), fetch('/get_msg_settings')]);
+      _all      = await rr.json();
+      _settings = await sr.json();
+      updateSettingsStatus();
+      renderRecipients();
+    } catch {
+      document.getElementById('recipList').innerHTML = '<div class="empty">Failed to load</div>';
+    }
+  }
+
+  function updateSettingsStatus() {
+    const el = document.getElementById('settingsStatus');
+    if (_settings.gmail && _settings.has_password) {
+      el.textContent   = `✅ ${_settings.gmail}`;
+      el.className     = 'settings-status ok';
+    } else {
+      el.textContent   = '⚠️ Gmail not configured';
+      el.className     = 'settings-status bad';
+    }
+  }
+
+  // ── RECIPIENTS ──
+  function setFilter(f, btn) {
+    _filter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    renderRecipients();
+  }
+
+  function renderRecipients() {
+    const q = document.getElementById('recipSearch').value.trim().toLowerCase();
+    _filtered = _all.filter(r => {
+      const hasEmail = r.email && r.email.trim() !== '';
+      if (_filter === 'seller'   && r.type !== 'Seller')   return false;
+      if (_filter === 'buyer'    && r.type !== 'Buyer')    return false;
+      if (_filter === 'has-email'  && !hasEmail)           return false;
+      if (_filter === 'no-email'   && hasEmail)            return false;
+      if (q && ![r.name, r.email||'', r.phone||''].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    document.getElementById('recipCount').textContent = `${_filtered.length} shown`;
+
+    const list = document.getElementById('recipList');
+    if (!_filtered.length) {
+      list.innerHTML = '<div class="empty">No clients found</div>';
+      updateSelectedUI(); updatePreview(); return;
+    }
+
+    list.innerHTML = _filtered.map(r => {
+      const sel      = _selected.has(r.id);
+      const initials = (r.name||'?').slice(0,2).toUpperCase();
+      const hasEmail = r.email && r.email.trim() !== '';
+      const hasPhone = r.phone && r.phone.trim() !== '';
+      return `
+        <div class="recip-item ${sel?'selected':''}" id="ri_${r.id}" onclick="toggleRecip('${r.id}')">
+          <input type="checkbox" ${sel?'checked':''} onclick="event.stopPropagation();toggleRecip('${r.id}')"/>
+          <div class="recip-avatar ${r.type.toLowerCase()}">${initials}</div>
+          <div class="recip-info" style="min-width:0">
+            <div class="recip-name">${esc(r.name)}</div>
+            <div style="display:flex;align-items:center;gap:3px">
+              <div class="recip-email ${hasEmail?'has':'missing'}">
+                ${hasEmail ? '✉️ '+esc(r.email) : hasPhone ? '📞 '+esc(r.phone) : '⚠️ No contact info'}
+              </div>
+              <button class="edit-email-btn" onclick="event.stopPropagation();toggleEmailEdit('${r.id}')" title="Edit email">✏️</button>
+            </div>
+            <div class="inline-email-form" id="ef_${r.id}">
+              <input type="email" class="inline-email-input" id="ei_${r.id}" value="${esc(r.email||'')}" placeholder="Enter email…" onclick="event.stopPropagation()"/>
+              <button class="inline-email-save" onclick="event.stopPropagation();saveEmail('${r.id}','${r.type}')">Save</button>
+            </div>
+          </div>
+          <span class="recip-badge ${r.type.toLowerCase()}">${r.type}</span>
+        </div>`;
+    }).join('');
+
+    updateSelectedUI(); updatePreview();
+  }
+
+  function toggleEmailEdit(id) {
+    const form = document.getElementById('ef_'+id);
+    form.classList.toggle('show');
+    if (form.classList.contains('show')) {
+      document.getElementById('ei_'+id).focus();
+    }
+  }
+
+  async function saveEmail(id, type) {
+    const email = document.getElementById('ei_'+id).value.trim();
+    if (!email) { showToast('⚠️ Enter an email address'); return; }
+    try {
+      const endpoint = type === 'Seller' ? `/update_seller/${id}` : `/update_buyer/${id}`;
+      const fd = new FormData();
+      fd.append('data', JSON.stringify({email}));
+      const res  = await fetch(endpoint, {method:'POST', body:fd});
+      const json = await res.json();
+      if (json.success) {
+        // Update local data
+        const r = _all.find(x=>x.id===id);
+        if (r) r.email = email;
+        renderRecipients();
+        showToast('✅ Email saved!');
+      } else {
+        showToast('❌ '+(json.error||'Error'));
+      }
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function toggleRecip(id) {
+    _selected.has(id) ? _selected.delete(id) : _selected.add(id);
+    renderRecipients();
+  }
+
+  function toggleSelectAll() {
+    const allSel = _filtered.every(r => _selected.has(r.id));
+    _filtered.forEach(r => allSel ? _selected.delete(r.id) : _selected.add(r.id));
+    renderRecipients();
+  }
+
+  function updateSelectedUI() {
+    const selList    = _all.filter(r => _selected.has(r.id));
+    const withEmail  = selList.filter(r => r.email && r.email.trim() !== '');
+    const noEmail    = selList.length - withEmail.length;
+
+    document.getElementById('selectedCount').textContent = selList.length;
+    document.getElementById('sendCount').textContent     = `${selList.length} recipient${selList.length!==1?'s':''}`;
+    document.getElementById('emailCount').textContent    = `${withEmail.length} with email`;
+
+    const warn = document.getElementById('emailWarning');
+    warn.textContent = noEmail > 0
+      ? `⚠️ ${noEmail} recipient${noEmail>1?'s':''} have no email — they will be skipped`
+      : '';
+    warn.style.color = '#dc2626';
+
+    document.getElementById('selectedChips').innerHTML = selList.slice(0,6).map(r =>
+      `<div class="sel-chip">${esc(r.name)}<span class="rm" onclick="toggleRecip('${r.id}')">✕</span></div>`
+    ).join('') + (selList.length > 6 ? `<div style="color:#999;font-size:.72rem;font-weight:800;padding:3px 6px">+${selList.length-6} more</div>` : '');
+  }
+
+  // ── VARIABLES & PREVIEW ──
+  function insertVar(v) {
+    const ta = document.getElementById('msgBody');
+    const s  = ta.selectionStart, e = ta.selectionEnd;
+    ta.value = ta.value.slice(0,s) + v + ta.value.slice(e);
+    ta.selectionStart = ta.selectionEnd = s + v.length;
+    ta.focus(); updatePreview();
+  }
+
+  function updatePreview() {
+    const sub  = document.getElementById('subject').value;
+    const body = document.getElementById('msgBody').value;
+    const firstId = [..._selected][0];
+    const r   = (firstId && _all.find(x=>x.id===firstId)) || _all[0] || {};
+    const p = t => t.replace(/\{\{name\}\}/g,r.name||'Client')
+                    .replace(/\{\{type\}\}/g,r.type||'Client')
+                    .replace(/\{\{role\}\}/g,r.role||r.intent||'')
+                    .replace(/\{\{email\}\}/g,r.email||'')
+                    .replace(/\{\{phone\}\}/g,r.phone||'');
+    document.getElementById('previewSubject').textContent = sub  ? p(sub)  : '—';
+    document.getElementById('previewBody').textContent    = body ? p(body) : 'Write your message above…';
+  }
+
+  // ── SEND ──
+  async function startSend() {
+    if (_selected.size === 0) { showToast('⚠️ Select at least one recipient'); return; }
+    const subject = document.getElementById('subject').value.trim();
+    const body    = document.getElementById('msgBody').value.trim();
+    if (!subject) { showToast('⚠️ Enter a subject'); return; }
+    if (!body)    { showToast('⚠️ Enter a message body'); return; }
+    if (!_settings.gmail) { showToast('⚠️ Configure Gmail settings first'); openSettings(); return; }
+
+    document.getElementById('progressModal').classList.add('open');
+    document.getElementById('progBar').style.width = '0%';
+    document.getElementById('pTotal').textContent  = _selected.size;
+    document.getElementById('pSent').textContent   = '0';
+    document.getElementById('pFailed').textContent = '0';
+    document.getElementById('progStatus').textContent = 'Starting…';
+    document.getElementById('progDoneBtn').style.display = 'none';
+    document.getElementById('progErrors').style.display  = 'none';
+    document.getElementById('progErrors').innerHTML = '';
+    document.getElementById('sendBtn').disabled = true;
+
+    try {
+      const res  = await fetch('/send_bulk', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({recipient_ids:[..._selected], subject, body}),
+      });
+      const json = await res.json();
+      if (!json.success) { showToast('❌ '+json.error); closeProgress(); return; }
+      pollProgress(json.job_id);
+    } catch { showToast('❌ Server error'); closeProgress(); }
+  }
+
+  function pollProgress(jobId) {
+    _pollInterval = setInterval(async () => {
+      try {
+        const res  = await fetch(`/bulk_status/${jobId}`);
+        const job  = await res.json();
+        const done = (job.sent||0) + (job.failed||0);
+        const pct  = job.total > 0 ? Math.round(done/job.total*100) : 0;
+        document.getElementById('progBar').style.width   = pct+'%';
+        document.getElementById('pSent').textContent     = job.sent||0;
+        document.getElementById('pFailed').textContent   = job.failed||0;
+        document.getElementById('progStatus').textContent = job.done
+          ? (job.failed > 0 ? `Done — ${job.failed} failed` : '✅ All sent!')
+          : `Sending… (${done}/${job.total})`;
+        if (job.errors?.length) {
+          const el = document.getElementById('progErrors');
+          el.style.display = 'block';
+          el.innerHTML = job.errors.map(e=>`<div>❌ ${esc(e)}</div>`).join('');
+        }
+        if (job.done) {
+          clearInterval(_pollInterval);
+          document.getElementById('progDoneBtn').style.display = 'block';
+          document.getElementById('sendBtn').disabled = false;
+          // Save to history
+          _history.unshift({
+            time:    new Date().toLocaleString(),
+            subject: document.getElementById('subject').value,
+            body:    document.getElementById('msgBody').value,
+            total:   job.total, sent:job.sent||0, failed:job.failed||0,
+          });
+          localStorage.setItem && localStorage.setItem('serenia_msg_history', JSON.stringify(_history.slice(0,20)));
+        }
+      } catch { clearInterval(_pollInterval); }
+    }, 1000);
+  }
+
+  function closeProgress() {
+    document.getElementById('progressModal').classList.remove('open');
+    document.getElementById('sendBtn').disabled = false;
+    if (_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
+  }
+
+  // ── WHATSAPP BULK ──
+  function openWABulk() {
+    if (_selected.size === 0) { showToast('⚠️ Select recipients first'); return; }
+    const body = document.getElementById('msgBody').value.trim();
+    const selList = _all.filter(r => _selected.has(r.id) && r.phone?.trim());
+    const noPhone = _all.filter(r => _selected.has(r.id) && !r.phone?.trim()).length;
+
+    const list = document.getElementById('waList');
+    list.innerHTML = '';
+
+    if (noPhone > 0) {
+      list.insertAdjacentHTML('beforeend',
+        `<div style="background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:8px 12px;font-size:.75rem;font-weight:700;color:#b45309;margin-bottom:6px">
+          ⚠️ ${noPhone} recipient${noPhone>1?'s have':' has'} no phone number and will be skipped.
+        </div>`);
+    }
+
+    selList.forEach(r => {
+      const clean = r.phone.replace(/[^0-9+]/g,'');
+      const p = body
+        ? body.replace(/\{\{name\}\}/g,r.name||'there')
+              .replace(/\{\{type\}\}/g,r.type||'Client')
+              .replace(/\{\{role\}\}/g,r.role||r.intent||'')
+        : `Hello ${r.name||'there'}, we are reaching out from SERENIA.`;
+      list.insertAdjacentHTML('beforeend', `
+        <a href="https://wa.me/${clean}?text=${encodeURIComponent(p)}" target="_blank" class="wa-link">
+          <span style="font-size:1.2rem">💬</span>
+          <div>
+            <div class="wa-name">${esc(r.name)}</div>
+            <div class="wa-phone">${esc(r.phone)}</div>
+          </div>
+          <span style="margin-left:auto;font-size:.75rem;font-weight:800;color:#16a34a">Open →</span>
+        </a>`);
+    });
+
+    if (!selList.length) {
+      list.innerHTML = '<div class="empty">No recipients have phone numbers</div>';
+    }
+
+    document.getElementById('waModal').classList.add('open');
+  }
+
+  // ── HISTORY ──
+  function renderHistory() {
+    try {
+      const saved = localStorage.getItem && localStorage.getItem('serenia_msg_history');
+      if (saved) _history = JSON.parse(saved);
+    } catch {}
+    const wrap = document.getElementById('historyList');
+    if (!_history.length) { wrap.innerHTML = '<div class="empty">No send history yet</div>'; return; }
+    wrap.innerHTML = _history.map(h => `
+      <div class="history-item">
+        <div class="hi-top">
+          <div class="hi-icon">📨</div>
+          <div class="hi-subject">${esc(h.subject||'(no subject)')}</div>
+          <div class="hi-time">${esc(h.time||'')}</div>
+        </div>
+        <div class="hi-stats">
+          <span class="hi-stat total">📤 ${h.total} sent to</span>
+          <span class="hi-stat sent">✅ ${h.sent} delivered</span>
+          ${h.failed>0?`<span class="hi-stat failed">❌ ${h.failed} failed</span>`:''}
+        </div>
+        <div class="hi-body">${esc((h.body||'').replace(/\n/g,' '))}</div>
+      </div>`).join('');
+  }
+
+  // ── SETTINGS ──
+  function openSettings() {
+    document.getElementById('sGmail').value      = _settings.gmail||'';
+    document.getElementById('sAppPw').value      = _settings.has_password ? '••••••••••••••••' : '';
+    document.getElementById('sAppPw').dataset.saved = _settings.has_password ? '1' : '0';
+    document.getElementById('sSenderName').value = _settings.sender_name||'SERENIA';
+    document.getElementById('settingsModal').classList.add('open');
+  }
+
+  async function saveSettings() {
+    const gmail  = document.getElementById('sGmail').value.trim();
+    const pwInp  = document.getElementById('sAppPw');
+    const name   = document.getElementById('sSenderName').value.trim()||'SERENIA';
+    if (!gmail) { showToast('⚠️ Enter Gmail address'); return; }
+    const isSaved = pwInp.dataset.saved === '1' && pwInp.value === '••••••••••••••••';
+    const appPw   = isSaved ? '' : pwInp.value.trim();
+    if (!isSaved && !appPw) { showToast('⚠️ Enter App Password'); return; }
+    const body = {gmail, sender_name:name};
+    if (appPw) body.app_password = appPw;
+    try {
+      const res  = await fetch('/save_msg_settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const json = await res.json();
+      if (json.success) {
+        _settings = {gmail, sender_name:name, has_password:true};
+        updateSettingsStatus();
+        showToast('✅ Settings saved!');
+        document.getElementById('settingsModal').classList.remove('open');
+      } else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block main %}
+    <h1>Profile</h1>
+    <div class="container2">
+        <div class="details-container2 overflow">
+            <table class="table">
+                <tr>
+                    <th>Username</th>
+                    <td>{{ session.name }}</td>
+                </tr>
+                <tr>
+                    <th>Date joined</th>
+                    <td>{{ date }}</td>
+                </tr>
+                <tr>
+                    <th>Currency</th>
+                    <td>{{ currency }}</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <a href="/change-password" class="button-link"><button class="btn btn-dark transaction-btn" id="change-password">Change password</button></a>
+        </div>
+    </div>
+{% endblock %}

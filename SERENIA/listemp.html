@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List Employee – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+    body{background:#1a1a2e}
+
+    .page-header{background:#1400cc;text-align:center;padding:26px 20px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .page-header h1{font-size:2.6rem;font-weight:900;letter-spacing:.06em;color:#fff;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s,transform .15s}
+    .back-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-50%) scale(1.05)}
+
+    .scroll-wrap{max-width:920px;margin:0 auto;padding:32px 24px 80px;display:flex;flex-direction:column;gap:24px}
+
+    /* CARDS */
+    .card{background:#252540;border-radius:22px;padding:32px 36px;box-shadow:0 8px 32px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);animation:fadeUp .5s ease both}
+    .card:nth-child(2){animation-delay:.08s}
+    .card:nth-child(3){animation-delay:.16s}
+    .card:nth-child(4){animation-delay:.24s}
+    .card:nth-child(5){animation-delay:.32s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .card-title{color:#818cf8;font-weight:900;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+    /* FORM ROWS */
+    .form-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+    .form-row:last-child{margin-bottom:0}
+    .form-row label{color:rgba(255,255,255,.7);font-weight:900;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;min-width:210px;flex-shrink:0}
+
+    .form-row input,.form-row select,.form-row textarea{flex:1;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;padding:12px 18px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#fff;outline:none;transition:border-color .2s,background .2s;appearance:none;-webkit-appearance:none}
+    .form-row textarea{border-radius:14px;resize:vertical;min-height:50px}
+    .form-row input::placeholder,.form-row textarea::placeholder{color:rgba(255,255,255,.25)}
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:#818cf8;background:rgba(129,140,248,.08)}
+    .form-row select option{background:#252540;color:#fff}
+
+    .select-wrap{flex:1;position:relative}
+    .select-wrap select{width:100%;padding-right:44px;cursor:pointer}
+    .select-wrap .arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:#818cf8;font-size:.9rem}
+
+    /* Input with prefix */
+    .input-prefix-wrap{flex:1;display:flex;align-items:center;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;overflow:hidden;transition:border-color .2s}
+    .input-prefix-wrap:focus-within{border-color:#818cf8;background:rgba(129,140,248,.08)}
+    .input-prefix-wrap .prefix{padding:12px 12px 12px 18px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;color:#818cf8;user-select:none;white-space:nowrap}
+    .input-prefix-wrap input{flex:1;background:transparent;border:none;border-radius:0;padding:12px 18px 12px 4px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#fff;outline:none;appearance:none}
+    .input-prefix-wrap input::placeholder{color:rgba(255,255,255,.25)}
+
+    /* STATUS TOGGLE */
+    .status-toggle-wrap{flex:1;display:flex;gap:10px}
+    .status-btn{flex:1;padding:11px 10px;border-radius:50px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .status-btn.active-sel{background:#16a34a;border-color:#16a34a;color:#fff}
+    .status-btn.inactive-sel{background:#dc2626;border-color:#dc2626;color:#fff}
+
+    /* PHOTO */
+    .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+    .photo-upload-row .field-label{color:rgba(255,255,255,.7);font-weight:900;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;min-width:210px;flex-shrink:0}
+    .photo-preview{width:96px;height:96px;border-radius:50%;border:3px solid #818cf8;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;overflow:hidden;flex-shrink:0;transition:border-color .2s}
+    .photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .photo-change-btn{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:background .2s}
+    .photo-change-btn:hover{background:rgba(255,255,255,.18)}
+
+    /* MULTI-SELECT (properties/clients) */
+    .multi-select-panel{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:18px 20px}
+    .ms-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .ms-header h3{color:rgba(255,255,255,.7);font-weight:900;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em}
+    .ms-search{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;outline:none;width:180px}
+    .ms-search::placeholder{color:rgba(255,255,255,.25)}
+    .ms-search:focus{border-color:#818cf8}
+    .ms-list{max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:#818cf8 transparent}
+    .ms-list::-webkit-scrollbar{width:3px}
+    .ms-list::-webkit-scrollbar-thumb{background:#818cf8;border-radius:3px}
+    .ms-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:10px;padding:9px 12px;cursor:pointer;border:1.5px solid transparent;transition:all .18s}
+    .ms-item:hover{background:rgba(129,140,248,.1)}
+    .ms-item.selected{border-color:#818cf8;background:rgba(129,140,248,.12)}
+    .ms-item input[type="checkbox"]{width:16px;height:16px;accent-color:#818cf8;cursor:pointer;flex-shrink:0}
+    .ms-item-body{flex:1;min-width:0}
+    .ms-item-id{font-size:.65rem;font-weight:900;color:#818cf8;letter-spacing:.08em;text-transform:uppercase}
+    .ms-item-title{font-size:.85rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ms-item-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4)}
+    .ms-count{margin-top:8px;font-size:.8rem;font-weight:800;color:#818cf8}
+    .ms-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .chip{display:flex;align-items:center;gap:5px;background:#818cf8;color:#fff;border-radius:50px;padding:4px 12px;font-size:.75rem;font-weight:800}
+    .chip .crm{cursor:pointer;opacity:.7;font-size:.85rem}
+    .chip .crm:hover{opacity:1}
+    .ms-empty{color:rgba(255,255,255,.3);font-size:.85rem;font-weight:700;text-align:center;padding:16px}
+
+    /* DOCS */
+    .check-panel{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px}
+    .check-panel h3{color:rgba(255,255,255,.7);font-weight:900;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+    .check-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin-bottom:12px}
+    .check-item{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .check-item input[type="checkbox"]{width:16px;height:16px;accent-color:#818cf8;cursor:pointer;flex-shrink:0}
+    .check-item span{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:#818cf8}
+
+    .doc-photos-wrap{margin-top:12px}
+    .doc-photos-label{color:rgba(255,255,255,.5);font-weight:900;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+    .doc-photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .doc-thumb{width:68px;height:52px;border-radius:8px;overflow:hidden;position:relative;flex-shrink:0}
+    .doc-thumb img{width:100%;height:100%;object-fit:cover}
+    .doc-thumb .rm{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:15px;height:15px;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+    /* ADD / ACTION BTNS */
+    .add-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:9px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:background .2s,transform .15s;margin-top:6px}
+    .add-btn:hover{background:rgba(255,255,255,.18);transform:scale(1.04)}
+    .add-btn .plus{width:20px;height:20px;background:#818cf8;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900}
+
+    /* SUBMIT */
+    .submit-wrap{text-align:center;padding:8px 0 16px}
+    .submit-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:60px;padding:20px 90px;cursor:pointer;box-shadow:0 0 28px rgba(20,0,204,.6),0 6px 22px rgba(0,0,0,.3);transition:background .2s,transform .15s,box-shadow .2s}
+    .submit-btn:hover{background:#2c14ff;transform:translateY(-3px) scale(1.03)}
+    .submit-btn:active{transform:scale(.97)}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 32px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    /* MODALS */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#252540;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;min-width:300px;box-shadow:0 12px 48px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:12px}
+    .modal-box h3{color:#818cf8;font-weight:900;font-size:1.05rem;text-transform:uppercase}
+    .modal-box input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:50px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;color:#fff}
+    .modal-box input::placeholder{color:rgba(255,255,255,.3)}
+    .modal-box input:focus{border-color:#818cf8}
+    .modal-btns{display:flex;gap:10px}
+    .modal-btns button{flex:1;border:none;border-radius:50px;padding:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .modal-btns .confirm{background:#1400cc;color:#fff}
+    .modal-btns .cancel{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+
+    @media(max-width:640px){
+      .form-row{flex-direction:column;align-items:flex-start}
+      .form-row label{min-width:unset}
+      .check-list{grid-template-columns:1fr}
+      .ms-header{flex-direction:column;align-items:flex-start;gap:8px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <button class="back-btn" onclick="window.location.href='emp.html'">← BACK</button>
+  <h1>LIST EMPLOYEE</h1>
+</div>
+
+<div class="scroll-wrap">
+
+  <!-- CARD 1: Personal Info -->
+  <div class="card">
+    <div class="card-title">Personal Information</div>
+
+    <div class="photo-upload-row">
+      <label class="field-label">Employee Photo:</label>
+      <div class="photo-preview" id="photoPreview" onclick="document.getElementById('empPhotoInput').click()">👤</div>
+      <button class="photo-change-btn" onclick="document.getElementById('empPhotoInput').click()">Change Photo</button>
+      <input type="file" id="empPhotoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)"/>
+    </div>
+
+    <div class="form-row">
+      <label>Full Name:</label>
+      <input type="text" id="empName" placeholder="Employee full name…"/>
+    </div>
+    <div class="form-row">
+      <label>Phone:</label>
+      <input type="tel" id="empPhone" placeholder="+971 or +91…"/>
+    </div>
+    <div class="form-row">
+      <label>Email:</label>
+      <input type="email" id="empEmail" placeholder="email@example.com"/>
+    </div>
+    <div class="form-row">
+      <label>Nationality:</label>
+      <input type="text" id="nationality" placeholder="e.g. Indian, Emirati…"/>
+    </div>
+    <div class="form-row">
+      <label>Date of Joining:</label>
+      <input type="date" id="joiningDate"/>
+    </div>
+    <div class="form-row">
+      <label>Status:</label>
+      <div class="status-toggle-wrap">
+        <button class="status-btn active-sel" id="btnActive" onclick="setStatus('Active')">✓ Active</button>
+        <button class="status-btn" id="btnInactive" onclick="setStatus('Inactive')">✗ Inactive</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Role & Department -->
+  <div class="card">
+    <div class="card-title">Role & Department</div>
+
+    <div class="form-row">
+      <label>Role / Designation:</label>
+      <div class="select-wrap">
+        <select id="role" onchange="handleCustomSel(this,'roleModal','roleCustomInput')">
+          <option value="">— Select Role —</option>
+          <option>Agent</option>
+          <option>Senior Agent</option>
+          <option>Property Manager</option>
+          <option>Sales Manager</option>
+          <option>Branch Manager</option>
+          <option>Admin</option>
+          <option>Coordinator</option>
+          <option>Legal Advisor</option>
+          <option>Finance Officer</option>
+          <option>HR Manager</option>
+          <option>Other</option>
+          <option value="__custom__">+ Custom…</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Department:</label>
+      <div class="select-wrap">
+        <select id="department" onchange="handleCustomSel(this,'deptModal','deptCustomInput')">
+          <option value="">— Select Department —</option>
+          <option>Sales</option>
+          <option>Rental</option>
+          <option>Legal</option>
+          <option>Finance</option>
+          <option>Admin</option>
+          <option>HR</option>
+          <option>Other</option>
+          <option value="__custom__">+ Custom…</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Salary:</label>
+      <div class="input-prefix-wrap" id="salaryWrap">
+        <span class="prefix" id="salaryPrefix">AED</span>
+        <input type="number" id="salary" min="0" placeholder="Monthly salary…"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Currency:</label>
+      <div class="select-wrap">
+        <select id="currency" onchange="updatePrefix()">
+          <option value="AED">AED (UAE)</option>
+          <option value="INR">₹ INR (India)</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Commission Type:</label>
+      <div class="select-wrap">
+        <select id="commissionType">
+          <option value="">None</option>
+          <option value="percent">Percentage (%)</option>
+          <option value="fixed">Fixed Amount</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Commission Value:</label>
+      <input type="number" id="commissionValue" min="0" placeholder="e.g. 2 (%) or 5000 (fixed)…"/>
+    </div>
+
+    <div class="form-row">
+      <label>Notes / Remarks:</label>
+      <textarea id="notes" rows="2" placeholder="Additional notes…"></textarea>
+    </div>
+  </div>
+
+  <!-- CARD 3: Assigned Properties -->
+  <div class="card">
+    <div class="card-title">Assigned Properties</div>
+    <div class="multi-select-panel">
+      <div class="ms-header">
+        <h3>Select Properties</h3>
+        <input type="text" class="ms-search" id="propSearch" placeholder="🔍 Search…" oninput="filterList('prop')"/>
+      </div>
+      <div class="ms-list" id="propList"><div class="ms-empty">Loading…</div></div>
+      <div class="ms-count" id="propCount"></div>
+      <div class="ms-chips" id="propChips"></div>
+    </div>
+  </div>
+
+  <!-- CARD 4: Assigned Clients -->
+  <div class="card">
+    <div class="card-title">Assigned Clients</div>
+    <div class="multi-select-panel">
+      <div class="ms-header">
+        <h3>Select Clients (Buyers / Sellers)</h3>
+        <input type="text" class="ms-search" id="clientSearch" placeholder="🔍 Search…" oninput="filterList('client')"/>
+      </div>
+      <div class="ms-list" id="clientList"><div class="ms-empty">Loading…</div></div>
+      <div class="ms-count" id="clientCount"></div>
+      <div class="ms-chips" id="clientChips"></div>
+    </div>
+  </div>
+
+  <!-- CARD 5: Documents -->
+  <div class="card">
+    <div class="card-title">Documents</div>
+    <div class="check-panel">
+      <h3>Docs Submitted</h3>
+      <div class="check-list" id="docsList">
+        <label class="check-item"><input type="checkbox" value="Emirates ID"/><span>Emirates ID</span></label>
+        <label class="check-item"><input type="checkbox" value="Aadhaar Card"/><span>Aadhaar Card</span></label>
+        <label class="check-item"><input type="checkbox" value="PAN Card"/><span>PAN Card</span></label>
+        <label class="check-item"><input type="checkbox" value="Passport Copy"/><span>Passport Copy</span></label>
+        <label class="check-item"><input type="checkbox" value="Visa Copy"/><span>Visa Copy</span></label>
+        <label class="check-item"><input type="checkbox" value="Employment Contract"/><span>Employment Contract</span></label>
+        <label class="check-item"><input type="checkbox" value="RERA Certificate"/><span>RERA Certificate</span></label>
+        <label class="check-item"><input type="checkbox" value="Offer Letter"/><span>Offer Letter</span></label>
+        <label class="check-item"><input type="checkbox" value="Bank Details"/><span>Bank Details</span></label>
+        <label class="check-item"><input type="checkbox" value="NDA Signed"/><span>NDA Signed</span></label>
+      </div>
+      <button class="add-btn" onclick="openDocModal()">Add <span class="plus">+</span></button>
+
+      <div class="doc-photos-wrap">
+        <div class="doc-photos-label">Upload Document Photos:</div>
+        <button class="add-btn" onclick="document.getElementById('docPhotoInput').click()">Add Doc Photos <span class="plus">+</span></button>
+        <input type="file" id="docPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDocPhotos(this)"/>
+        <div class="doc-photo-preview" id="docPhotoPreview"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" id="saveBtn" onclick="submitEmployee()">SAVE EMPLOYEE</button>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- Role modal -->
+<div class="modal-overlay" id="roleModal">
+  <div class="modal-box"><h3>Custom Role</h3>
+    <input type="text" id="roleCustomInput" placeholder="e.g. Leasing Consultant…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal('roleModal','role')">Cancel</button>
+      <button class="confirm" onclick="saveCustomOpt('roleModal','role','roleCustomInput')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dept modal -->
+<div class="modal-overlay" id="deptModal">
+  <div class="modal-box"><h3>Custom Department</h3>
+    <input type="text" id="deptCustomInput" placeholder="e.g. Marketing…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal('deptModal','department')">Cancel</button>
+      <button class="confirm" onclick="saveCustomOpt('deptModal','department','deptCustomInput')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Doc modal -->
+<div class="modal-overlay" id="addDocModal">
+  <div class="modal-box"><h3>Add Custom Document</h3>
+    <input type="text" id="addDocInput" placeholder="Document name…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="document.getElementById('addDocModal').classList.remove('open')">Cancel</button>
+      <button class="confirm" onclick="saveDocItem()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let _prevVal     = {};
+  let _photoFile   = null;
+  let _docPhotos   = [];
+  let _selProps    = new Set();
+  let _selClients  = new Set();
+  let _allProps    = [];
+  let _allClients  = [];
+  let _empStatus   = 'Active';
+
+  // ── Status toggle ──
+  function setStatus(s) {
+    _empStatus = s;
+    document.getElementById('btnActive').className   = 'status-btn' + (s==='Active'?' active-sel':'');
+    document.getElementById('btnInactive').className = 'status-btn' + (s==='Inactive'?' inactive-sel':'');
+  }
+
+  // ── Load data ──
+  async function loadData() {
+    try {
+      const [pr, sr, br] = await Promise.all([
+        fetch('/get_properties'), fetch('/get_sellers'), fetch('/get_buyers')
+      ]);
+      _allProps   = await pr.json();
+      const sellers = await sr.json();
+      const buyers  = await br.json();
+      _allClients = [
+        ...sellers.map(s => ({id:s.id, name:s.seller_name, type:'Seller', role:s.role})),
+        ...buyers.map(b  => ({id:b.id, name:b.buyer_name,  type:'Buyer',  role:b.intent})),
+      ];
+      renderList('prop');
+      renderList('client');
+    } catch {}
+  }
+
+  function filterList(type) {
+    renderList(type);
+  }
+
+  function renderList(type) {
+    const isProp = type === 'prop';
+    const q      = document.getElementById(isProp ? 'propSearch' : 'clientSearch').value.trim().toLowerCase();
+    const listEl = document.getElementById(isProp ? 'propList' : 'clientList');
+    const selSet = isProp ? _selProps : _selClients;
+
+    const items = isProp ? _allProps : _allClients;
+    const filtered = q
+      ? items.filter(x => [x.id, isProp ? x.title : x.name, isProp ? x.city : x.role].join(' ').toLowerCase().includes(q))
+      : items;
+
+    if (!filtered.length) { listEl.innerHTML = '<div class="ms-empty">No results</div>'; return; }
+
+    listEl.innerHTML = filtered.map(x => {
+      const selected = selSet.has(x.id);
+      const title    = isProp ? (x.title || 'Untitled') : x.name;
+      const sub      = isProp ? [x.property_type, x.city].filter(Boolean).join(' · ') : `${x.type} · ${x.role||''}`;
+      return `
+        <div class="ms-item ${selected?'selected':''}" onclick="toggle('${type}','${x.id}')">
+          <input type="checkbox" ${selected?'checked':''} onclick="event.stopPropagation();toggle('${type}','${x.id}')"/>
+          <div class="ms-item-body">
+            <div class="ms-item-id"># ${esc(x.id)}</div>
+            <div class="ms-item-title">${esc(title)}</div>
+            <div class="ms-item-sub">${esc(sub)}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggle(type, id) {
+    const isProp = type === 'prop';
+    const selSet = isProp ? _selProps : _selClients;
+    selSet.has(id) ? selSet.delete(id) : selSet.add(id);
+    renderList(type);
+    updateChips(type);
+    updateCount(type);
+  }
+
+  function updateChips(type) {
+    const isProp  = type === 'prop';
+    const selSet  = isProp ? _selProps : _selClients;
+    const all     = isProp ? _allProps : _allClients;
+    const chipsEl = document.getElementById(isProp ? 'propChips' : 'clientChips');
+    chipsEl.innerHTML = [...selSet].map(id => {
+      const x = all.find(i => i.id === id);
+      const label = x ? (isProp ? (x.title || x.id) : x.name) : id;
+      return `<div class="chip">${esc(label)}<span class="crm" onclick="toggle('${type}','${id}')">✕</span></div>`;
+    }).join('');
+  }
+
+  function updateCount(type) {
+    const isProp = type === 'prop';
+    const n = (isProp ? _selProps : _selClients).size;
+    document.getElementById(isProp ? 'propCount' : 'clientCount').textContent =
+      n ? `${n} selected` : '';
+  }
+
+  // ── Photo ──
+  function handlePhoto(input) {
+    const f = input.files[0]; if (!f) return;
+    _photoFile = f;
+    const r = new FileReader();
+    r.onload = e => { document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}"/>`; };
+    r.readAsDataURL(f);
+  }
+
+  // ── Doc photos ──
+  function handleDocPhotos(input) {
+    Array.from(input.files).forEach(f => { if (!_docPhotos.find(x=>x.name===f.name)) _docPhotos.push(f); });
+    renderDocPreviews(); input.value='';
+  }
+  function renderDocPreviews() {
+    const c = document.getElementById('docPhotoPreview'); c.innerHTML='';
+    _docPhotos.forEach((f,i) => {
+      const div=document.createElement('div'); div.className='doc-thumb';
+      const img=document.createElement('img');
+      const r=new FileReader(); r.onload=e=>{img.src=e.target.result;}; r.readAsDataURL(f);
+      const btn=document.createElement('button'); btn.className='rm'; btn.textContent='✕';
+      btn.onclick=()=>{_docPhotos.splice(i,1);renderDocPreviews();};
+      div.appendChild(img); div.appendChild(btn); c.appendChild(div);
+    });
+  }
+
+  // ── Currency prefix ──
+  function updatePrefix() {
+    document.getElementById('salaryPrefix').textContent =
+      document.getElementById('currency').value === 'INR' ? '₹' : 'AED';
+  }
+
+  // ── Custom selects ──
+  function handleCustomSel(sel, modalId, inputId) {
+    if (sel.value==='__custom__') {
+      sel.value=_prevVal[sel.id]||'';
+      document.getElementById(inputId).value='';
+      document.getElementById(modalId).classList.add('open');
+    } else _prevVal[sel.id]=sel.value;
+  }
+  function closeModal(modalId, selId) {
+    document.getElementById(modalId).classList.remove('open');
+    if (!document.getElementById(selId).value) document.getElementById(selId).value='';
+  }
+  function saveCustomOpt(modalId, selId, inputId) {
+    const val=document.getElementById(inputId).value.trim(); if(!val) return;
+    const sel=document.getElementById(selId);
+    if(![...sel.options].some(o=>o.value===val)) sel.insertBefore(new Option(val,val),sel.querySelector('option[value="__custom__"]'));
+    sel.value=val; _prevVal[selId]=val;
+    document.getElementById(modalId).classList.remove('open');
+  }
+
+  // ── Doc items ──
+  function openDocModal(){document.getElementById('addDocInput').value='';document.getElementById('addDocModal').classList.add('open');}
+  function saveDocItem(){
+    const val=document.getElementById('addDocInput').value.trim(); if(!val) return;
+    const label=document.createElement('label'); label.className='check-item';
+    label.innerHTML=`<input type="checkbox" value="${val}" checked/><span>${val.toUpperCase()}</span>`;
+    document.getElementById('docsList').appendChild(label);
+    document.getElementById('addDocModal').classList.remove('open');
+  }
+
+  function getChecked(id){return [...document.querySelectorAll(`#${id} input[type="checkbox"]:checked`)].map(c=>c.value)}
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  // ── Submit ──
+  async function submitEmployee() {
+    const name = document.getElementById('empName').value.trim();
+    if (!name) { showToast('⚠️ Please enter employee name.'); return; }
+
+    const selPropsArr   = [..._selProps].map(id => {
+      const p = _allProps.find(x=>x.id===id);
+      return p ? {id:p.id,title:p.title,property_type:p.property_type,city:p.city} : {id};
+    });
+    const selClientsArr = [..._selClients].map(id => {
+      const c = _allClients.find(x=>x.id===id);
+      return c ? {id:c.id,name:c.name,type:c.type} : {id};
+    });
+
+    const data = {
+      emp_name:         name,
+      phone:            document.getElementById('empPhone').value.trim(),
+      email:            document.getElementById('empEmail').value.trim(),
+      nationality:      document.getElementById('nationality').value.trim(),
+      joining_date:     document.getElementById('joiningDate').value,
+      status:           _empStatus,
+      role:             document.getElementById('role').value,
+      department:       document.getElementById('department').value,
+      salary:           document.getElementById('salary').value,
+      currency:         document.getElementById('currency').value,
+      commission_type:  document.getElementById('commissionType').value,
+      commission_value: document.getElementById('commissionValue').value,
+      notes:            document.getElementById('notes').value.trim(),
+      assigned_properties: selPropsArr,
+      assigned_property_ids: [..._selProps],
+      assigned_clients: selClientsArr,
+      assigned_client_ids: [..._selClients],
+      docs_submitted:   getChecked('docsList'),
+    };
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled=true; btn.textContent='SAVING…';
+
+    const fd = new FormData();
+    fd.append('data', JSON.stringify(data));
+    if (_photoFile) fd.append('emp_photo', _photoFile);
+    _docPhotos.forEach(f => fd.append('doc_photos', f));
+
+    try {
+      const res  = await fetch('/save_employee', {method:'POST',body:fd});
+      const json = await res.json();
+      if (json.success) {
+        showToast(`✅ Employee saved! ID: ${json.id}`, 4000);
+        setTimeout(()=>window.location.href='emp.html', 1800);
+      } else {
+        showToast('❌ Error: '+(json.error||'Unknown'));
+        btn.disabled=false; btn.textContent='SAVE EMPLOYEE';
+      }
+    } catch {
+      showToast('❌ Could not connect to server.');
+      btn.disabled=false; btn.textContent='SAVE EMPLOYEE';
+    }
+  }
+
+  loadData();
+</script>
+</body>
+</html>

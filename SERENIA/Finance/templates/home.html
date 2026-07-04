@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    {% if msg %}
+        <div class="alert alert-primary" role="alert">
+            {{ msg }}
+        </div>
+    {% endif %}
+    <div class="container">
+        <div id="transaction-form">
+            <div class="box-title">Enter transaction</div>
+            <form class="form-group home-form", method="post">
+                <label for="debit" class="home-label">Debit: </label>
+                <select name="debit" class="full-width" id="debit">
+                    {% for account in accounts %}
+                        <option value="{{ account }}">{{ account }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="credit" class="home-label">Credit: </label>
+                <select name="credit" class="full-width" id="credit">
+                    {% for account in accounts %}
+                        <option value="{{ account }}">{{ account }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="particular" class="home-label">Particular:</label>
+                <input type="text" autocomplete="off" class="full-width" id="particular" name="particular"><br>
+                <label for="amount" class="home-label">Amount:</label>
+                <input type="number" autocomplete="off" class="full-width" id="amount" name="amount" step=".01"><br>
+                <button type="submit" class="btn btn-light transaction-btn" id="add-transaction-btn">Add Transaction</button>
+            </form>
+        </div>
+        <div id="balance">
+            <div class="box-title">Balance ({{ currency }})</div>
+            <div class="center"><span class="box-info">{{ balance }}</span></div>
+        </div>
+        {% if pft >= 0 %}
+            <div id="profit">
+                <div class="box-title">Profit ({{ currency }})</div>
+                <div class="center"><span class="box-info">{{ profit }}</span></div>
+            </div>
+        {% else %}
+            <div id="loss">
+                <div class="box-title">Loss ({{ currency }})</div>
+                <div class="center"><span class="box-info">{{ profit }}</span></div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="container2">
+        <h2>Recent transactions</h2>
+        <div class="overflow">
+            <table class="table display" id="table_id">
+                <thead>
+                    <th scope="col">Date (UTC)</th>
+                    <th scope="col">Debit</th>
+                    <th scope="col">Credit</th>
+                    <th scope="col">Particular</th>
+                    <th scope="col">Amount ({{ currency }})</th>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        {% for item in transaction %}
+                            <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+{% endblock %}

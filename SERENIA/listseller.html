@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List Seller – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+    body{background:#D9C8E8}
+
+    /* HEADER */
+    .page-header{background:#D4A8E8;text-align:center;padding:26px 20px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(91,33,245,.12)}
+    .page-header h1{font-size:2.6rem;font-weight:900;letter-spacing:.06em;color:#1a1a2e;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:#5B21F5;color:#fff;border:none;border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s,transform .15s}
+    .back-btn:hover{background:#6B31FF;transform:translateY(-50%) scale(1.05)}
+
+    .scroll-wrap{max-width:900px;margin:0 auto;padding:32px 24px 80px;display:flex;flex-direction:column;gap:26px}
+
+    /* CARDS */
+    .card{background:#9B6DBF;border-radius:24px;padding:34px 38px;box-shadow:0 8px 32px rgba(91,33,245,.18);animation:fadeUp .5s ease both}
+    .card:nth-child(2){animation-delay:.1s}
+    .card:nth-child(3){animation-delay:.2s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+    .card-title{color:#fff;font-weight:900;font-size:1.2rem;letter-spacing:.07em;text-transform:uppercase;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid rgba(255,255,255,.2)}
+
+    /* FORM ROWS */
+    .form-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .form-row:last-child{margin-bottom:0}
+    .form-row label{color:#fff;font-weight:900;font-size:1.05rem;letter-spacing:.05em;text-transform:uppercase;min-width:220px;flex-shrink:0}
+
+    .form-row input,.form-row select,.form-row textarea{flex:1;background:#E8DFF0;border:none;border-radius:50px;padding:13px 20px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#1a1a2e;outline:none;transition:box-shadow .2s,background .2s;appearance:none;-webkit-appearance:none}
+    .form-row textarea{border-radius:16px;resize:vertical;min-height:52px}
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{box-shadow:0 0 0 3px rgba(91,33,245,.35);background:#f0e8ff}
+
+    .select-wrap{flex:1;position:relative}
+    .select-wrap select{width:100%;padding-right:44px;cursor:pointer}
+    .select-wrap .arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:#7B4FA0;font-size:1rem}
+
+    /* PHOTO UPLOAD */
+    .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .photo-upload-row label.field-label{color:#fff;font-weight:900;font-size:1.05rem;letter-spacing:.05em;text-transform:uppercase;min-width:220px;flex-shrink:0}
+    .photo-preview{width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.4);object-fit:cover;background:#7B4FA0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:rgba(255,255,255,.3);cursor:pointer;overflow:hidden;flex-shrink:0}
+    .photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .photo-change-btn{background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:background .2s}
+    .photo-change-btn:hover{background:#333}
+
+    /* DOCS CHECKLIST */
+    .check-panel{background:#E8DFF0;border-radius:16px;padding:22px 26px}
+    .check-panel h3{font-weight:900;font-size:1.1rem;text-transform:uppercase;letter-spacing:.06em;color:#1a1a2e;margin-bottom:14px}
+    .check-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;margin-bottom:14px}
+    .check-item{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .check-item input[type="checkbox"]{width:18px;height:18px;accent-color:#5B21F5;cursor:pointer;flex-shrink:0}
+    .check-item span{font-weight:800;font-size:.88rem;text-transform:uppercase;letter-spacing:.04em;color:#5B21F5}
+
+    /* DOC PHOTO UPLOAD */
+    .doc-photos-wrap{margin-top:14px}
+    .doc-photos-label{color:#1a1a2e;font-weight:900;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+    .doc-photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .doc-thumb{width:72px;height:56px;border-radius:8px;overflow:hidden;position:relative;flex-shrink:0}
+    .doc-thumb img{width:100%;height:100%;object-fit:cover}
+    .doc-thumb .rm{position:absolute;top:2px;right:3px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+    /* ADD BTN */
+    .add-btn{display:inline-flex;align-items:center;gap:8px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:background .2s,transform .15s;margin-top:6px}
+    .add-btn:hover{background:#333;transform:scale(1.04)}
+    .add-btn .plus{width:22px;height:22px;background:#9B6DBF;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900}
+
+    /* SUBMIT */
+    .submit-wrap{text-align:center;padding:8px 0 16px}
+    .submit-btn{background:#5B21F5;color:#fff;font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:60px;padding:20px 90px;cursor:pointer;box-shadow:0 0 28px rgba(91,33,245,.5),0 6px 22px rgba(0,0,0,.2);transition:background .2s,transform .15s,box-shadow .2s}
+    .submit-btn:hover{background:#6B31FF;transform:translateY(-3px) scale(1.03);box-shadow:0 0 50px rgba(91,33,245,.75),0 10px 30px rgba(0,0,0,.25)}
+    .submit-btn:active{transform:scale(.97)}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 32px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.25);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#9B6DBF;border-radius:20px;padding:30px 34px;min-width:300px;box-shadow:0 12px 48px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:14px}
+    .modal-box h3{color:#fff;font-weight:900;font-size:1.1rem;text-transform:uppercase}
+    .modal-box input{background:#E8DFF0;border:none;border-radius:50px;padding:11px 18px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;outline:none;color:#1a1a2e}
+    .modal-btns{display:flex;gap:10px}
+    .modal-btns button{flex:1;border:none;border-radius:50px;padding:11px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer}
+    .modal-btns .confirm{background:#5B21F5;color:#fff}
+    .modal-btns .cancel{background:#E8DFF0;color:#1a1a2e}
+
+    @media(max-width:640px){
+      .form-row{flex-direction:column;align-items:flex-start}
+      .form-row label{min-width:unset}
+      .check-list{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <button class="back-btn" onclick="window.location.href='seller.html'">← BACK</button>
+  <h1>LIST SELLER</h1>
+</div>
+
+<div class="scroll-wrap">
+
+  <!-- CARD 1: Personal Info -->
+  <div class="card">
+    <div class="card-title">Personal Information</div>
+
+    <!-- Profile Photo -->
+    <div class="photo-upload-row">
+      <label class="field-label">Seller Photo:</label>
+      <div class="photo-preview" id="photoPreview" onclick="document.getElementById('sellerPhotoInput').click()">
+        <span id="photoIcon">👤</span>
+      </div>
+      <button class="photo-change-btn" onclick="document.getElementById('sellerPhotoInput').click()">Change Photo</button>
+      <input type="file" id="sellerPhotoInput" accept="image/*" style="display:none" onchange="handleSellerPhoto(this)"/>
+    </div>
+
+    <div class="form-row">
+      <label>Full Name:</label>
+      <input type="text" id="sellerName" placeholder="Seller full name…"/>
+    </div>
+    <div class="form-row">
+      <label>Phone:</label>
+      <input type="tel" id="sellerPhone" placeholder="+971 or +91…"/>
+    </div>
+    <div class="form-row">
+      <label>Email:</label>
+      <input type="email" id="sellerEmail" placeholder="email@example.com"/>
+    </div>
+    <div class="form-row">
+      <label>Nationality:</label>
+      <input type="text" id="nationality" placeholder="e.g. Indian, Emirati…"/>
+    </div>
+    <div class="form-row">
+      <label>Role:</label>
+      <div class="select-wrap">
+        <select id="role" onchange="handleCustomSelect(this,'roleModal','roleCustomInput')">
+          <option value="">— Select Role —</option>
+          <option>Seller</option>
+          <option>Landlord / Rent</option>
+          <option>Lease</option>
+          <option>Other</option>
+          <option value="__custom__">+ Custom…</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Demanded Price:</label>
+      <input type="number" id="demandedPrice" min="0" placeholder="e.g. 1500000"/>
+    </div>
+    <div class="form-row">
+      <label>Currency:</label>
+      <div class="select-wrap">
+        <select id="currency">
+          <option value="AED">AED (UAE)</option>
+          <option value="INR">₹ INR (India)</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Notes / Remarks:</label>
+      <textarea id="notes" rows="2" placeholder="Any additional notes…"></textarea>
+    </div>
+  </div>
+
+  <!-- CARD 2: Property Info -->
+  <div class="card">
+    <div class="card-title">Property Details</div>
+
+    <div class="form-row">
+      <label>Property Title:</label>
+      <div class="select-wrap">
+        <select id="linkedProperty" onchange="handlePropSelect(this)">
+          <option value="">— Select saved property —</option>
+          <option value="__manual__">+ Enter manually</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="form-row" id="manualPropRow" style="display:none">
+      <label>Manual Property:</label>
+      <input type="text" id="manualPropertyTitle" placeholder="Enter property title…"/>
+    </div>
+
+    <div id="linkedPropInfo" style="display:none;background:#E8DFF0;border-radius:14px;padding:14px 18px;margin-bottom:18px">
+      <div style="font-weight:900;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:#5B21F5;margin-bottom:6px">Linked Property</div>
+      <div id="linkedPropDetails" style="font-size:.9rem;font-weight:700;color:#1a1a2e"></div>
+    </div>
+
+  </div>
+
+  <!-- CARD 3: Docs Submitted -->
+  <div class="card">
+    <div class="card-title">Documents</div>
+    <div class="check-panel">
+      <h3>Docs Submitted</h3>
+      <div class="check-list" id="docsList">
+        <label class="check-item"><input type="checkbox" value="Emirates ID"/><span>Emirates ID</span></label>
+        <label class="check-item"><input type="checkbox" value="Aadhaar Card"/><span>Aadhaar Card</span></label>
+        <label class="check-item"><input type="checkbox" value="PAN Card"/><span>PAN Card</span></label>
+        <label class="check-item"><input type="checkbox" value="Passport Copy"/><span>Passport Copy</span></label>
+        <label class="check-item"><input type="checkbox" value="Title Deed"/><span>Title Deed</span></label>
+        <label class="check-item"><input type="checkbox" value="Sale Deed"/><span>Sale Deed</span></label>
+        <label class="check-item"><input type="checkbox" value="NOC"/><span>NOC</span></label>
+        <label class="check-item"><input type="checkbox" value="Form A"/><span>Form A</span></label>
+        <label class="check-item"><input type="checkbox" value="MOU"/><span>MOU</span></label>
+        <label class="check-item"><input type="checkbox" value="Agreement to Sale"/><span>Agreement to Sale</span></label>
+        <label class="check-item"><input type="checkbox" value="Encumbrance Certificate"/><span>Encumbrance Cert.</span></label>
+        <label class="check-item"><input type="checkbox" value="Property Tax Receipt"/><span>Property Tax Receipt</span></label>
+        <label class="check-item"><input type="checkbox" value="Mortgage Clearance"/><span>Mortgage Clearance</span></label>
+        <label class="check-item"><input type="checkbox" value="Original Keys"/><span>Original Keys</span></label>
+        <label class="check-item"><input type="checkbox" value="OC / CC"/><span>OC / CC</span></label>
+        <label class="check-item"><input type="checkbox" value="Building Plan Approval"/><span>Building Plan Approval</span></label>
+      </div>
+      <button class="add-btn" onclick="openDocModal()">Add <span class="plus">+</span></button>
+
+      <!-- Doc Photo Upload -->
+      <div class="doc-photos-wrap">
+        <div class="doc-photos-label">Upload Document Photos:</div>
+        <button class="add-btn" onclick="document.getElementById('docPhotoInput').click()">Add Doc Photos <span class="plus">+</span></button>
+        <input type="file" id="docPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDocPhotos(this)"/>
+        <div class="doc-photo-preview" id="docPhotoPreview"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" id="saveBtn" onclick="submitSeller()">SAVE SELLER</button>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- Role Custom Modal -->
+<div class="modal-overlay" id="roleModal">
+  <div class="modal-box">
+    <h3>Custom Role</h3>
+    <input type="text" id="roleCustomInput" placeholder="e.g. Co-owner…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal('roleModal','role')">Cancel</button>
+      <button class="confirm" onclick="saveCustomOpt('roleModal','role','roleCustomInput')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Doc Modal -->
+<div class="modal-overlay" id="addDocModal">
+  <div class="modal-box">
+    <h3>Add Custom Document</h3>
+    <input type="text" id="addDocInput" placeholder="Document name…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="document.getElementById('addDocModal').classList.remove('open')">Cancel</button>
+      <button class="confirm" onclick="saveDocItem()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let _prevVal = {};
+  let _sellerPhotoFile = null;
+  let _docPhotoFiles   = [];
+  let _allProperties   = [];
+
+  // ── Load saved properties for dropdown ──
+  async function loadProperties() {
+    try {
+      const res = await fetch('/get_properties');
+      _allProperties = await res.json();
+      const sel = document.getElementById('linkedProperty');
+      _allProperties.forEach(p => {
+        const opt = new Option(`[${p.id}] ${p.property_type||''} — ${p.title||'Untitled'} — ${p.city||''}`, p.id);
+        sel.insertBefore(opt, sel.querySelector('option[value="__manual__"]'));
+      });
+    } catch {}
+  }
+
+  function handlePropSelect(sel) {
+    const manRow  = document.getElementById('manualPropRow');
+    const infoBox = document.getElementById('linkedPropInfo');
+    const details = document.getElementById('linkedPropDetails');
+
+    if (sel.value === '__manual__') {
+      manRow.style.display  = 'flex';
+      infoBox.style.display = 'none';
+    } else if (sel.value) {
+      manRow.style.display  = 'none';
+      const prop = _allProperties.find(p => p.id === sel.value);
+      if (prop) {
+        const cur = prop.currency === 'INR' ? '₹' : 'AED';
+        const price = prop.sale_price_aed || prop.sale_price_inr || prop.monthly_rent_aed || prop.monthly_rent_inr;
+        details.innerHTML = `
+          <b>${prop.title || 'Untitled'}</b><br>
+          ${[prop.property_type, prop.category, prop.city].filter(Boolean).join(' · ')}<br>
+          ${price ? `${cur} ${Number(price).toLocaleString()}` : ''}`;
+        infoBox.style.display = 'block';
+      }
+    } else {
+      manRow.style.display  = 'none';
+      infoBox.style.display = 'none';
+    }
+  }
+
+  // ── Seller Photo ──
+  function handleSellerPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    _sellerPhotoFile = file;
+    const preview = document.getElementById('photoPreview');
+    const reader  = new FileReader();
+    reader.onload  = e => {
+      preview.innerHTML = `<img src="${e.target.result}" alt="Seller"/>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Doc Photos ──
+  function handleDocPhotos(input) {
+    Array.from(input.files).forEach(f => {
+      if (!_docPhotoFiles.find(x => x.name === f.name)) _docPhotoFiles.push(f);
+    });
+    renderDocPreviews();
+    input.value = '';
+  }
+  function renderDocPreviews() {
+    const c = document.getElementById('docPhotoPreview');
+    c.innerHTML = '';
+    _docPhotoFiles.forEach((f, i) => {
+      const div = document.createElement('div');
+      div.className = 'doc-thumb';
+      const img = document.createElement('img');
+      const reader = new FileReader();
+      reader.onload = e => { img.src = e.target.result; };
+      reader.readAsDataURL(f);
+      const btn = document.createElement('button');
+      btn.className = 'rm';
+      btn.textContent = '✕';
+      btn.onclick = () => { _docPhotoFiles.splice(i,1); renderDocPreviews(); };
+      div.appendChild(img);
+      div.appendChild(btn);
+      c.appendChild(div);
+    });
+  }
+
+  // ── Custom Select ──
+  function handleCustomSelect(sel, modalId, inputId) {
+    if (sel.value === '__custom__') {
+      sel.value = _prevVal[sel.id] || '';
+      document.getElementById(inputId).value = '';
+      document.getElementById(modalId).classList.add('open');
+    } else { _prevVal[sel.id] = sel.value; }
+  }
+  function closeModal(modalId, selectId) {
+    document.getElementById(modalId).classList.remove('open');
+    if (!document.getElementById(selectId).value) document.getElementById(selectId).value = '';
+  }
+  function saveCustomOpt(modalId, selectId, inputId) {
+    const val = document.getElementById(inputId).value.trim();
+    if (!val) return;
+    const sel = document.getElementById(selectId);
+    if (![...sel.options].some(o => o.value === val)) {
+      sel.insertBefore(new Option(val, val), sel.querySelector('option[value="__custom__"]'));
+    }
+    sel.value = val;
+    _prevVal[selectId] = val;
+    document.getElementById(modalId).classList.remove('open');
+  }
+
+  // ── Doc checkbox add ──
+  function openDocModal() {
+    document.getElementById('addDocInput').value = '';
+    document.getElementById('addDocModal').classList.add('open');
+  }
+  function saveDocItem() {
+    const val = document.getElementById('addDocInput').value.trim();
+    if (!val) return;
+    const label = document.createElement('label');
+    label.className = 'check-item';
+    label.innerHTML = `<input type="checkbox" value="${val}" checked/><span>${val.toUpperCase()}</span>`;
+    document.getElementById('docsList').appendChild(label);
+    document.getElementById('addDocModal').classList.remove('open');
+  }
+
+  function getChecked(listId) {
+    return [...document.querySelectorAll(`#${listId} input[type="checkbox"]:checked`)].map(cb => cb.value);
+  }
+
+  function showToast(msg, dur=3500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  // ── Submit ──
+  async function submitSeller() {
+    const name = document.getElementById('sellerName').value.trim();
+    if (!name) { showToast('⚠️ Please enter seller name.'); return; }
+
+    const propSel = document.getElementById('linkedProperty').value;
+    const propTitle = propSel === '__manual__'
+      ? document.getElementById('manualPropertyTitle').value.trim()
+      : propSel || '';
+
+    const data = {
+      seller_name:      name,
+      phone:            document.getElementById('sellerPhone').value.trim(),
+      email:            document.getElementById('sellerEmail').value.trim(),
+      nationality:      document.getElementById('nationality').value.trim(),
+      role:             document.getElementById('role').value,
+      demanded_price:   document.getElementById('demandedPrice').value,
+      currency:         document.getElementById('currency').value,
+      notes:            document.getElementById('notes').value.trim(),
+      linked_property_id: propSel !== '__manual__' ? propSel : '',
+      property_title:   propTitle,
+      docs_submitted:   getChecked('docsList'),
+      doc_photo_files:  _docPhotoFiles.map(f => f.name),
+    };
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = 'SAVING…';
+
+    const fd = new FormData();
+    fd.append('data', JSON.stringify(data));
+    if (_sellerPhotoFile) fd.append('seller_photo', _sellerPhotoFile);
+    _docPhotoFiles.forEach(f => fd.append('doc_photos', f));
+
+    try {
+      const res  = await fetch('/save_seller', { method: 'POST', body: fd });
+      const json = await res.json();
+      if (json.success) {
+        showToast(`✅ Seller saved! ID: ${json.id}`, 4000);
+        setTimeout(() => window.location.href = 'seller.html', 1800);
+      } else {
+        showToast('❌ Error: ' + (json.error || 'Unknown'));
+        btn.disabled = false; btn.textContent = 'SAVE SELLER';
+      }
+    } catch {
+      showToast('❌ Could not connect to server.');
+      btn.disabled = false; btn.textContent = 'SAVE SELLER';
+    }
+  }
+
+  loadProperties();
+</script>
+
+</body>
+</html>

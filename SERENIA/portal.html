@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Portal – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f4f4f8;color:#1a1a2e}
+
+    /* HEADER */
+    .header{background:#1400cc;padding:14px 24px;display:flex;align-items:center;gap:14px;box-shadow:0 3px 16px rgba(20,0,204,.3);position:sticky;top:0;z-index:100}
+    .brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em;color:#fff}
+    .portal-badge{background:rgba(255,255,255,.2);color:#fff;font-size:.68rem;font-weight:900;padding:3px 10px;border-radius:5px;text-transform:uppercase;letter-spacing:.07em}
+    .header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+    .user-name{color:rgba(255,255,255,.8);font-size:.82rem;font-weight:800}
+    .logout-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;padding:6px 14px;border-radius:8px;cursor:pointer;transition:background .2s;text-transform:uppercase;letter-spacing:.05em}
+    .logout-btn:hover{background:rgba(255,255,255,.25)}
+
+    /* TABS */
+    .tabs{background:#fff;border-bottom:2px solid #e8e0ff;display:flex;padding:0 24px;overflow-x:auto;scrollbar-width:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{font-weight:900;font-size:.82rem;letter-spacing:.07em;text-transform:uppercase;padding:13px 18px;cursor:pointer;color:#888;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;flex-shrink:0}
+    .tab:hover{color:#1400cc}
+    .tab.active{color:#1400cc;border-bottom-color:#1400cc}
+
+    .wrap{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+
+    /* WELCOME CARD */
+    .welcome-card{background:linear-gradient(135deg,#1400cc,#5B21F5);border-radius:18px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 28px rgba(20,0,204,.25)}
+    .welcome-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#fff;text-transform:uppercase;flex-shrink:0;overflow:hidden}
+    .welcome-avatar img{width:100%;height:100%;object-fit:cover}
+    .welcome-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;color:#fff;line-height:1}
+    .welcome-sub{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.65);margin-top:4px}
+
+    /* KPI ROW */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    @media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr}}
+    .kpi{background:#fff;border-radius:14px;padding:16px 18px;border:1.5px solid #e8e0ff;box-shadow:0 2px 8px rgba(20,0,204,.06)}
+    .kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#1400cc;line-height:1;margin-bottom:3px}
+    .kpi-label{font-size:.68rem;font-weight:900;color:#888;text-transform:uppercase;letter-spacing:.07em}
+
+    /* CARDS */
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:#1400cc;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .section-title::after{content:'';flex:1;height:1.5px;background:#e8e0ff}
+
+    .deal-card{background:#fff;border-radius:14px;padding:16px 18px;border:1.5px solid #e8e0ff;margin-bottom:10px;box-shadow:0 2px 8px rgba(20,0,204,.05)}
+    .deal-title{font-weight:800;font-size:.95rem;color:#1a1a2e;margin-bottom:6px}
+    .deal-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .deal-stage{font-size:.68rem;font-weight:900;padding:3px 10px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .stage-inquiry    {background:rgba(129,140,248,.12);color:#4f46e5}
+    .stage-viewing    {background:rgba(251,191,36,.12);color:#b45309}
+    .stage-negotiation{background:rgba(251,146,60,.12);color:#c2410c}
+    .stage-documentation{background:rgba(34,211,238,.1);color:#0e7490}
+    .stage-closed-won {background:rgba(22,163,74,.12);color:#15803d}
+    .stage-closed-lost{background:rgba(220,38,38,.1);color:#dc2626}
+    .deal-value{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:#1400cc}
+    .deal-property{font-size:.75rem;font-weight:700;color:#666}
+
+    .payment-row{background:#fff;border-radius:12px;padding:12px 16px;border:1.5px solid #e8e0ff;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(20,0,204,.04)}
+    .pay-type{font-size:.72rem;font-weight:900;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em;background:rgba(20,0,204,.08);color:#1400cc;flex-shrink:0}
+    .pay-info{flex:1;min-width:0}
+    .pay-amount{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#1400cc}
+    .pay-due{font-size:.72rem;font-weight:700;color:#888}
+    .pay-status{font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .pay-status.Received{background:rgba(22,163,74,.12);color:#16a34a}
+    .pay-status.Pending{background:rgba(217,119,6,.1);color:#d97706}
+    .pay-status.Overdue{background:rgba(220,38,38,.1);color:#dc2626}
+
+    .viewing-card{background:#fff;border-radius:12px;padding:12px 16px;border:1.5px solid #e8e0ff;margin-bottom:8px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 6px rgba(20,0,204,.04)}
+    .viewing-date-box{background:#1400cc;color:#fff;border-radius:10px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:52px}
+    .vd-day{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1}
+    .vd-mon{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;opacity:.8}
+    .vd-time{font-size:.68rem;font-weight:800;margin-top:2px;opacity:.7}
+    .viewing-info{flex:1;min-width:0}
+    .viewing-prop{font-weight:800;font-size:.88rem;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .viewing-sub{font-size:.72rem;font-weight:700;color:#888;margin-top:2px}
+    .vstatus{font-size:.65rem;font-weight:900;padding:3px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em;background:rgba(20,0,204,.08);color:#1400cc}
+
+    /* SHORTLIST */
+    .prop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media(max-width:600px){.prop-grid{grid-template-columns:1fr}}
+    .prop-card{background:#fff;border-radius:14px;overflow:hidden;border:1.5px solid #e8e0ff;box-shadow:0 2px 8px rgba(20,0,204,.05);transition:transform .2s,box-shadow .2s}
+    .prop-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(20,0,204,.12)}
+    .prop-img{width:100%;height:140px;object-fit:cover;background:#f0ebff;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc}
+    .prop-img img{width:100%;height:100%;object-fit:cover}
+    .prop-body{padding:12px 14px}
+    .prop-title-c{font-weight:800;font-size:.88rem;color:#1a1a2e;margin-bottom:3px}
+    .prop-sub-c{font-size:.72rem;font-weight:700;color:#888;margin-bottom:6px}
+    .prop-price-c{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:#1400cc}
+    .remove-shortlist{background:none;border:none;color:#ccc;font-size:.75rem;cursor:pointer;float:right;margin-top:2px;transition:color .2s}
+    .remove-shortlist:hover{color:#dc2626}
+
+    /* DOCS */
+    .doc-row{background:#fff;border-radius:11px;padding:11px 14px;border:1.5px solid #e8e0ff;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+    .doc-icon{font-size:1.2rem;flex-shrink:0}
+    .doc-info{flex:1}
+    .doc-name{font-weight:800;font-size:.85rem;color:#1a1a2e}
+    .doc-num{font-size:.72rem;font-weight:700;color:#888}
+    .doc-days{font-size:.72rem;font-weight:900;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .doc-days.ok{background:rgba(22,163,74,.1);color:#16a34a}
+    .doc-days.soon{background:rgba(217,119,6,.1);color:#d97706}
+    .doc-days.expired{background:rgba(220,38,38,.1);color:#dc2626}
+
+    .empty-state{text-align:center;padding:36px;color:#bbb;font-weight:700;font-size:.88rem}
+    .empty-state .ei{font-size:2.5rem;margin-bottom:8px}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;padding:11px 24px;border-radius:50px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand" id="brandName">SERENIA</div>
+  <div class="portal-badge">Client Portal</div>
+  <div class="header-right">
+    <span class="user-name" id="userName"></span>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview',this)">🏠 Overview</div>
+  <div class="tab" onclick="switchTab('deals',this)">🤝 My Deals</div>
+  <div class="tab" onclick="switchTab('payments',this)">💰 Payments</div>
+  <div class="tab" onclick="switchTab('viewings',this)">📅 Viewings</div>
+  <div class="tab" onclick="switchTab('shortlist',this)">❤️ Shortlist</div>
+  <div class="tab" onclick="switchTab('documents',this)">📋 Documents</div>
+  <div class="tab" id="chatTabBtn" onclick="switchTab('chat',this)">💬 Chat <span id="chatUnreadBadge" style="display:none;background:#f87171;color:#fff;font-size:.62rem;font-weight:900;padding:1px 6px;border-radius:50px;margin-left:4px">0</span></div>
+</div>
+
+<div class="wrap" id="wrap">
+  <div style="text-align:center;padding:60px;color:#bbb;font-weight:700">Loading your portal…</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _data = null, _tab = 'overview';
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  async function load() {
+    try {
+      const res = await fetch('/portal_data');
+      if (res.status === 401) { window.location.href = '/portal_login'; return; }
+      _data = await res.json();
+      document.getElementById('userName').textContent = _data.person?.seller_name || _data.person?.buyer_name || 'Client';
+      renderTab();
+    } catch { document.getElementById('wrap').innerHTML = '<div style="text-align:center;padding:60px;color:#dc2626;font-weight:700">Failed to load. Please refresh.</div>'; }
+  }
+
+  function switchTab(tab, btn) {
+    _tab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderTab();
+  }
+
+  function renderTab() {
+    if (!_data) return;
+    const wrap = document.getElementById('wrap');
+    switch(_tab) {
+      case 'overview':  wrap.innerHTML = renderOverview();  break;
+      case 'deals':     wrap.innerHTML = renderDeals();     break;
+      case 'payments':  wrap.innerHTML = renderPayments();  break;
+      case 'viewings':  wrap.innerHTML = renderViewings();  break;
+      case 'shortlist': wrap.innerHTML = renderShortlist(); break;
+      case 'documents': wrap.innerHTML = renderDocuments(); break;
+      case 'chat':      renderChatTab(); break;
+    }
+  }
+
+  function renderOverview() {
+    const name  = _data.person?.seller_name || _data.person?.buyer_name || 'Client';
+    const type  = _data.person_type === 'buyer' ? 'Buyer' : 'Seller';
+    const photo = _data.person?.photo_filename;
+    const today = new Date().toISOString().slice(0,10);
+
+    const pendingPayments = _data.payments.filter(p => p.status === 'Pending' || (p.status !== 'Received' && p.due_date && p.due_date < today));
+    const upcomingViewings = _data.viewings.filter(v => v.date >= today && v.status !== 'Cancelled');
+    const activeDeals = _data.deals.filter(d => !['Closed Won','Closed Lost'].includes(d.stage));
+    const expiringSoon = _data.doc_expiries.filter(e => {
+      const days = Math.ceil((new Date(e.expiry_date) - new Date(today)) / 86400000);
+      return days >= 0 && days <= 60;
+    });
+
+    return `
+      <div class="welcome-card">
+        <div class="welcome-avatar">
+          ${photo ? `<img src="/photos/${esc(photo)}" onerror="this.style.display='none'"/>` : name.slice(0,2).toUpperCase()}
+        </div>
+        <div>
+          <div class="welcome-name">Welcome, ${esc(name)}</div>
+          <div class="welcome-sub">${type} Account · ${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}</div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-val">${_data.deals.length}</div><div class="kpi-label">My Deals</div></div>
+        <div class="kpi"><div class="kpi-val">${_data.viewings.length}</div><div class="kpi-label">Viewings</div></div>
+        <div class="kpi"><div class="kpi-val">${_data.shortlisted.length}</div><div class="kpi-label">Shortlisted</div></div>
+        <div class="kpi"><div class="kpi-val">${pendingPayments.length}</div><div class="kpi-label">Pending Payments</div></div>
+      </div>
+
+      ${activeDeals.length ? `
+        <div class="section-title">🤝 Active Deals</div>
+        ${activeDeals.map(d => dealCard(d)).join('')}` : ''}
+
+      ${upcomingViewings.length ? `
+        <div class="section-title" style="margin-top:20px">📅 Upcoming Viewings</div>
+        ${upcomingViewings.slice(0,3).map(v => viewingCard(v)).join('')}` : ''}
+
+      ${expiringSoon.length ? `
+        <div class="section-title" style="margin-top:20px">⚠️ Documents Expiring Soon</div>
+        ${expiringSoon.map(e => docCard(e, today)).join('')}` : ''}
+    `;
+  }
+
+  function renderDeals() {
+    if (!_data.deals.length) return emptyState('🤝', 'No deals yet');
+    return `<div class="section-title">🤝 All My Deals</div>` + _data.deals.map(d => dealCard(d)).join('');
+  }
+
+  function renderPayments() {
+    if (!_data.payments.length) return emptyState('💰', 'No payments yet');
+    const today = new Date().toISOString().slice(0,10);
+    const sorted = [..._data.payments].sort((a,b) => (b.due_date||'').localeCompare(a.due_date||''));
+    return `<div class="section-title">💰 Payment History</div>` + sorted.map(p => {
+      const eff = p.status === 'Received' ? 'Received' : (p.due_date && p.due_date < today ? 'Overdue' : 'Pending');
+      return `<div class="payment-row">
+        <span class="pay-type">${esc(p.pay_type||'Payment')}</span>
+        <div class="pay-info">
+          <div class="pay-amount">${esc(p.currency||'AED')} ${Number(p.amount||0).toLocaleString()}</div>
+          <div class="pay-due">Due: ${p.due_date||'—'}${p.payment_method?' · '+esc(p.payment_method):''}</div>
+        </div>
+        <span class="pay-status ${eff}">${eff}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function renderViewings() {
+    if (!_data.viewings.length) return emptyState('📅', 'No viewings scheduled');
+    const sorted = [..._data.viewings].sort((a,b) => b.date.localeCompare(a.date));
+    return `<div class="section-title">📅 My Viewings</div>` + sorted.map(v => viewingCard(v)).join('');
+  }
+
+  function renderShortlist() {
+    const items = _data.shortlisted.concat(_data.interested);
+    const unique = items.filter((p,i,a) => a.findIndex(x=>x.id===p.id)===i);
+    if (!unique.length) return emptyState('❤️', 'No shortlisted properties yet', 'Properties you\'re interested in will appear here');
+    return `<div class="section-title">❤️ My Shortlist</div>
+      <div class="prop-grid">${unique.map(p => propCard(p)).join('')}</div>`;
+  }
+
+  function renderDocuments() {
+    if (!_data.doc_expiries.length) return emptyState('📋', 'No documents tracked');
+    const today = new Date().toISOString().slice(0,10);
+    return `<div class="section-title">📋 My Documents</div>` + _data.doc_expiries.map(e => docCard(e, today)).join('');
+  }
+
+  function dealCard(d) {
+    const stageCls = d.stage.toLowerCase().replace(/\s+/g,'-');
+    const cur = d.currency||'AED';
+    // Deal pipeline stages
+    const ALL_STAGES = ['Inquiry','Viewing','Negotiation','Documentation','Closed Won'];
+    const curIdx     = ALL_STAGES.indexOf(d.stage);
+    const isLost     = d.stage === 'Closed Lost';
+    const timelineHTML = `
+      <div style="display:flex;align-items:center;margin-top:12px;margin-bottom:4px;overflow-x:auto;padding-bottom:4px">
+        ${ALL_STAGES.map((s,i) => {
+          const done    = !isLost && i < curIdx;
+          const active  = !isLost && i === curIdx;
+          const future  = isLost || i > curIdx;
+          const color   = done||active ? '#1400cc' : '#e8e0ff';
+          const textCol = done||active ? '#fff' : '#aaa';
+          return `<div style="display:flex;align-items:center;flex:1;min-width:0">
+            <div style="flex:1;height:3px;background:${i===0?'transparent':done?'#1400cc':'#e8e0ff'}"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:${textCol};flex-shrink:0;border:2px solid ${done||active?'#1400cc':'#d0c8f0'}">${done?'✓':active?'●':i+1}</div>
+              <div style="font-size:.58rem;font-weight:800;color:${done||active?'#1400cc':'#aaa'};text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">${s.split(' ')[0]}</div>
+            </div>
+            <div style="flex:1;height:3px;background:${i===ALL_STAGES.length-1?'transparent':done?'#1400cc':'#e8e0ff'}"></div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    return `<div class="deal-card">
+      <div class="deal-title">${esc(d.title||d.id)}</div>
+      ${isLost ? `<div style="background:#fee2e2;border-radius:6px;padding:4px 10px;display:inline-block;font-size:.72rem;font-weight:800;color:#dc2626;margin-bottom:8px">Closed Lost</div>` : timelineHTML}
+      <div class="deal-meta" style="margin-top:8px">
+        ${d._property_title?`<span class="deal-property">🏠 ${esc(d._property_title)}</span>`:''}
+        ${d.value?`<span class="deal-value">${cur} ${Number(d.value).toLocaleString()}</span>`:''}
+        ${d.close_date?`<span style="font-size:.72rem;font-weight:700;color:#888">Close: ${d.close_date}</span>`:''}
+      </div>
+      ${d.notes?`<div style="margin-top:8px;font-size:.78rem;font-weight:700;color:#888;line-height:1.5">${esc(d.notes.slice(0,120))}${d.notes.length>120?'…':''}</div>`:''}
+    </div>`;
+  }
+
+  // ── CHAT TAB ──
+  let _chatPollTimer = null;
+
+  function renderChatTab() {
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = `
+      <div style="display:flex;flex-direction:column;height:calc(100vh - 200px);background:#fff;border-radius:16px;border:1.5px solid #e8e0ff;overflow:hidden;box-shadow:0 4px 16px rgba(20,0,204,.08)">
+        <div style="background:#1400cc;padding:14px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0" id="chatPrimary">
+          <span style="font-size:1.2rem">💬</span>
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.07em;color:#fff">CHAT WITH YOUR AGENT</div>
+            <div style="font-size:.7rem;font-weight:700;color:rgba(255,255,255,.65)">Your agent will respond shortly</div>
+          </div>
+        </div>
+        <div id="portalMsgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#f9f7ff;scrollbar-width:thin">
+          <div style="text-align:center;color:#bbb;font-size:.85rem;font-weight:700;padding:20px">Loading…</div>
+        </div>
+        <div style="padding:12px 14px;border-top:1.5px solid #e8e0ff;background:#fff;display:flex;gap:10px;align-items:flex-end;flex-shrink:0">
+          <textarea id="portalMsgInput" placeholder="Type a message…" rows="1"
+            style="flex:1;background:#f4f4f8;border:1.5px solid #e0d8f8;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:#1a1a2e;outline:none;resize:none;max-height:100px;transition:border-color .2s;line-height:1.5"
+            onfocus="this.style.borderColor='#1400cc'" onblur="this.style.borderColor='#e0d8f8'"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendPortalMsg()}"></textarea>
+          <button onclick="sendPortalMsg()" style="background:#1400cc;color:#fff;border:none;border-radius:9px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;flex-shrink:0;transition:background .2s" onmouseover="this.style.background='#2c14ff'" onmouseout="this.style.background='#1400cc'">➤</button>
+        </div>
+      </div>`;
+
+    loadPortalChat();
+    if (_chatPollTimer) clearInterval(_chatPollTimer);
+    _chatPollTimer = setInterval(loadPortalChat, 4000);
+  }
+
+  async function loadPortalChat() {
+    try {
+      const res  = await fetch('/portal/chat');
+      const conv = await res.json();
+      if (!conv || conv.error) return;
+
+      // Update unread badge
+      const unread = conv.unread_client || 0;
+      const badge  = document.getElementById('chatUnreadBadge');
+      if (badge) { badge.textContent = unread; badge.style.display = unread ? 'inline' : 'none'; }
+
+      const msgsEl = document.getElementById('portalMsgs');
+      if (!msgsEl) return;
+
+      const msgs = conv.messages || [];
+      if (!msgs.length) {
+        msgsEl.innerHTML = '<div style="text-align:center;color:#bbb;font-size:.85rem;font-weight:700;padding:30px">No messages yet. Say hello to your agent!</div>';
+        return;
+      }
+
+      const primary = document.getElementById('chatPrimary');
+      if (primary && window.SERENIA_BRANDING?.primary_color) {
+        primary.style.background = window.SERENIA_BRANDING.primary_color;
+      }
+
+      msgsEl.innerHTML = msgs.map(m => {
+        const isMe = m.sender_type === 'client';
+        const time = m.time ? m.time.slice(11,16) : '';
+        return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'};gap:2px;max-width:75%;align-self:${isMe?'flex-end':'flex-start'}">
+          <div style="font-size:.65rem;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.04em">${esc(m.sender_name)}</div>
+          <div style="background:${isMe?'#1400cc':'#fff'};color:${isMe?'#fff':'#1a1a2e'};border-radius:${isMe?'14px 14px 4px 14px':'14px 14px 14px 4px'};padding:10px 14px;font-size:.88rem;font-weight:700;line-height:1.5;border:${isMe?'none':'1.5px solid #e8e0ff'};word-break:break-word">${esc(m.text)}</div>
+          <div style="font-size:.62rem;font-weight:700;color:#bbb">${time}</div>
+        </div>`;
+      }).join('');
+
+      // scroll to bottom
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    } catch {}
+  }
+
+  async function sendPortalMsg() {
+    const inp  = document.getElementById('portalMsgInput');
+    if (!inp) return;
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    inp.style.height = 'auto';
+    try {
+      await fetch('/portal/chat/send', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({text}),
+      });
+      await loadPortalChat();
+    } catch {}
+  }
+
+  function viewingCard(v) {
+    const d  = new Date(v.date+'T00:00:00');
+    return `<div class="viewing-card">
+      <div class="viewing-date-box">
+        <div class="vd-day">${d.getDate()}</div>
+        <div class="vd-mon">${MONTHS[d.getMonth()]}</div>
+        <div class="vd-time">${v.time||'—'}</div>
+      </div>
+      <div class="viewing-info">
+        <div class="viewing-prop">${esc(v._property_title||'Property')}</div>
+        <div class="viewing-sub">${v.duration?v.duration+' min · ':''}</div>
+      </div>
+      <span class="vstatus">${esc(v.status||'Scheduled')}</span>
+    </div>`;
+  }
+
+  function propCard(p) {
+    const cur = p.currency==='INR'?'₹':'AED';
+    const price = p.sale_price_aed||p.sale_price_inr||p.monthly_rent_aed||p.monthly_rent_inr;
+    const img   = p.photos?.length ? `<img src="/photos/${p.photos[0]}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>` : '🏠';
+    return `<div class="prop-card">
+      <div class="prop-img">${img}</div>
+      <div class="prop-body">
+        <div class="prop-title-c">${esc(p.title||'Untitled')}</div>
+        <div class="prop-sub-c">${esc([p.city,p.property_type].filter(Boolean).join(' · '))}</div>
+        ${price?`<div class="prop-price-c">${cur} ${Number(price).toLocaleString()}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  function docCard(e, today) {
+    const days  = Math.ceil((new Date(e.expiry_date) - new Date(today)) / 86400000);
+    const cls   = days < 0 ? 'expired' : days <= 30 ? 'soon' : 'ok';
+    const label = days < 0 ? `Expired ${Math.abs(days)}d ago` : days === 0 ? 'Expires today' : `${days} days left`;
+    return `<div class="doc-row">
+      <div class="doc-icon">📄</div>
+      <div class="doc-info">
+        <div class="doc-name">${esc(e.doc_type)}</div>
+        ${e.doc_number?`<div class="doc-num">${esc(e.doc_number)}</div>`:''}
+      </div>
+      <div>
+        <div style="font-size:.72rem;font-weight:700;color:#888;margin-bottom:3px">${e.expiry_date}</div>
+        <span class="doc-days ${cls}">${label}</span>
+      </div>
+    </div>`;
+  }
+
+  function emptyState(icon, title, sub='') {
+    return `<div class="empty-state"><div class="ei">${icon}</div><div style="font-weight:800;color:#666;font-size:.95rem">${title}</div>${sub?`<div style="margin-top:4px;font-size:.8rem">${sub}</div>`:''}</div>`;
+  }
+
+  async function doLogout() {
+    await fetch('/client_logout', {method:'POST'});
+    window.location.href = '/portal_login';
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  // Load branding for header color
+  fetch('/get_branding').then(r=>r.json()).then(b=>{
+    if (b.primary_color) {
+      document.querySelector('.header').style.background = b.primary_color;
+      document.querySelectorAll('.tab.active,.kpi-val,.section-title,.deal-value,.prop-price-c,.pay-amount').forEach(el => el.style.color = b.primary_color);
+    }
+    if (b.company_name) document.getElementById('brandName').textContent = b.company_name;
+  }).catch(()=>{});
+
+  load();
+</script>
+</body>
+</html>

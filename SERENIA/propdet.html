@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property Details – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue:#1400cc; --off:#f4f4f8; --text:#0a0030; --card:#fff; --gray:#888;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:var(--off);color:var(--text)}
+
+    /* HEADER */
+    .header{background:var(--blue);display:flex;align-items:center;gap:16px;padding:16px 32px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.25)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.07em;text-transform:uppercase;padding:9px 18px;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;letter-spacing:.06em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .prop-id-badge{background:rgba(255,255,255,.18);color:#fff;font-size:.8rem;font-weight:900;letter-spacing:.1em;padding:6px 14px;border-radius:8px;flex-shrink:0}
+
+    /* BODY */
+    .body-wrap{max-width:1100px;margin:0 auto;padding:36px 32px 80px;display:flex;flex-direction:column;gap:28px}
+
+    /* GALLERY */
+    .gallery-wrap{display:flex;flex-direction:column;gap:10px}
+    .gallery-main{border-radius:16px;overflow:hidden;background:var(--blue);aspect-ratio:16/7;position:relative;cursor:zoom-in}
+    .gallery-main img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+    .gallery-main:hover img{transform:scale(1.025)}
+    .no-photo{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(255,255,255,.25)}
+    .expand-hint{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:800;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .2s}
+    .gallery-main:hover .expand-hint{opacity:1}
+    .photo-counter{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:800}
+
+    .gallery-thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--gray) transparent}
+    .gallery-thumb{width:90px;height:66px;border-radius:8px;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid transparent;transition:border-color .2s,opacity .2s,transform .15s;opacity:.65}
+    .gallery-thumb:hover{opacity:.9;transform:scale(1.05)}
+    .gallery-thumb.active{border-color:var(--blue);opacity:1}
+    .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* LIGHTBOX */
+    .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.96);flex-direction:column;align-items:center;justify-content:center;gap:16px}
+    .lightbox.open{display:flex}
+    .lb-img-wrap{position:relative;display:flex;align-items:center;justify-content:center;max-width:92vw;max-height:78vh}
+    .lb-img{max-width:92vw;max-height:78vh;object-fit:contain;border-radius:10px;display:block;pointer-events:none;transition:opacity .18s}
+    .lb-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:1.8rem;width:52px;height:52px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;z-index:10}
+    .lb-arrow:hover{background:rgba(255,255,255,.25);transform:translateY(-50%) scale(1.1)}
+    .lb-arrow.prev{left:-70px}
+    .lb-arrow.next{right:-70px}
+    .lb-close{position:fixed;top:18px;right:22px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:1.3rem;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:2001}
+    .lb-close:hover{background:rgba(255,255,255,.25)}
+    .lb-counter{color:rgba(255,255,255,.7);font-size:.85rem;font-weight:800;letter-spacing:.06em}
+    .lb-thumbs{display:flex;gap:8px;overflow-x:auto;max-width:92vw;padding:2px 0;scrollbar-width:none}
+    .lb-thumbs::-webkit-scrollbar{display:none}
+    .lb-thumb{width:62px;height:46px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid transparent;opacity:.45;transition:opacity .2s,border-color .2s}
+    .lb-thumb.active{border-color:#fff;opacity:1}
+    .lb-thumb:hover{opacity:.8}
+    .lb-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* INFO CARDS */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .info-card{background:var(--card);border-radius:16px;padding:24px 28px;box-shadow:0 2px 16px rgba(20,0,204,.07)}
+    .info-card.full{grid-column:1/-1}
+    .info-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.07em;color:var(--blue);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--off)}
+    .detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--off);gap:12px}
+    .detail-row:last-child{border-bottom:none}
+    .detail-key{font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);flex-shrink:0}
+    .detail-val{font-size:.95rem;font-weight:800;color:var(--text);text-align:right}
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:8px}
+    .tag{background:var(--off);color:var(--blue);font-size:.8rem;font-weight:900;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:7px}
+    .desc-text{font-size:.95rem;font-weight:600;line-height:1.7;color:#333}
+
+    /* STATES */
+    .not-found{text-align:center;padding:100px 20px;color:var(--gray)}
+    .not-found .emoji{font-size:4rem;margin-bottom:16px}
+    .not-found p{font-weight:800;font-size:1.2rem;text-transform:uppercase}
+    .loading-wrap{display:flex;justify-content:center;padding:100px}
+    .spinner{width:52px;height:52px;border:5px solid rgba(20,0,204,.12);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width:700px){
+      .info-grid{grid-template-columns:1fr}
+      .info-card.full{grid-column:1}
+      .body-wrap{padding:20px 16px 60px}
+      .lb-arrow.prev{left:-44px}
+      .lb-arrow.next{right:-44px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title" id="headerTitle">Loading…</div>
+  <div class="prop-id-badge" id="headerID"></div>
+  <a id="editBtn" href="#" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;transition:background .2s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">✏️ EDIT</a>
+  <a id="mapBtn" href="#" style="background:rgba(10,124,62,.3);border:1.5px solid rgba(10,124,62,.5);color:#4ade80;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;transition:background .2s;flex-shrink:0;display:none" onmouseover="this.style.background='rgba(10,124,62,.5)'" onmouseout="this.style.background='rgba(10,124,62,.3)'">🗺 MAP</a>
+  <a id="brochureBtn" href="#" style="background:rgba(217,119,6,.2);border:1.5px solid rgba(217,119,6,.35);color:#fbbf24;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;flex-shrink:0" onmouseover="this.style.background='rgba(217,119,6,.35)'" onmouseout="this.style.background='rgba(217,119,6,.2)'">📄 BROCHURE</a>
+  <button onclick="duplicateProp()" style="background:rgba(8,145,178,.2);border:1.5px solid rgba(8,145,178,.35);color:#22d3ee;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0" onmouseover="this.style.background='rgba(8,145,178,.35)'" onmouseout="this.style.background='rgba(8,145,178,.2)'">⧉ DUPLICATE</button>
+  <button onclick="deleteProp()" style="background:rgba(220,38,38,.2);border:1.5px solid rgba(220,38,38,.4);color:#f87171;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0" onmouseover="this.style.background='rgba(220,38,38,.35)'" onmouseout="this.style.background='rgba(220,38,38,.2)'">🗑 DELETE</button>
+</div>
+
+<div class="body-wrap" id="bodyWrap">
+  <div class="loading-wrap"><div class="spinner"></div></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <div class="lb-img-wrap">
+    <button class="lb-arrow prev" id="lbPrev" onclick="lbNav(-1)">&#8249;</button>
+    <img class="lb-img" id="lbImg" src="" alt=""/>
+    <button class="lb-arrow next" id="lbNext" onclick="lbNav(1)">&#8250;</button>
+  </div>
+  <div class="lb-counter" id="lbCounter"></div>
+  <div class="lb-thumbs" id="lbThumbs"></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const propId = params.get('id');
+  let PHOTOS = [];
+  let lbIdx  = 0;
+  let mainIdx = 0;
+  let touchX0 = 0, touchY0 = 0;
+
+  async function loadProperty() {
+    if (!propId) { showNotFound(); return; }
+    try {
+      const res   = await fetch('/get_properties');
+      const props = await res.json();
+      const prop  = props.find(p => p.id === propId);
+      if (!prop) { showNotFound(); return; }
+      renderProperty(prop);
+    } catch { showNotFound(); }
+  }
+
+  function renderProperty(p) {
+    document.title = `${p.title||'Property'} – SERENIA`;
+    document.getElementById('headerTitle').textContent = p.title || 'Untitled';
+    document.getElementById('headerID').textContent    = `# ${p.id}`;
+    document.getElementById('editBtn').href = `editprop.html?id=${p.id}`;
+    document.getElementById('brochureBtn').href = `brochure.html?id=${p.id}`;
+
+    // Show map button only if coords exist
+    if (p.lat && p.lng) {
+      const mapBtn = document.getElementById('mapBtn');
+      mapBtn.href         = `propmap.html?id=${p.id}`;
+      mapBtn.style.display = 'inline-flex';
+    }
+
+    const cur = p.currency === 'INR' ? '₹' : 'AED';
+    const fmt = n => n ? `${cur} ${Number(n).toLocaleString()}` : null;
+
+    PHOTOS = p.photos || [];
+
+    // Gallery
+    const galleryHtml = `
+      <div class="gallery-wrap">
+        <div class="gallery-main" id="galMain" onclick="openLb(mainIdx)">
+          ${PHOTOS.length
+            ? `<img id="mainImg" src="/photos/${PHOTOS[0]}" alt="Cover"/>
+               <div class="expand-hint">🔍 CLICK TO ENLARGE</div>
+               <div class="photo-counter" id="galCounter">1 / ${PHOTOS.length}</div>`
+            : `<div class="no-photo">🏠</div>`}
+        </div>
+        ${PHOTOS.length > 1 ? `
+        <div class="gallery-thumbs">
+          ${PHOTOS.map((ph,i)=>`
+            <div class="gallery-thumb ${i===0?'active':''}" id="gth_${i}" onclick="setMain(${i})">
+              <img src="/photos/${ph}" loading="lazy"/>
+            </div>`).join('')}
+        </div>` : ''}
+      </div>`;
+
+    const rows = arr => arr.filter(r=>r[1]).map(([k,v])=>`
+      <div class="detail-row">
+        <span class="detail-key">${k}</span>
+        <span class="detail-val">${esc(v)}</span>
+      </div>`).join('');
+
+    const basic = rows([
+      ['Property Type', p.property_type],['Category',p.category],
+      ['City',p.city],['State',p.state],['PIN / ZIP',p.pincode],
+      ['Floor',p.floor],['Address',p.address],
+      ['Region',p.region||'UAE'],['Listed On',p.created_at],
+      ['Coordinates', (p.lat && p.lng) ? `${parseFloat(p.lat).toFixed(5)}, ${parseFloat(p.lng).toFixed(5)}` : null],
+    ]);
+    const size = rows([
+      ['Bedrooms',p.bedrooms?`${p.bedrooms} BHK`:null],
+      ['Bathrooms',p.bathrooms],
+      ['Area',p.area_sqft?`${p.area_sqft} sq ft`:null],
+      ['Carpet Area',p.carpet_area_sqft?`${p.carpet_area_sqft} sq ft`:null],
+    ]);
+    const pricing = rows([
+      ['Sale Price',   fmt(p.sale_price_aed||p.sale_price_inr)],
+      ['Per Sq Ft',    fmt(p.per_sqft_price_aed||p.per_sqft_price_inr)],
+      ['Monthly Rent', fmt(p.monthly_rent_aed||p.monthly_rent_inr)],
+      ['Security Dep.',fmt(p.security_deposit_inr)],
+      ['Maintenance',  fmt(p.maintenance_inr)],
+    ]);
+    const seller = rows([
+      ['Seller / Owner',p.seller_name],['Phone',p.seller_phone],
+    ]);
+
+    const tags  = arr => arr.map(a=>`<span class="tag">${esc(a)}</span>`).join('');
+    const amen  = (p.amenities||[]);
+    const docs  = (p.docs_required||[]);
+    const vids  = (p.videos||[]);
+
+    document.getElementById('bodyWrap').innerHTML = `
+      ${galleryHtml}
+      <div class="info-grid">
+        <div class="info-card"><h2>Property Info</h2>${basic||'<span class="detail-key">—</span>'}</div>
+        <div class="info-card">
+          <h2>Size</h2>${size||'<span class="detail-key">—</span>'}
+          ${pricing?`<h2 style="margin-top:20px">Pricing</h2>${pricing}`:''}
+        </div>
+        ${seller?`<div class="info-card"><h2>Seller / Owner</h2>${seller}</div>`:''}
+        ${p.description?`<div class="info-card ${seller?'':'full'}"><h2>Description</h2><p class="desc-text">${esc(p.description)}</p></div>`:''}
+        ${amen.length?`<div class="info-card"><h2>Amenities</h2><div class="tags-wrap">${tags(amen)}</div></div>`:''}
+        ${docs.length?`<div class="info-card"><h2>Docs Required</h2><div class="tags-wrap">${tags(docs)}</div></div>`:''}
+        ${vids.length?`<div class="info-card full"><h2>Videos</h2><div style="display:flex;flex-wrap:wrap;gap:12px;">${
+          vids.map(v=>`<video controls style="border-radius:10px;max-width:360px;width:100%;"><source src="/videos/${v}"></video>`).join('')
+        }</div></div>`:''}
+      </div>`;
+
+    buildLbThumbs();
+    initGalSwipe();
+  }
+
+  // ── Main gallery ──
+  function setMain(idx) {
+    if (!PHOTOS.length) return;
+    mainIdx = idx;
+    const img = document.getElementById('mainImg');
+    if (img) img.src = `/photos/${PHOTOS[idx]}`;
+    const ctr = document.getElementById('galCounter');
+    if (ctr) ctr.textContent = `${idx+1} / ${PHOTOS.length}`;
+    document.querySelectorAll('.gallery-thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  }
+
+  function initGalSwipe() {
+    const el = document.getElementById('galMain');
+    if (!el || !PHOTOS.length) return;
+    el.addEventListener('touchstart', e=>{ touchX0=e.touches[0].clientX; touchY0=e.touches[0].clientY; },{passive:true});
+    el.addEventListener('touchend', e=>{
+      const dx=e.changedTouches[0].clientX-touchX0;
+      const dy=e.changedTouches[0].clientY-touchY0;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>45){
+        const ni=mainIdx+(dx<0?1:-1);
+        if(ni>=0&&ni<PHOTOS.length) setMain(ni);
+      }
+    },{passive:true});
+  }
+
+  // ── Lightbox ──
+  function buildLbThumbs() {
+    document.getElementById('lbThumbs').innerHTML = PHOTOS.map((ph,i)=>`
+      <div class="lb-thumb" id="lbt_${i}" onclick="lbGoTo(${i})">
+        <img src="/photos/${ph}" loading="lazy"/>
+      </div>`).join('');
+  }
+
+  function openLb(idx) {
+    if (!PHOTOS.length) return;
+    lbIdx = idx;
+    updateLb();
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLb() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function updateLb() {
+    const img = document.getElementById('lbImg');
+    img.style.opacity = '0';
+    setTimeout(()=>{ img.src=`/photos/${PHOTOS[lbIdx]}`; img.style.opacity='1'; }, 130);
+    document.getElementById('lbCounter').textContent = `${lbIdx+1} / ${PHOTOS.length}`;
+    document.querySelectorAll('.lb-thumb').forEach((t,i)=>t.classList.toggle('active',i===lbIdx));
+    const at = document.getElementById(`lbt_${lbIdx}`);
+    if (at) at.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+    document.getElementById('lbPrev').style.visibility = lbIdx===0 ? 'hidden' : 'visible';
+    document.getElementById('lbNext').style.visibility = lbIdx===PHOTOS.length-1 ? 'hidden' : 'visible';
+    setMain(lbIdx);
+  }
+
+  function lbNav(dir) {
+    const n=lbIdx+dir;
+    if(n<0||n>=PHOTOS.length) return;
+    lbIdx=n; updateLb();
+  }
+  function lbGoTo(idx){ lbIdx=idx; updateLb(); }
+
+  // Keyboard
+  document.addEventListener('keydown', e=>{
+    if(!document.getElementById('lightbox').classList.contains('open')) return;
+    if(e.key==='ArrowRight') lbNav(1);
+    if(e.key==='ArrowLeft')  lbNav(-1);
+    if(e.key==='Escape')     closeLb();
+  });
+
+  // Touch swipe on lightbox
+  const lbEl = document.getElementById('lightbox');
+  let lbTx=0, lbTy=0;
+  lbEl.addEventListener('touchstart',e=>{ lbTx=e.touches[0].clientX; lbTy=e.touches[0].clientY; },{passive:true});
+  lbEl.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-lbTx;
+    const dy=e.changedTouches[0].clientY-lbTy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) dx<0?lbNav(1):lbNav(-1);
+  },{passive:true});
+
+  // Click backdrop to close
+  lbEl.addEventListener('click',e=>{ if(e.target===lbEl) closeLb(); });
+
+  function showNotFound() {
+    document.getElementById('headerTitle').textContent='Not Found';
+    document.getElementById('bodyWrap').innerHTML=`<div class="not-found"><div class="emoji">🔍</div><p>Property not found</p></div>`;
+  }
+
+  function esc(s){
+    if(!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function duplicateProp() {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!confirm('Create a duplicate of this property?')) return;
+    try {
+      const res  = await fetch(`/duplicate_property/${id}`, {method:'POST'});
+      const json = await res.json();
+      if (json.success) {
+        if (confirm(`✅ Duplicated as "${json.title}"\n\nOpen the new property?`)) {
+          window.location.href = `propdet.html?id=${json.id}`;
+        }
+      } else {
+        alert('❌ ' + (json.error||'Error'));
+      }
+    } catch { alert('❌ Server error'); }
+  }
+
+  async function deleteProp() {
+    if (!confirm('Delete this property? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/delete_property/' + propId, {method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { alert('Property deleted.'); window.location.href = 'prop.html'; }
+      else alert('Error: ' + (json.error||'Unknown'));
+    } catch { alert('Server error'); }
+  }
+
+  loadProperty();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

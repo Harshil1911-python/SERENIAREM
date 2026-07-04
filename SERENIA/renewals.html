@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Renewal Tracker – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-h{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer}
+    .add-btn-h:hover{background:#e8e0ff}
+
+    /* ALERT CHIPS */
+    .alerts-bar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 24px;display:flex;gap:10px;flex-wrap:wrap}
+    .alert-chip{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;font-size:.8rem;font-weight:800;cursor:pointer;border:1.5px solid transparent;transition:all .2s}
+    .alert-chip.red{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.25);color:#f87171}
+    .alert-chip.amber{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.2);color:#fbbf24}
+    .alert-chip.blue{background:rgba(20,0,204,.12);border-color:rgba(20,0,204,.2);color:#818cf8}
+    .alert-chip.green{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.18);color:#4ade80}
+    .alert-chip.active{transform:scale(1.04)}
+    .alert-num{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;line-height:1}
+
+    .toolbar{background:#0f0f23;padding:10px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.06)}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}.fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+    .fsearch{flex:1;max-width:240px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}.fsearch:focus{border-color:#818cf8}
+
+    .wrap{max-width:980px;margin:0 auto;padding:20px 20px 80px}
+
+    .renewal-card{background:#1e1e3a;border-radius:14px;padding:16px 18px;border:1.5px solid rgba(255,255,255,.06);margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:all .2s}
+    .renewal-card:hover{border-color:rgba(129,140,248,.25);background:#252545}
+    .renewal-card.expired{border-left:3px solid #f87171}
+    .renewal-card.critical{border-left:3px solid #f87171}
+    .renewal-card.warning{border-left:3px solid #fbbf24}
+    .renewal-card.upcoming{border-left:3px solid #818cf8}
+
+    .days-badge{width:60px;flex-shrink:0;text-align:center;background:rgba(255,255,255,.05);border-radius:10px;padding:10px 6px}
+    .db-num{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1}
+    .db-label{font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4)}
+    .db-num.expired{color:#f87171}.db-num.critical{color:#f87171}.db-num.warning{color:#fbbf24}.db-num.ok{color:#4ade80}
+
+    .rc-body{flex:1;min-width:0}
+    .rc-title{font-weight:800;font-size:.92rem;color:#fff;margin-bottom:4px}
+    .rc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px}
+    .rc-tag{font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .rc-tag.prop{background:rgba(20,0,204,.2);color:#818cf8}
+    .rc-tag.tenant{background:rgba(10,124,62,.15);color:#4ade80}
+    .rc-tag.type{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+    .rc-dates{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:4px}
+    .rc-rent{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#818cf8}
+    .rc-notes{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3);line-height:1.5}
+
+    .rc-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .status-badge{font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .sb-active{background:rgba(22,163,74,.15);color:#4ade80}
+    .sb-expired{background:rgba(220,38,38,.15);color:#f87171}
+    .sb-renewed{background:rgba(129,140,248,.15);color:#818cf8}
+    .sb-vacated{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+    .rc-actions{display:flex;gap:5px}
+    .rca{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45);font-family:'Nunito',sans-serif;font-weight:800;font-size:.7rem;padding:4px 9px;cursor:pointer;transition:all .2s}
+    .rca:hover{background:rgba(255,255,255,.14);color:#fff}
+    .rca.renew{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.25);color:#4ade80}
+    .rca.renew:hover{background:rgba(22,163,74,.3)}
+    .rca.del:hover{background:rgba(220,38,38,.2);border-color:rgba(220,38,38,.3);color:#f87171}
+
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:700}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:16px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:26px 30px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.06em;color:#fff;margin-bottom:18px}
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;appearance:none;resize:vertical;transition:border-color .2s}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-btns{display:flex;gap:10px;margin-top:10px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">🔄 RENEWAL TRACKER</div>
+  <button class="add-btn-h" onclick="openAdd()">+ ADD LEASE</button>
+</div>
+
+<div class="alerts-bar">
+  <div class="alert-chip red" onclick="setFilter('expired',this)">
+    <div><div class="alert-num" id="nExpired">—</div><div style="font-size:.62rem">EXPIRED</div></div><span style="font-size:1.3rem">🚨</span>
+  </div>
+  <div class="alert-chip red" onclick="setFilter('30',this)">
+    <div><div class="alert-num" id="n30">—</div><div style="font-size:.62rem">≤ 30 DAYS</div></div><span style="font-size:1.3rem">⚠️</span>
+  </div>
+  <div class="alert-chip amber" onclick="setFilter('60',this)">
+    <div><div class="alert-num" id="n60">—</div><div style="font-size:.62rem">≤ 60 DAYS</div></div><span style="font-size:1.3rem">📅</span>
+  </div>
+  <div class="alert-chip green" onclick="setFilter('ok',this)">
+    <div><div class="alert-num" id="nOk">—</div><div style="font-size:.62rem">ACTIVE</div></div><span style="font-size:1.3rem">✅</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="fchip active" onclick="setType('all',this)">All</button>
+  <button class="fchip" onclick="setType('Active',this)">Active</button>
+  <button class="fchip" onclick="setType('Expired',this)">Expired</button>
+  <button class="fchip" onclick="setType('Renewed',this)">Renewed</button>
+  <button class="fchip" onclick="setType('Vacated',this)">Vacated</button>
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search leases…" oninput="render()"/>
+</div>
+
+<div class="wrap" id="wrap"><div class="empty">Loading…</div></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Add Lease</div>
+    <input type="hidden" id="editId"/>
+    <div class="field"><label>Property *</label>
+      <select id="rProp"><option value="">— Select property —</option></select>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Tenant Name *</label><input type="text" id="rTenant" placeholder="Tenant full name…"/></div>
+      <div class="field"><label>Tenant Phone</label><input type="tel" id="rPhone" placeholder="+971…"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Lease Start *</label><input type="date" id="rStart"/></div>
+      <div class="field"><label>Lease End *</label><input type="date" id="rEnd"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Monthly Rent</label><input type="number" id="rRent" placeholder="e.g. 5000"/></div>
+      <div class="field"><label>Currency</label>
+        <select id="rCurrency"><option>AED</option><option>INR</option><option>USD</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Lease Type</label>
+        <select id="rType">
+          <option>Residential</option><option>Commercial</option>
+          <option>Short-term</option><option>Annual</option>
+        </select>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="rStatus">
+          <option>Active</option><option>Expired</option>
+          <option>Renewed</option><option>Vacated</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notes</label>
+      <textarea id="rNotes" placeholder="Renewal terms, special conditions…"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveRenewal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _renewals=[], _props=[], _filterStatus='all', _filterDays='all';
+  const today = new Date().toISOString().slice(0,10);
+
+  function daysUntil(dateStr){
+    return Math.ceil((new Date(dateStr+'T00:00:00')-new Date(today+'T00:00:00'))/86400000);
+  }
+  function urgency(r){
+    if(r.status==='Expired'||r.status==='Vacated')return 'expired';
+    const d=daysUntil(r.lease_end||today);
+    if(d<0)return 'expired';
+    if(d<=30)return 'critical';
+    if(d<=60)return 'warning';
+    return 'ok';
+  }
+
+  async function load(){
+    try{
+      const [rr,pr]=await Promise.all([fetch('/get_renewals'),fetch('/get_properties')]);
+      _renewals=await rr.json(); _props=await pr.json();
+      updateAlerts(); render();
+    }catch{document.getElementById('wrap').innerHTML='<div class="empty">Failed to load</div>';}
+  }
+
+  function updateAlerts(){
+    const urg=_renewals.map(r=>urgency(r));
+    document.getElementById('nExpired').textContent=urg.filter(u=>u==='expired').length;
+    document.getElementById('n30').textContent=urg.filter(u=>u==='critical').length;
+    document.getElementById('n60').textContent=urg.filter(u=>u==='warning').length;
+    document.getElementById('nOk').textContent=urg.filter(u=>u==='ok').length;
+  }
+
+  function setFilter(f,btn){
+    _filterDays=f;
+    document.querySelectorAll('.alert-chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active'); render();
+  }
+  function setType(t,btn){
+    _filterStatus=t;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active'); render();
+  }
+
+  function render(){
+    const q=document.getElementById('fsearch').value.trim().toLowerCase();
+    let list=_renewals.filter(r=>{
+      const u=urgency(r);
+      if(_filterStatus!=='all'&&r.status!==_filterStatus)return false;
+      if(_filterDays==='expired'&&u!=='expired')return false;
+      if(_filterDays==='30'&&u!=='critical')return false;
+      if(_filterDays==='60'&&u!=='warning')return false;
+      if(_filterDays==='ok'&&u!=='ok')return false;
+      if(q&&![r.tenant_name,r.tenant_phone,r.notes].join(' ').toLowerCase().includes(q))return false;
+      return true;
+    }).sort((a,b)=>(a.lease_end||'').localeCompare(b.lease_end||''));
+
+    const wrap=document.getElementById('wrap');
+    if(!list.length){wrap.innerHTML='<div class="empty">No leases found</div>';return;}
+
+    wrap.innerHTML=list.map(r=>{
+      const prop=_props.find(p=>p.id===r.property_id);
+      const d=daysUntil(r.lease_end||today);
+      const u=urgency(r);
+      const dLabel=d<0?`Expired ${Math.abs(d)}d ago`:d===0?'Today':d<=365?d+'d':Math.round(d/30)+'mo';
+      const sbCls={Active:'sb-active',Expired:'sb-expired',Renewed:'sb-renewed',Vacated:'sb-vacated'}[r.status]||'sb-active';
+      return `<div class="renewal-card ${u}">
+        <div class="days-badge">
+          <div class="db-num ${u}">${dLabel}</div>
+          <div class="db-label">to end</div>
+        </div>
+        <div class="rc-body">
+          <div class="rc-title">${esc(r.tenant_name||'Unnamed Tenant')}</div>
+          <div class="rc-tags">
+            ${prop?`<span class="rc-tag prop">🏠 ${esc(prop.title||prop.id)}</span>`:''}
+            ${r.tenant_phone?`<span class="rc-tag tenant">📞 ${esc(r.tenant_phone)}</span>`:''}
+            ${r.lease_type?`<span class="rc-tag type">${esc(r.lease_type)}</span>`:''}
+          </div>
+          <div class="rc-dates">📅 ${r.lease_start||'?'} → ${r.lease_end||'?'}</div>
+          ${r.monthly_rent?`<div class="rc-rent">${r.currency||'AED'} ${Number(r.monthly_rent).toLocaleString()} / mo</div>`:''}
+          ${r.notes?`<div class="rc-notes">${esc(r.notes.slice(0,80))}${r.notes.length>80?'…':''}</div>`:''}
+        </div>
+        <div class="rc-right">
+          <span class="status-badge ${sbCls}">${r.status||'Active'}</span>
+          <div class="rc-actions">
+            ${r.status==='Active'?`<button class="rca renew" onclick="markRenewed('${r.id}')">🔄 Renewed</button>`:''}
+            <button class="rca" onclick="openEdit('${r.id}')">✏️</button>
+            <button class="rca del" onclick="deleteRenewal('${r.id}')">✕</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function populatePropSelect(currentId=''){
+    const sel=document.getElementById('rProp');
+    sel.innerHTML='<option value="">— Select property —</option>'+
+      _props.map(p=>`<option value="${p.id}" ${p.id===currentId?'selected':''}>${esc(p.title||p.id)} · ${esc(p.city||'')}</option>`).join('');
+  }
+
+  function openAdd(){
+    document.getElementById('editId').value='';
+    document.getElementById('modalTitle').textContent='Add Lease';
+    populatePropSelect();
+    ['rTenant','rPhone','rRent','rNotes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('rStart').value=today;
+    document.getElementById('rCurrency').value='AED';
+    document.getElementById('rType').value='Residential';
+    document.getElementById('rStatus').value='Active';
+    // Auto-set end date 1 year from now
+    const end=new Date(); end.setFullYear(end.getFullYear()+1);
+    document.getElementById('rEnd').value=end.toISOString().slice(0,10);
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function openEdit(id){
+    const r=_renewals.find(x=>x.id===id);if(!r)return;
+    document.getElementById('editId').value=id;
+    document.getElementById('modalTitle').textContent='Edit Lease';
+    populatePropSelect(r.property_id||'');
+    document.getElementById('rTenant').value=r.tenant_name||'';
+    document.getElementById('rPhone').value=r.tenant_phone||'';
+    document.getElementById('rStart').value=r.lease_start||'';
+    document.getElementById('rEnd').value=r.lease_end||'';
+    document.getElementById('rRent').value=r.monthly_rent||'';
+    document.getElementById('rCurrency').value=r.currency||'AED';
+    document.getElementById('rType').value=r.lease_type||'Residential';
+    document.getElementById('rStatus').value=r.status||'Active';
+    document.getElementById('rNotes').value=r.notes||'';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  async function saveRenewal(){
+    const tenant=document.getElementById('rTenant').value.trim();
+    const end=document.getElementById('rEnd').value;
+    if(!tenant){showToast('⚠️ Enter tenant name');return;}
+    if(!end){showToast('⚠️ Enter lease end date');return;}
+    const editId=document.getElementById('editId').value;
+    const data={
+      property_id:document.getElementById('rProp').value,
+      tenant_name:tenant,
+      tenant_phone:document.getElementById('rPhone').value.trim(),
+      lease_start:document.getElementById('rStart').value,
+      lease_end:end,
+      monthly_rent:document.getElementById('rRent').value,
+      currency:document.getElementById('rCurrency').value,
+      lease_type:document.getElementById('rType').value,
+      status:document.getElementById('rStatus').value,
+      notes:document.getElementById('rNotes').value.trim(),
+    };
+    try{
+      const url=editId?`/update_renewal/${editId}`:'/save_renewal';
+      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json=await res.json();
+      if(json.success){closeModal();await load();showToast(editId?'✅ Updated!':'✅ Lease added!');}
+      else showToast('❌ '+(json.error||'Error'));
+    }catch{showToast('❌ Server error');}
+  }
+
+  async function markRenewed(id){
+    // Open edit pre-filled with Renewed status + new dates
+    openEdit(id);
+    document.getElementById('rStatus').value='Renewed';
+    const end=new Date(document.getElementById('rEnd').value);
+    if(!isNaN(end)){
+      end.setFullYear(end.getFullYear()+1);
+      document.getElementById('rStart').value=document.getElementById('rEnd').value;
+      document.getElementById('rEnd').value=end.toISOString().slice(0,10);
+    }
+    showToast('📅 Adjust dates and save to renew');
+  }
+
+  async function deleteRenewal(id){
+    if(!confirm('Delete this lease record?'))return;
+    try{
+      const res=await fetch(`/delete_renewal/${id}`,{method:'DELETE'});
+      const json=await res.json();
+      if(json.success){await load();showToast('✅ Deleted');}
+      else showToast('❌ '+json.error);
+    }catch{showToast('❌ Server error');}
+  }
+
+  function closeModal(){document.getElementById('modal').classList.remove('open');}
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

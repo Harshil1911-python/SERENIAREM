@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice Generator – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .layout{max-width:1100px;margin:0 auto;padding:24px 20px 80px;display:grid;grid-template-columns:340px 1fr;gap:20px}
+    @media(max-width:860px){.layout{grid-template-columns:1fr}}
+
+    .card{background:#1e1e3a;border-radius:16px;padding:22px 24px;border:1px solid rgba(255,255,255,.07)}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.07em;color:#818cf8;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)}
+
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none;resize:vertical}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    .line-items{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+    .line-item{display:grid;grid-template-columns:1fr 80px 90px 28px;gap:6px;align-items:center}
+    .line-item input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;color:#fff;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;outline:none}
+    .line-item input:focus{border-color:#818cf8}
+    .remove-line{background:rgba(220,38,38,.2);border:none;border-radius:6px;color:#f87171;width:24px;height:24px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .remove-line:hover{background:rgba(220,38,38,.4)}
+    .add-line-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;width:100%}
+    .add-line-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+
+    .gen-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;letter-spacing:.07em;text-transform:uppercase;border:none;border-radius:11px;padding:13px;width:100%;cursor:pointer;box-shadow:0 0 18px rgba(20,0,204,.4);transition:all .2s;margin-top:8px}
+    .gen-btn:hover{background:#2c14ff;transform:translateY(-1px)}
+
+    /* PREVIEW */
+    .preview-outer{background:#1e1e3a;border-radius:16px;border:1px solid rgba(255,255,255,.07);overflow:hidden}
+    .preview-toolbar{background:#252545;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .preview-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.07em;color:#818cf8}
+    .print-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;transition:background .2s;letter-spacing:.05em;text-transform:uppercase}
+    .print-btn:hover{background:#15803d}
+    #invoiceFrame{width:100%;height:640px;border:none;background:#fff}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;box-shadow:0 6px 24px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">🧾 INVOICE GENERATOR</div>
+</div>
+
+<div class="layout">
+  <!-- LEFT: Form -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+
+    <div class="card">
+      <div class="card-title">Invoice Details</div>
+      <div class="form-2">
+        <div class="field"><label>Invoice Type</label>
+          <select id="iType">
+            <option>Receipt</option><option>Invoice</option>
+            <option>Proforma Invoice</option><option>Payment Voucher</option>
+          </select>
+        </div>
+        <div class="field"><label>Invoice #</label>
+          <input type="text" id="iNumber" placeholder="e.g. INV-001"/>
+        </div>
+      </div>
+      <div class="form-2">
+        <div class="field"><label>Date</label><input type="date" id="iDate"/></div>
+        <div class="field"><label>Due Date</label><input type="date" id="iDue"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bill To</div>
+      <div class="field"><label>Client Name</label>
+        <select id="iClient" onchange="fillClient()">
+          <option value="">— Select or type below —</option>
+        </select>
+      </div>
+      <div class="field"><label>Name</label><input type="text" id="iClientName" placeholder="Client full name…"/></div>
+      <div class="form-2">
+        <div class="field"><label>Phone</label><input type="text" id="iClientPhone" placeholder="+971…"/></div>
+        <div class="field"><label>Email</label><input type="text" id="iClientEmail" placeholder="email@…"/></div>
+      </div>
+      <div class="field"><label>Address</label><input type="text" id="iClientAddr" placeholder="Client address…"/></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Line Items</div>
+      <div class="line-items" id="lineItems"></div>
+      <button class="add-line-btn" onclick="addLine()">+ Add Line Item</button>
+      <div style="margin-top:12px;background:rgba(255,255,255,.04);border-radius:9px;padding:10px 14px">
+        <div class="form-2" style="margin-bottom:8px">
+          <div class="field" style="margin:0"><label>Currency</label>
+            <select id="iCurrency" onchange="generate()"><option>AED</option><option>INR</option><option>USD</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Tax %</label>
+            <input type="number" id="iTax" value="5" min="0" max="100" oninput="generate()"/>
+          </div>
+        </div>
+        <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35)">VAT / Tax will be auto-calculated</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notes</div>
+      <div class="field"><textarea id="iNotes" placeholder="Payment terms, bank details, thank you message…" rows="3"></textarea></div>
+    </div>
+
+    <button class="gen-btn" onclick="generate()">📄 GENERATE INVOICE</button>
+  </div>
+
+  <!-- RIGHT: Preview -->
+  <div>
+    <div class="preview-outer">
+      <div class="preview-toolbar">
+        <div class="preview-label">Live Preview</div>
+        <button class="print-btn" onclick="printInvoice()">🖨 Print / Save PDF</button>
+      </div>
+      <iframe id="invoiceFrame" src="about:blank"></iframe>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _clients=[], _branding={company_name:'SERENIA',primary_color:'#1400cc'};
+  let _lineCount = 0;
+
+  async function load() {
+    try {
+      const [cr, br] = await Promise.all([fetch('/get_clients'), fetch('/get_branding')]);
+      const clients  = await cr.json();
+      _branding      = await br.json();
+
+      const sel = document.getElementById('iClient');
+      clients.forEach(c => {
+        const name = c.seller_name || c.buyer_name || '?';
+        sel.insertAdjacentHTML('beforeend', `<option value="${c.id}" data-name="${esc(name)}" data-phone="${esc(c.phone||'')}" data-email="${esc(c.email||'')}">${esc(name)} (${c.seller_name?'Seller':'Buyer'})</option>`);
+      });
+      _clients = clients;
+
+      // Set defaults
+      const today = new Date().toISOString().slice(0,10);
+      document.getElementById('iDate').value    = today;
+      document.getElementById('iNumber').value  = 'INV-' + Date.now().toString().slice(-4);
+
+      // Add first line item
+      addLine('Property Transaction Fee');
+      generate();
+    } catch {}
+  }
+
+  function fillClient() {
+    const sel = document.getElementById('iClient');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt.value) return;
+    document.getElementById('iClientName').value  = opt.dataset.name  || '';
+    document.getElementById('iClientPhone').value = opt.dataset.phone || '';
+    document.getElementById('iClientEmail').value = opt.dataset.email || '';
+    generate();
+  }
+
+  function addLine(desc='', qty=1, price='') {
+    _lineCount++;
+    const id = _lineCount;
+    document.getElementById('lineItems').insertAdjacentHTML('beforeend', `
+      <div class="line-item" id="line_${id}">
+        <input type="text"   placeholder="Description…" value="${esc(desc)}" oninput="generate()"/>
+        <input type="number" placeholder="Qty"  value="${qty}"   min="1" oninput="generate()"/>
+        <input type="number" placeholder="Price" value="${price}" min="0" step="0.01" oninput="generate()"/>
+        <button class="remove-line" onclick="document.getElementById('line_${id}').remove();generate()">✕</button>
+      </div>`);
+    generate();
+  }
+
+  function getLines() {
+    return [...document.querySelectorAll('.line-item')].map(row => {
+      const inputs = row.querySelectorAll('input');
+      return {
+        desc:  inputs[0].value.trim(),
+        qty:   parseFloat(inputs[1].value)||1,
+        price: parseFloat(inputs[2].value)||0,
+      };
+    }).filter(l => l.desc || l.price);
+  }
+
+  function generate() {
+    const type     = document.getElementById('iType').value;
+    const number   = document.getElementById('iNumber').value;
+    const date     = document.getElementById('iDate').value;
+    const due      = document.getElementById('iDue').value;
+    const currency = document.getElementById('iCurrency').value;
+    const taxPct   = parseFloat(document.getElementById('iTax').value)||0;
+    const notes    = document.getElementById('iNotes').value;
+    const cName    = document.getElementById('iClientName').value;
+    const cPhone   = document.getElementById('iClientPhone').value;
+    const cEmail   = document.getElementById('iClientEmail').value;
+    const cAddr    = document.getElementById('iClientAddr').value;
+    const lines    = getLines();
+    const company  = _branding.company_name || 'SERENIA';
+    const primary  = _branding.primary_color || '#1400cc';
+
+    const subtotal = lines.reduce((s, l) => s + l.qty * l.price, 0);
+    const tax      = subtotal * taxPct / 100;
+    const total    = subtotal + tax;
+    const fmt      = n => `${currency} ${Number(n).toFixed(2)}`;
+
+    const logoHtml = _branding.logo_filename
+      ? `<img src="/photos/${_branding.logo_filename}" style="height:44px;object-fit:contain;display:block" onerror="this.style.display='none'"/>`
+      : `<div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.12em;color:${primary}">${company}</div>`;
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:#fff;color:#1a1a2e;padding:32px;max-width:760px;margin:0 auto;font-size:13px}
+        @media print{body{padding:12px}}
+      </style>
+    </head><body>
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:2.5px solid ${primary}">
+      <div>${logoHtml}<div style="font-size:11px;font-weight:700;color:#888;margin-top:4px">${esc(_branding.tagline||'Real Estate Management')}</div></div>
+      <div style="text-align:right">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.1em;color:${primary}">${esc(type).toUpperCase()}</div>
+        <div style="font-size:12px;font-weight:800;color:#555;margin-top:2px">#${esc(number)}</div>
+        <div style="font-size:11px;font-weight:700;color:#888;margin-top:2px">Date: ${date||'—'}</div>
+        ${due?`<div style="font-size:11px;font-weight:700;color:#888">Due: ${due}</div>`:''}
+      </div>
+    </div>
+
+    <!-- From / To -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+      <div>
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#888;margin-bottom:6px">From</div>
+        <div style="font-weight:900;font-size:13px;color:#1a1a2e">${esc(company)}</div>
+        ${_branding.phone?`<div style="font-size:11px;font-weight:700;color:#666;margin-top:2px">📞 ${esc(_branding.phone)}</div>`:''}
+        ${_branding.email?`<div style="font-size:11px;font-weight:700;color:#666">✉️ ${esc(_branding.email)}</div>`:''}
+        ${_branding.address?`<div style="font-size:11px;font-weight:700;color:#666">📍 ${esc(_branding.address)}</div>`:''}
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#888;margin-bottom:6px">Bill To</div>
+        <div style="font-weight:900;font-size:13px;color:#1a1a2e">${esc(cName||'Client Name')}</div>
+        ${cPhone?`<div style="font-size:11px;font-weight:700;color:#666;margin-top:2px">📞 ${esc(cPhone)}</div>`:''}
+        ${cEmail?`<div style="font-size:11px;font-weight:700;color:#666">✉️ ${esc(cEmail)}</div>`:''}
+        ${cAddr?`<div style="font-size:11px;font-weight:700;color:#666">📍 ${esc(cAddr)}</div>`:''}
+      </div>
+    </div>
+
+    <!-- Line Items Table -->
+    <table style="width:100%;border-collapse:collapse;margin-bottom:0">
+      <thead>
+        <tr style="background:${primary};color:#fff">
+          <th style="text-align:left;padding:9px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border-radius:8px 0 0 0">Description</th>
+          <th style="text-align:center;padding:9px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;width:60px">Qty</th>
+          <th style="text-align:right;padding:9px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;width:100px">Rate</th>
+          <th style="text-align:right;padding:9px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;width:100px;border-radius:0 8px 0 0">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lines.map((l,i)=>`
+          <tr style="background:${i%2===0?'#f9f7ff':'#fff'}">
+            <td style="padding:9px 12px;font-size:12px;font-weight:700;border-bottom:1px solid #f0ebff">${esc(l.desc)}</td>
+            <td style="padding:9px 12px;font-size:12px;font-weight:700;text-align:center;border-bottom:1px solid #f0ebff">${l.qty}</td>
+            <td style="padding:9px 12px;font-size:12px;font-weight:700;text-align:right;border-bottom:1px solid #f0ebff">${fmt(l.price)}</td>
+            <td style="padding:9px 12px;font-size:12px;font-weight:800;text-align:right;border-bottom:1px solid #f0ebff">${fmt(l.qty*l.price)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div style="display:flex;justify-content:flex-end;margin-top:0">
+      <div style="width:240px">
+        <div style="display:flex;justify-content:space-between;padding:7px 12px;background:#f9f7ff;border:1px solid #f0ebff;font-size:12px;font-weight:700">
+          <span style="color:#666">Subtotal</span><span>${fmt(subtotal)}</span>
+        </div>
+        ${taxPct>0?`<div style="display:flex;justify-content:space-between;padding:7px 12px;background:#f9f7ff;border:1px solid #f0ebff;border-top:none;font-size:12px;font-weight:700">
+          <span style="color:#666">Tax (${taxPct}%)</span><span>${fmt(tax)}</span>
+        </div>`:''}
+        <div style="display:flex;justify-content:space-between;padding:10px 12px;background:${primary};border-radius:0 0 8px 8px;font-size:13px;font-weight:900;color:#fff">
+          <span>TOTAL</span><span>${fmt(total)}</span>
+        </div>
+      </div>
+    </div>
+
+    ${notes?`<div style="margin-top:20px;padding:12px 16px;background:#f9f7ff;border:1px solid #e0d8ff;border-radius:8px;font-size:11px;font-weight:700;color:#555;line-height:1.6">
+      <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:5px">Notes</div>
+      ${esc(notes).replace(/\n/g,'<br/>')}
+    </div>`:''}
+
+    <!-- Footer -->
+    <div style="margin-top:28px;padding-top:12px;border-top:1px solid #e0d8ff;display:flex;justify-content:space-between;align-items:flex-end">
+      <div style="font-size:10px;font-weight:700;color:#aaa">${esc(company)} · Generated ${new Date().toLocaleDateString()}</div>
+      <div style="text-align:center">
+        <div style="width:140px;border-top:1px solid #ccc;padding-top:5px;font-size:10px;font-weight:700;color:#aaa">Authorised Signature</div>
+      </div>
+    </div>
+
+    </body></html>`;
+
+    document.getElementById('invoiceFrame').srcdoc = html;
+  }
+
+  function printInvoice() {
+    const frame = document.getElementById('invoiceFrame');
+    if (frame.contentWindow) frame.contentWindow.print();
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  function showToast(m,d=3000){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

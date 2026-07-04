@@ -1,0 +1,190 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Statement of Financial Position
+{% endblock %}
+
+{% block main %}
+    <h1 class="statement-h1">Statement of Financial Position as at {{ today_date }}</h1>
+    <div class="statement-container">
+        <div class="edit-delete">
+            <a href="/sofp/download-excel" class="button-link"><button type="submit" class="btn btn-dark transaction-btn" id="download-excel">Download as Excel</button></a>
+        </div>
+        <div class="overflow">
+            <table class="table table-bordered">
+                <colgroup>
+                    <col span="1" style="width: 50%;">
+                    <col span="1" style="width: 25%;">
+                    <col span="1" style="width: 25%;">
+                </colgroup>
+                <thead>
+                    <th></th>
+                    <th class="td-bold">{{ currency }}</th>
+                    <th class="td-bold">{{ currency }}</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="td-bold">Assets</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Non-current assets:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[0][0]] }}</td>
+                        <td>{{ sofp_list[0][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[1][0]] }}</td>
+                        <td>{{ sofp_list[1][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[2][0]] }}</td>
+                        <td>{{ sofp_list[2][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total[0] }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Current assets:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[3][0]] }}</td>
+                        <td>{{ sofp_list[3][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[4][0]] }}</td>
+                        <td>{{ sofp_list[4][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[5][0]] }}</td>
+                        <td>{{ sofp_list[5][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total[1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Total assets</td>
+                        <td></td>
+                        <td class="td-bold">{{ total[2] }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Equity and liabilities</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Capital:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[12][0]] }}</td>
+                        <td>{{ sofp_list[12][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[13][0]] }}</td>
+                        <td>{{ sofp_list[13][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total[3] }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Non-current liabilities:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[6][0]] }}</td>
+                        <td>{{ sofp_list[6][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[7][0]] }}</td>
+                        <td>{{ sofp_list[7][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total[4] }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Current liabilities:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[8][0]] }}</td>
+                        <td>{{ sofp_list[8][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[9][0]] }}</td>
+                        <td>{{ sofp_list[9][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[10][0]] }}</td>
+                        <td>{{ sofp_list[10][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sofp_list[11][0]] }}</td>
+                        <td>{{ sofp_list[11][1] }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total[5] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Total equity and liabilities</td>
+                        <td></td>
+                        <td class="td-bold">{{ total[6] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>    
+    </div>
+{% endblock %}

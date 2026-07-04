@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet"/>
+  <!-- Preload all section backgrounds for instant navigation -->
+  <link rel="preload" href="homebg.png"    as="image"/>
+  <link rel="preload" href="propbg.png"    as="image"/>
+  <link rel="preload" href="clientsbg.png" as="image"/>
+  <link rel="preload" href="empbg.png"     as="image"/>
+  <link rel="preload" href="sellerbg.png"  as="image"/>
+  <link rel="preload" href="buyerbg.png"   as="image"/>
+  <style>
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html,body { width:100%; height:100%; }
+
+    body {
+      background-image: url('homebg.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 60px 160px;
+      padding: 40px;
+    }
+
+    .nav-btn {
+      background-color: #5B21F5;
+      color: #ffffff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 18px;
+      padding: 38px 80px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      min-width: 380px;
+      box-shadow: 0 0 25px rgba(91,33,245,0.45), 0 6px 24px rgba(0,0,0,0.2);
+      animation: floatIn 0.6s ease both;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .nav-btn:nth-child(1) { animation-delay: 0.1s; }
+    .nav-btn:nth-child(2) { animation-delay: 0.25s; }
+    .nav-btn:nth-child(3) { animation-delay: 0.4s; }
+    .nav-btn:nth-child(4) { animation-delay: 0.55s; }
+
+    @keyframes floatIn {
+      0%   { opacity:0; transform:translateY(30px) scale(0.95); }
+      100% { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .nav-btn::before {
+      content:'';
+      position:absolute; top:0; left:-120%;
+      width:60%; height:100%;
+      background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,0.22) 50%,transparent 100%);
+      animation:shimmer 3s ease-in-out infinite;
+    }
+    .nav-btn:nth-child(2)::before { animation-delay:0.7s; }
+    .nav-btn:nth-child(3)::before { animation-delay:1.4s; }
+    .nav-btn:nth-child(4)::before { animation-delay:2.1s; }
+
+    @keyframes shimmer {
+      0%   { left:-120%; opacity:0; }
+      20%  { opacity:1; }
+      60%  { left:160%; opacity:0.8; }
+      100% { left:160%; opacity:0; }
+    }
+
+    .nav-btn:hover {
+      transform:translateY(-5px) scale(1.04);
+      background-color:#6B31FF;
+      box-shadow:0 0 50px rgba(91,33,245,0.75),0 0 90px rgba(91,33,245,0.35),0 12px 36px rgba(0,0,0,0.28);
+    }
+
+    @keyframes pressDown {
+      0%   { transform:scale(1); }
+      35%  { transform:scale(0.95); }
+      70%  { transform:scale(1.04); }
+      100% { transform:scale(1); }
+    }
+    .clicked { animation:pressDown 0.3s ease forwards !important; }
+
+    .top-bar {
+      position:fixed; top:0; left:0; right:0;
+      background:rgba(0,0,0,.45); backdrop-filter:blur(10px);
+      display:flex; align-items:center; justify-content:flex-end;
+      padding:10px 24px; z-index:100;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .hint {
+      position:fixed; bottom:22px; left:50%;
+      transform:translateX(-50%);
+      color:rgba(255,255,255,.3);
+      font-family:'Nunito',sans-serif;
+      font-size:.8rem; font-weight:900;
+      letter-spacing:.12em; text-transform:uppercase;
+      pointer-events:none;
+      animation:fadeHint 5s ease 2s both;
+    }
+    @keyframes fadeHint {
+      0%{opacity:0} 15%{opacity:1} 75%{opacity:1} 100%{opacity:0}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div id="userInfo"></div>
+  </div>
+
+  <div class="grid">
+    <button class="nav-btn" onclick="goTo(this,'prop.html')">PROPERTIES</button>
+    <button class="nav-btn" onclick="goTo(this,'clients.html')">CLIENTS</button>
+    <button class="nav-btn" onclick="goTo(this,'emp.html')">EMPLOYEES</button>
+    <button class="nav-btn" onclick="goTo(this,'finance.html')">FINANCE</button>
+  </div>
+
+  <div class="hint">⌨️ Ctrl + A — Premium Features</div>
+
+  <script>
+    // Preload all section backgrounds immediately
+    ['propbg.png','clientsbg.png','empbg.png','sellerbg.png','buyerbg.png','bg.png'].forEach(src => {
+      const img = new Image(); img.src = src;
+    });
+
+    function goTo(btn, page) {
+      btn.classList.add('clicked');
+      setTimeout(() => btn.classList.remove('clicked'), 300);
+      window.location.href = page;
+    }
+
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        window.location.href = 'premium.html';
+      }
+    });
+  </script>
+  <script src="session-guard.js"></script>
+  <script src="branding-loader.js"></script>
+
+</body>
+</html>

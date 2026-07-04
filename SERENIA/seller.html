@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sellers – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+
+    body{
+      background-image:url('sellerbg.png');
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-color:#f5ece0;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    .header{background:#1400cc;text-align:center;padding:22px 20px 18px;position:relative}
+    .header h1{font-size:3rem;font-weight:900;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.35);border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:.05em;transition:background .2s,transform .15s}
+    .back-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-50%) scale(1.05)}
+
+    .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;gap:36px}
+
+    /* TOP 3 STATS */
+    .stats-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+    .stat-card{background:#fff;border-radius:22px;padding:26px 32px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.12);min-width:240px;animation:fadeUp .5s ease both}
+    .stat-card:nth-child(1){animation-delay:.05s}
+    .stat-card:nth-child(2){animation-delay:.15s}
+    .stat-card:nth-child(3){animation-delay:.25s}
+    .stat-label{font-size:.95rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#111;line-height:1.35;margin-bottom:10px}
+    .stat-value{font-size:3rem;font-weight:900;color:#111;line-height:1}
+
+    /* BOTTOM ROW */
+    .bottom-row{display:flex;gap:28px;justify-content:center;align-items:center;flex-wrap:wrap;animation:fadeUp .5s ease .35s both}
+    .action-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-size:2.2rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:22px;padding:28px 72px;cursor:pointer;min-width:250px;box-shadow:0 6px 28px rgba(20,0,204,.5),0 4px 14px rgba(0,0,0,.2);transition:background .18s,transform .15s,box-shadow .18s}
+    .action-btn:hover{background:#2c14ff;transform:translateY(-4px) scale(1.03);box-shadow:0 12px 40px rgba(20,0,204,.7),0 6px 20px rgba(0,0,0,.25)}
+    .action-btn:active{transform:scale(.97)}
+
+    .stat-card.center{min-width:250px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:700px){
+      .header h1{font-size:2rem}
+      .stat-card{min-width:160px;padding:18px 20px}
+      .action-btn{min-width:160px;padding:20px 32px;font-size:1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='clients.html'">← BACK</button>
+    <h1>CLIENTS</h1>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Clients Interested<br>In Selling</div>
+        <div class="stat-value" id="statSelling">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Clients Interested<br>In Renting (LL)</div>
+        <div class="stat-value" id="statRenting">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Clients Interested<br>In Selling Other Properties</div>
+        <div class="stat-value" id="statOther">—</div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+      <button class="action-btn" onclick="window.location.href='listseller.html'">LIST</button>
+      <div class="stat-card center">
+        <div class="stat-label">Total Clients Listed<br>Sellers</div>
+        <div class="stat-value" id="statTotal">—</div>
+      </div>
+      <button class="action-btn" onclick="window.location.href='viewseller.html'">VIEW</button>
+    </div>
+  </div>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res     = await fetch('/get_sellers');
+        const sellers = await res.json();
+        let selling = 0, renting = 0, other = 0;
+        sellers.forEach(s => {
+          const role = (s.role || '').toLowerCase();
+          if (role.includes('sell'))  selling++;
+          else if (role.includes('rent') || role.includes('landlord')) renting++;
+          else other++;
+        });
+        animateCount('statSelling', selling);
+        animateCount('statRenting', renting);
+        animateCount('statOther',   other);
+        animateCount('statTotal',   sellers.length);
+      } catch {
+        ['statSelling','statRenting','statOther','statTotal'].forEach(id => {
+          document.getElementById(id).textContent = '0';
+        });
+      }
+    }
+
+    function animateCount(id, target) {
+      const el = document.getElementById(id);
+      if (!target) { el.textContent = '0'; return; }
+      let n = 0;
+      const step = Math.ceil(target / 30);
+      const t = setInterval(() => {
+        n = Math.min(n + step, target);
+        el.textContent = n;
+        if (n >= target) clearInterval(t);
+      }, 20);
+    }
+
+    loadStats();
+  </script>
+
+</body>
+</html>

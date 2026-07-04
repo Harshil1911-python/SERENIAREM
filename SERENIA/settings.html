@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .wrap{max-width:800px;margin:0 auto;padding:24px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    .card{background:#1e1e3a;border-radius:18px;padding:26px 28px;border:1px solid rgba(255,255,255,.07);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.08em;color:#818cf8;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+
+    .field{margin-bottom:16px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:11px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none}
+    .field input::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus{border-color:#818cf8;background:rgba(129,140,248,.07)}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .pw-wrap{position:relative}
+    .pw-wrap input{padding-right:44px}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:1rem}
+    .pw-toggle:hover{color:rgba(255,255,255,.6)}
+
+    .save-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.07em;text-transform:uppercase;border:none;border-radius:11px;padding:12px 28px;cursor:pointer;box-shadow:0 0 18px rgba(20,0,204,.4);transition:all .2s;margin-top:4px}
+    .save-btn:hover{background:#2c14ff;transform:translateY(-1px)}
+
+    /* COLOR PICKER */
+    .color-row{display:flex;align-items:center;gap:12px}
+    .color-preview{width:40px;height:40px;border-radius:8px;border:2px solid rgba(255,255,255,.15);cursor:pointer;flex-shrink:0;transition:transform .15s}
+    .color-preview:hover{transform:scale(1.1)}
+    .color-input{width:0;height:0;opacity:0;position:absolute}
+
+    /* LOGO UPLOAD */
+    .logo-upload-row{display:flex;align-items:center;gap:16px}
+    .logo-preview{width:80px;height:50px;border-radius:10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:rgba(255,255,255,.3);overflow:hidden;flex-shrink:0}
+    .logo-preview img{width:100%;height:100%;object-fit:contain;padding:4px}
+    .upload-logo-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;padding:9px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .upload-logo-btn:hover{background:rgba(255,255,255,.18)}
+
+    /* BACKUP */
+    .backup-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .bi-item{text-align:center}
+    .bi-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#fff;line-height:1}
+    .bi-label{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.07em}
+    .backup-btn{background:#16a34a;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:11px;padding:13px 24px;cursor:pointer;box-shadow:0 0 18px rgba(22,163,74,.3);transition:all .2s;margin-right:10px}
+    .backup-btn:hover{background:#15803d;transform:translateY(-1px)}
+    .restore-btn{background:rgba(217,119,6,.2);color:#fbbf24;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid rgba(217,119,6,.3);border-radius:11px;padding:12px 24px;cursor:pointer;transition:all .2s}
+    .restore-btn:hover{background:rgba(217,119,6,.35)}
+
+    .restore-warning{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;font-weight:700;color:#f87171;line-height:1.6;margin-top:12px;display:none}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    @media(max-width:600px){.form-2{grid-template-columns:1fr}.backup-info{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='premium.html'">← BACK</button>
+  <div class="header-title">⚙️ SETTINGS</div>
+</div>
+
+<div class="wrap">
+
+  <!-- AI API KEY -->
+  <div class="card">
+    <div class="card-title">🤖 AI Settings (Anthropic API)</div>
+
+    <div style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.55);line-height:1.6">
+      Required for AI Property Descriptions, Lead Scoring, Price Estimator and Email Sequences.<br/>
+      Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:#c4b5fd">console.anthropic.com</a> → API Keys
+    </div>
+
+    <div class="field" id="aiStatusRow">
+      <label>Current Status</label>
+      <div id="aiKeyStatus" style="background:rgba(255,255,255,.06);border-radius:9px;padding:10px 14px;font-size:.88rem;font-weight:700;color:rgba(255,255,255,.5)">Checking…</div>
+    </div>
+
+    <div class="field">
+      <label>Anthropic API Key</label>
+      <div class="pw-wrap">
+        <input type="password" id="aiApiKey" placeholder="sk-ant-api03-…"/>
+        <button class="pw-toggle" onclick="togglePw('aiApiKey')">👁</button>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveApiKey()">Save API Key</button>
+  </div>
+  <div class="card">
+    <div class="card-title">🔒 Change Password</div>
+    <div class="field">
+      <label>Current Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="pwCurrent" placeholder="Enter current password…"/>
+        <button class="pw-toggle" onclick="togglePw('pwCurrent')">👁</button>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field">
+        <label>New Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="pwNew" placeholder="Min 6 characters…"/>
+          <button class="pw-toggle" onclick="togglePw('pwNew')">👁</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirm New Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="pwConfirm" placeholder="Repeat new password…"/>
+          <button class="pw-toggle" onclick="togglePw('pwConfirm')">👁</button>
+        </div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="changePassword()">Update Password</button>
+  </div>
+
+  <!-- COMPANY BRANDING -->
+  <div class="card">
+    <div class="card-title">🎨 Company Branding</div>
+
+    <!-- Logo -->
+    <div class="field">
+      <label>Company Logo</label>
+      <div class="logo-upload-row">
+        <div class="logo-preview" id="logoPreview">
+          <span>No Logo</span>
+        </div>
+        <button class="upload-logo-btn" onclick="document.getElementById('logoInput').click()">📁 Upload Logo</button>
+        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
+        <span id="logoName" style="font-size:.78rem;color:rgba(255,255,255,.4);font-weight:700"></span>
+      </div>
+    </div>
+
+    <div class="form-2">
+      <div class="field">
+        <label>Company Name</label>
+        <input type="text" id="bCompany" placeholder="e.g. Al Baraka Properties" oninput="updateBrandPreview()"/>
+      </div>
+      <div class="field">
+        <label>Tagline</label>
+        <input type="text" id="bTagline" placeholder="e.g. Your Dream Home Awaits" oninput="updateBrandPreview()"/>
+      </div>
+    </div>
+
+    <div class="form-2">
+      <div class="field">
+        <label>Primary Color</label>
+        <div class="color-row">
+          <div class="color-preview" id="primaryPreview" onclick="document.getElementById('primaryColor').click()"></div>
+          <input type="color" id="primaryColor" class="color-input" value="#1400cc" onchange="updateColorPreview('primary')"/>
+          <input type="text" id="primaryHex" value="#1400cc" placeholder="#1400cc" oninput="syncColorFromHex('primary')" style="flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:11px 14px;color:#fff;font-family:monospace;font-size:.9rem;font-weight:700;outline:none"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Accent Color</label>
+        <div class="color-row">
+          <div class="color-preview" id="accentPreview" onclick="document.getElementById('accentColor').click()"></div>
+          <input type="color" id="accentColor" class="color-input" value="#5B21F5" onchange="updateColorPreview('accent')"/>
+          <input type="text" id="accentHex" value="#5B21F5" placeholder="#5B21F5" oninput="syncColorFromHex('accent')" style="flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:11px 14px;color:#fff;font-family:monospace;font-size:.9rem;font-weight:700;outline:none"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-2">
+      <div class="field"><label>Phone</label><input type="tel" id="bPhone" placeholder="+971 50 000 0000"/></div>
+      <div class="field"><label>Email</label><input type="email" id="bEmail" placeholder="info@company.com"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Website</label><input type="text" id="bWebsite" placeholder="www.company.com"/></div>
+      <div class="field"><label>WhatsApp</label><input type="text" id="bWhatsapp" placeholder="+971 50 000 0000"/></div>
+    </div>
+    <div class="field"><label>Office Address</label><input type="text" id="bAddress" placeholder="Office 201, Building Name, Dubai…"/></div>
+
+    <!-- LIVE PREVIEW -->
+    <div style="margin-top:20px;margin-bottom:16px">
+      <div style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Live Preview</div>
+      <div id="brandPreview" style="border-radius:14px;overflow:hidden;border:1.5px solid rgba(255,255,255,.1)">
+        <!-- Header preview -->
+        <div id="previewHeader" style="background:#1400cc;padding:14px 20px;display:flex;align-items:center;gap:12px">
+          <img id="previewLogo" src="" alt="" style="height:32px;display:none;border-radius:4px;object-fit:contain"/>
+          <span id="previewCompanyName" style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em;color:#fff">SERENIA</span>
+          <span id="previewTagline" style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);margin-left:4px"></span>
+        </div>
+        <!-- Button preview -->
+        <div style="background:#0a0a1a;padding:16px 20px;display:flex;gap:10px;flex-wrap:wrap">
+          <button id="previewBtn1" style="border:none;border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;color:#fff;cursor:default;background:#1400cc">PROPERTIES</button>
+          <button id="previewBtn2" style="border:none;border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;color:#fff;cursor:default;background:#5B21F5">CLIENTS</button>
+          <button style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;color:rgba(255,255,255,.5);cursor:default">LOGOUT</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveBranding()">Save Branding</button>
+  </div>
+
+  <!-- BACKUP & RESTORE -->
+  <div class="card">
+    <div class="card-title">💾 Backup & Restore</div>
+
+    <div class="backup-info" id="backupInfo">
+      <div class="bi-item"><div class="bi-val" id="biProps">—</div><div class="bi-label">Properties</div></div>
+      <div class="bi-item"><div class="bi-val" id="biClients">—</div><div class="bi-label">Clients</div></div>
+      <div class="bi-item"><div class="bi-val" id="biDeals">—</div><div class="bi-label">Deals</div></div>
+      <div class="bi-item"><div class="bi-val" id="biEmps">—</div><div class="bi-label">Employees</div></div>
+      <div class="bi-item"><div class="bi-val" id="biTasks">—</div><div class="bi-label">Tasks</div></div>
+      <div class="bi-item"><div class="bi-val" id="biLeads">—</div><div class="bi-label">Leads</div></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="backup-btn" onclick="downloadBackup()">⬇️ Download Backup</button>
+      <button class="restore-btn" onclick="document.getElementById('restoreInput').click()">📁 Restore from Backup</button>
+      <input type="file" id="restoreInput" accept=".zip" style="display:none" onchange="handleRestore(this)"/>
+    </div>
+
+    <div class="restore-warning" id="restoreWarning">
+      ⚠️ <strong>Warning:</strong> Restoring will OVERWRITE all current data with the backup. This cannot be undone. Make sure you download a backup of the current data first.
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _logoFile = null;
+
+  function togglePw(id) {
+    const inp = document.getElementById(id);
+    inp.type  = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  async function changePassword() {
+    const current = document.getElementById('pwCurrent').value;
+    const newPw   = document.getElementById('pwNew').value;
+    const confirm = document.getElementById('pwConfirm').value;
+    if (!current)      { showToast('⚠️ Enter current password'); return; }
+    if (newPw.length < 6) { showToast('⚠️ New password must be 6+ characters'); return; }
+    if (newPw !== confirm) { showToast('⚠️ Passwords do not match'); return; }
+    try {
+      const res  = await fetch('/change_password', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({old_password:current, new_password:newPw}),
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('✅ Password changed! Please log in again.');
+        ['pwCurrent','pwNew','pwConfirm'].forEach(id=>document.getElementById(id).value='');
+        setTimeout(() => { fetch('/logout',{method:'POST'}); window.location.href='/'; }, 2500);
+      } else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function updateColorPreview(which) {
+    const color = document.getElementById(which+'Color').value;
+    document.getElementById(which+'Preview').style.background = color;
+    document.getElementById(which+'Hex').value = color;
+    updateBrandPreview();
+  }
+  function syncColorFromHex(which) {
+    const hex = document.getElementById(which+'Hex').value.trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+      document.getElementById(which+'Color').value = hex;
+      document.getElementById(which+'Preview').style.background = hex;
+      updateBrandPreview();
+    }
+  }
+  function updateBrandPreview() {
+    const pc   = document.getElementById('primaryHex').value  || '#1400cc';
+    const ac   = document.getElementById('accentHex').value   || '#5B21F5';
+    const name = document.getElementById('bCompany').value    || 'SERENIA';
+    const tag  = document.getElementById('bTagline').value    || '';
+    document.getElementById('previewHeader').style.background       = pc;
+    document.getElementById('previewBtn1').style.background         = pc;
+    document.getElementById('previewBtn2').style.background         = ac;
+    document.getElementById('previewCompanyName').textContent       = name;
+    document.getElementById('previewTagline').textContent           = tag;
+  }
+
+  // ── Logo ──
+  function handleLogo(input) {
+    const f = input.files[0]; if (!f) return;
+    _logoFile = f;
+    document.getElementById('logoName').textContent = f.name;
+    const r = new FileReader();
+    r.onload = e => {
+      document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" alt="Logo"/>`;
+      const pLogo = document.getElementById('previewLogo');
+      pLogo.src = e.target.result;
+      pLogo.style.display = 'block';
+    };
+    r.readAsDataURL(f);
+  }
+
+  async function saveBranding() {
+    const data = {
+      company_name:  document.getElementById('bCompany').value.trim(),
+      tagline:       document.getElementById('bTagline').value.trim(),
+      primary_color: document.getElementById('primaryHex').value.trim() || '#1400cc',
+      accent_color:  document.getElementById('accentHex').value.trim()  || '#5B21F5',
+      phone:         document.getElementById('bPhone').value.trim(),
+      email:         document.getElementById('bEmail').value.trim(),
+      website:       document.getElementById('bWebsite').value.trim(),
+      whatsapp:      document.getElementById('bWhatsapp').value.trim(),
+      address:       document.getElementById('bAddress').value.trim(),
+    };
+    try {
+      const fd = new FormData();
+      fd.append('data', JSON.stringify(data));
+      if (_logoFile) fd.append('logo', _logoFile);
+      const res  = await fetch('/save_branding', {method:'POST', body:fd});
+      const json = await res.json();
+      if (json.success) showToast('✅ Branding saved!');
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  // ── Backup ──
+  async function loadBackupInfo() {
+    try {
+      const res  = await fetch('/backup_info');
+      const info = await res.json();
+      document.getElementById('biProps').textContent   = info.properties||0;
+      document.getElementById('biClients').textContent = (info.sellers||0)+(info.buyers||0);
+      document.getElementById('biDeals').textContent   = info.deals||0;
+      document.getElementById('biEmps').textContent    = info.employees||0;
+      document.getElementById('biTasks').textContent   = info.tasks||0;
+      document.getElementById('biLeads').textContent   = info.leads||0;
+    } catch {}
+  }
+
+  async function loadBranding() {
+    try {
+      const res = await fetch('/get_branding');
+      const b   = await res.json();
+      document.getElementById('bCompany').value  = b.company_name||'';
+      document.getElementById('bTagline').value  = b.tagline||'';
+      document.getElementById('bPhone').value    = b.phone||'';
+      document.getElementById('bEmail').value    = b.email||'';
+      document.getElementById('bWebsite').value  = b.website||'';
+      document.getElementById('bWhatsapp').value = b.whatsapp||'';
+      document.getElementById('bAddress').value  = b.address||'';
+      const pc = b.primary_color||'#1400cc';
+      const ac = b.accent_color||'#5B21F5';
+      document.getElementById('primaryColor').value = pc;
+      document.getElementById('primaryHex').value   = pc;
+      document.getElementById('primaryPreview').style.background = pc;
+      document.getElementById('accentColor').value  = ac;
+      document.getElementById('accentHex').value    = ac;
+      document.getElementById('accentPreview').style.background  = ac;
+      if (b.logo_filename) {
+        document.getElementById('logoPreview').innerHTML = `<img src="/photos/${b.logo_filename}" alt="Logo"/>`;
+        const pLogo = document.getElementById('previewLogo');
+        pLogo.src = `/photos/${b.logo_filename}`;
+        pLogo.style.display = 'block';
+      }
+      updateBrandPreview();
+    } catch {}
+  }
+
+  async function downloadBackup() {
+    showToast('⏳ Creating backup…');
+    try {
+      const res = await fetch('/download_backup');
+      if (!res.ok) { showToast('❌ Backup failed'); return; }
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `serenia_backup_${new Date().toISOString().slice(0,10)}.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('✅ Backup downloaded!');
+    } catch { showToast('❌ Backup failed'); }
+  }
+
+  async function handleRestore(input) {
+    const f = input.files[0]; if (!f) return;
+    document.getElementById('restoreWarning').style.display = 'block';
+    if (!confirm(`⚠️ RESTORE BACKUP\n\nThis will OVERWRITE ALL current data with "${f.name}".\n\nAre you absolutely sure?`)) {
+      input.value=''; return;
+    }
+    showToast('⏳ Restoring backup…');
+    try {
+      const fd = new FormData();
+      fd.append('backup', f);
+      const res  = await fetch('/restore_backup', {method:'POST', body:fd});
+      const json = await res.json();
+      if (json.success) {
+        showToast('✅ Backup restored! Reloading…');
+        setTimeout(()=>window.location.reload(),2000);
+      } else showToast('❌ '+(json.error||'Restore failed'));
+    } catch { showToast('❌ Server error'); }
+    input.value='';
+  }
+
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+
+  async function loadApiKeyStatus() {
+    try {
+      const res  = await fetch('/get_api_key_status');
+      const json = await res.json();
+      const el   = document.getElementById('aiKeyStatus');
+      if (json.has_key) {
+        el.innerHTML = '<span style="color:#4ade80">✅ API key is configured</span>';
+      } else {
+        el.innerHTML = '<span style="color:#f87171">❌ No API key set — AI features disabled</span>';
+      }
+    } catch {}
+  }
+
+  async function saveApiKey() {
+    const key = document.getElementById('aiApiKey').value.trim();
+    if (!key) { showToast('⚠️ Enter your API key'); return; }
+    if (!key.startsWith('sk-ant')) { showToast('⚠️ Key should start with sk-ant…'); return; }
+    try {
+      const res  = await fetch('/save_api_key', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({api_key: key}),
+      });
+      const json = await res.json();
+      if (json.success) {
+        document.getElementById('aiApiKey').value = '';
+        showToast('✅ API key saved! AI features now active.');
+        loadApiKeyStatus();
+      } else showToast('❌ ' + (json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  // Init
+  loadBranding();
+  loadBackupInfo();
+  loadApiKeyStatus();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

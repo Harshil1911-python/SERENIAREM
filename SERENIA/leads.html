@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leads – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-h{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+    .add-btn-h:hover{background:#e8e0ff}
+
+    /* KPI */
+    .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06)}
+    .kpi-cell{padding:12px 16px;border-right:1px solid rgba(255,255,255,.06);text-align:center}
+    .kpi-cell:last-child{border-right:none}
+    .kv{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1}
+    .kl{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+    /* TOOLBAR */
+    .toolbar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}.fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+    .fsearch{flex:1;max-width:240px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}.fsearch:focus{border-color:#818cf8}
+
+    /* PIPELINE VIEW */
+    .pipeline-wrap{display:flex;gap:12px;padding:16px 20px 80px;overflow-x:auto}
+    .pipe-col{width:260px;min-width:260px;background:#1e1e3a;border-radius:14px;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;max-height:calc(100vh-180px)}
+    .pipe-header{padding:12px 14px 8px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .pipe-dot{width:9px;height:9px;border-radius:50%}
+    .pipe-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.06em;flex:1}
+    .pipe-count{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-size:.7rem;font-weight:900;padding:2px 7px;border-radius:5px}
+    .pipe-cards{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+
+    /* LEAD CARD */
+    .lead-card{background:#252545;border-radius:10px;padding:12px;border:1.5px solid rgba(255,255,255,.06);cursor:pointer;transition:all .2s;position:relative}
+    .lead-card:hover{border-color:rgba(129,140,248,.35);background:#2a2a50;transform:translateY(-1px)}
+    .lc-name{font-weight:800;font-size:.88rem;color:#fff;margin-bottom:3px}
+    .lc-contact{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:6px}
+    .lc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+    .lc-tag{font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+    .lc-tag.source{background:rgba(129,140,248,.15);color:#818cf8}
+    .lc-tag.intent{background:rgba(20,0,204,.2);color:#a5b4fc}
+    .lc-tag.budget{background:rgba(22,163,74,.15);color:#4ade80}
+    .lc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+    .lc-date{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.25)}
+    .lc-actions{display:flex;gap:4px}
+    .lca{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:5px;color:rgba(255,255,255,.45);font-family:'Nunito',sans-serif;font-weight:800;font-size:.68rem;padding:3px 7px;cursor:pointer;transition:all .2s}
+    .lca:hover{background:rgba(255,255,255,.14);color:#fff}
+    .lca.convert{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.25);color:#4ade80}
+    .lca.convert:hover{background:rgba(22,163,74,.3)}
+    .lca.del:hover{background:rgba(220,38,38,.2);border-color:rgba(220,38,38,.3);color:#f87171}
+    .empty-col{text-align:center;padding:20px 10px;color:rgba(255,255,255,.2);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+    /* LIST VIEW */
+    .list-wrap{max-width:1000px;margin:0 auto;padding:16px 20px 80px}
+    .lead-row{background:#1e1e3a;border-radius:12px;padding:14px 16px;border:1.5px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:14px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+    .lead-row:hover{border-color:rgba(129,140,248,.3);background:#252545}
+    .lr-avatar{width:36px;height:36px;border-radius:50%;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff;flex-shrink:0;text-transform:uppercase}
+    .lr-info{flex:1;min-width:0}
+    .lr-name{font-weight:800;color:#fff;font-size:.9rem}
+    .lr-sub{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+    .status-badge{font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .status-new{background:rgba(129,140,248,.2);color:#818cf8}
+    .status-contacted{background:rgba(251,191,36,.15);color:#fbbf24}
+    .status-qualified{background:rgba(8,145,178,.2);color:#22d3ee}
+    .status-converted{background:rgba(22,163,74,.2);color:#4ade80}
+    .status-lost{background:rgba(248,113,113,.15);color:#f87171}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:16px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:26px 30px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:#fff;margin-bottom:18px}
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none;resize:vertical}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-btns{display:flex;gap:10px;margin-top:10px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    .view-toggle{display:flex;gap:6px;margin-left:auto}
+    .vt-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);border-radius:7px;padding:5px 12px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;transition:all .2s}
+    .vt-btn.active{background:#1400cc;border-color:#1400cc;color:#fff}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    @media(max-width:700px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='premium.html'">← BACK</button>
+  <div class="header-title">🎯 LEAD MANAGEMENT</div>
+  <button class="add-btn-h" onclick="openAdd()">+ NEW LEAD</button>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-cell"><div class="kv" id="kAll">—</div><div class="kl">Total</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#818cf8" id="kNew">—</div><div class="kl">New</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#fbbf24" id="kContacted">—</div><div class="kl">Contacted</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#4ade80" id="kConverted">—</div><div class="kl">Converted</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#f87171" id="kLost">—</div><div class="kl">Lost</div></div>
+</div>
+
+<div class="toolbar">
+  <button class="fchip active" onclick="setFilter('all',this)">All</button>
+  <button class="fchip" onclick="setFilter('New',this)">New</button>
+  <button class="fchip" onclick="setFilter('Contacted',this)">Contacted</button>
+  <button class="fchip" onclick="setFilter('Qualified',this)">Qualified</button>
+  <button class="fchip" onclick="setFilter('Converted',this)">Converted</button>
+  <button class="fchip" onclick="setFilter('Lost',this)">Lost</button>
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search leads…" oninput="render()"/>
+  <div class="view-toggle">
+    <button class="vt-btn active" id="vPipeline" onclick="switchView('pipeline')">🗂 Pipeline</button>
+    <button class="vt-btn" id="vList" onclick="switchView('list')">📋 List</button>
+  </div>
+</div>
+
+<div id="pipelineView">
+  <div class="pipeline-wrap" id="pipelineWrap"></div>
+</div>
+<div id="listView" style="display:none">
+  <div class="list-wrap" id="listWrap"></div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">New Lead</div>
+    <input type="hidden" id="editId"/>
+    <div class="form-2">
+      <div class="field"><label>Full Name *</label><input type="text" id="lName" placeholder="e.g. Rahul Sharma"/></div>
+      <div class="field"><label>Phone</label><input type="tel" id="lPhone" placeholder="+91 or +971…"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="email@example.com"/></div>
+      <div class="field"><label>Nationality</label><input type="text" id="lNationality" placeholder="e.g. Indian"/></div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Lead Source *</label>
+        <select id="lSource">
+          <option>Instagram</option><option>Facebook</option><option>Google Ads</option>
+          <option>Website</option><option>Referral</option><option>Walk-in</option>
+          <option>Cold Call</option><option>WhatsApp</option><option>Property Portal</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Intent</label>
+        <select id="lIntent">
+          <option>Buy</option><option>Rent</option><option>Sell</option>
+          <option>Lease</option><option>Investment</option><option>Unknown</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Budget</label><input type="number" id="lBudget" placeholder="e.g. 500000"/></div>
+      <div class="field"><label>Currency</label>
+        <select id="lCurrency"><option>AED</option><option>INR</option><option>USD</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Property Type Interest</label><input type="text" id="lPropType" placeholder="e.g. 2BHK Apartment"/></div>
+      <div class="field"><label>Preferred Location</label><input type="text" id="lLocation" placeholder="e.g. Dubai Marina"/></div>
+    </div>
+    <div class="field"><label>Status</label>
+      <select id="lStatus">
+        <option>New</option><option>Contacted</option><option>Qualified</option>
+        <option>Converted</option><option>Lost</option>
+      </select>
+    </div>
+    <div class="field"><label>Notes</label>
+      <textarea id="lNotes" placeholder="How they reached out, what they're looking for…"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Convert Modal -->
+<div class="modal-overlay" id="convertModal">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-title">Convert Lead</div>
+    <p style="color:rgba(255,255,255,.6);font-size:.88rem;font-weight:700;margin-bottom:16px;line-height:1.6">This will mark the lead as converted. Choose where to add them:</p>
+    <input type="hidden" id="convertId"/>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="doConvert('buyer')" style="background:#0a7c3e;color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#0d9e4f'" onmouseout="this.style.background='#0a7c3e'">🛒 Add as BUYER</button>
+      <button onclick="doConvert('seller')" style="background:#1400cc;color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#2c14ff'" onmouseout="this.style.background='#1400cc'">🏠 Add as SELLER</button>
+      <button onclick="document.getElementById('convertModal').classList.remove('open')" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:none;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _leads=[], _filter='all', _view='pipeline';
+  const STAGES = [
+    {key:'New',       color:'#818cf8', dot:'#818cf8'},
+    {key:'Contacted', color:'#fbbf24', dot:'#fbbf24'},
+    {key:'Qualified', color:'#22d3ee', dot:'#22d3ee'},
+    {key:'Converted', color:'#4ade80', dot:'#4ade80'},
+    {key:'Lost',      color:'#f87171', dot:'#f87171'},
+  ];
+
+  async function load() {
+    try {
+      const res = await fetch('/get_leads');
+      _leads = await res.json();
+      updateKPIs(); render();
+    } catch { showToast('❌ Failed to load'); }
+  }
+
+  function updateKPIs() {
+    document.getElementById('kAll').textContent       = _leads.length;
+    document.getElementById('kNew').textContent       = _leads.filter(l=>l.status==='New').length;
+    document.getElementById('kContacted').textContent = _leads.filter(l=>l.status==='Contacted').length;
+    document.getElementById('kConverted').textContent = _leads.filter(l=>l.status==='Converted').length;
+    document.getElementById('kLost').textContent      = _leads.filter(l=>l.status==='Lost').length;
+  }
+
+  function setFilter(f, btn) {
+    _filter=f;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('fsearch').value.trim().toLowerCase();
+    return _leads.filter(l => {
+      if (_filter !== 'all' && l.status !== _filter) return false;
+      if (q) {
+        const blob = [l.name,l.phone,l.email,l.source,l.intent,l.location].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+  }
+
+  function render() {
+    if (_view === 'pipeline') renderPipeline();
+    else renderList();
+  }
+
+  function renderPipeline() {
+    const filtered = getFiltered();
+    document.getElementById('pipelineWrap').innerHTML = STAGES.map(s => {
+      const cards = filtered.filter(l => (l.status||'New') === s.key);
+      return `<div class="pipe-col">
+        <div class="pipe-header">
+          <div class="pipe-dot" style="background:${s.dot}"></div>
+          <div class="pipe-title" style="color:${s.color}">${s.key}</div>
+          <div class="pipe-count">${cards.length}</div>
+        </div>
+        <div class="pipe-cards">
+          ${cards.length ? cards.map(l => leadCard(l)).join('') : '<div class="empty-col">No leads</div>'}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function leadCard(l) {
+    const cur = l.currency||'AED';
+    const budget = l.budget ? `${cur} ${Number(l.budget).toLocaleString()}` : '';
+    return `<div class="lead-card" onclick="openEdit('${l.id}')">
+      <div class="lc-name">${esc(l.name||'?')}</div>
+      <div class="lc-contact">${esc(l.phone||l.email||'No contact')}</div>
+      <div class="lc-tags">
+        ${l.source?`<span class="lc-tag source">${esc(l.source)}</span>`:''}
+        ${l.intent?`<span class="lc-tag intent">${esc(l.intent)}</span>`:''}
+        ${budget?`<span class="lc-tag budget">${budget}</span>`:''}
+      </div>
+      ${l.notes?`<div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-bottom:4px;line-height:1.4">${esc(l.notes.slice(0,60))}${l.notes.length>60?'…':''}</div>`:''}
+      <div class="lc-meta">
+        <span class="lc-date">${(l.created_at||'').slice(0,10)}</span>
+        <div class="lc-actions" onclick="event.stopPropagation()">
+          ${l.status!=='Converted'?`<button class="lca convert" onclick="openConvert('${l.id}')">Convert</button>`:''}
+          <button class="lca" onclick="openEdit('${l.id}')">✏️</button>
+          <button class="lca del" onclick="deleteLead('${l.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderList() {
+    const filtered = getFiltered().sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+    const wrap = document.getElementById('listWrap');
+    if (!filtered.length) { wrap.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,.2);font-weight:700">No leads found</div>'; return; }
+    wrap.innerHTML = filtered.map(l => {
+      const sc = (l.status||'new').toLowerCase();
+      return `<div class="lead-row" onclick="openEdit('${l.id}')">
+        <div class="lr-avatar">${(l.name||'?').slice(0,2).toUpperCase()}</div>
+        <div class="lr-info">
+          <div class="lr-name">${esc(l.name||'?')}</div>
+          <div class="lr-sub">${esc([l.phone,l.email,l.source,l.intent].filter(Boolean).join(' · '))}</div>
+        </div>
+        <div class="lr-right">
+          <span class="status-badge status-${sc}">${l.status||'New'}</span>
+          <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+            ${l.status!=='Converted'?`<button class="lca convert" onclick="openConvert('${l.id}')">Convert</button>`:''}
+            <button class="lca del" onclick="deleteLead('${l.id}')">✕</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function switchView(v) {
+    _view = v;
+    document.getElementById('pipelineView').style.display = v==='pipeline'?'':'none';
+    document.getElementById('listView').style.display     = v==='list'?'':'none';
+    document.getElementById('vPipeline').classList.toggle('active',v==='pipeline');
+    document.getElementById('vList').classList.toggle('active',v==='list');
+    render();
+  }
+
+  function openAdd() {
+    document.getElementById('editId').value='';
+    document.getElementById('modalTitle').textContent='New Lead';
+    ['lName','lPhone','lEmail','lNationality','lBudget','lPropType','lLocation','lNotes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('lSource').value='Instagram';
+    document.getElementById('lIntent').value='Buy';
+    document.getElementById('lCurrency').value='AED';
+    document.getElementById('lStatus').value='New';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function openEdit(id) {
+    const l=_leads.find(x=>x.id===id); if(!l) return;
+    document.getElementById('editId').value=id;
+    document.getElementById('modalTitle').textContent='Edit Lead';
+    document.getElementById('lName').value=l.name||'';
+    document.getElementById('lPhone').value=l.phone||'';
+    document.getElementById('lEmail').value=l.email||'';
+    document.getElementById('lNationality').value=l.nationality||'';
+    document.getElementById('lSource').value=l.source||'Instagram';
+    document.getElementById('lIntent').value=l.intent||'Buy';
+    document.getElementById('lBudget').value=l.budget||'';
+    document.getElementById('lCurrency').value=l.currency||'AED';
+    document.getElementById('lPropType').value=l.prop_type||'';
+    document.getElementById('lLocation').value=l.location||'';
+    document.getElementById('lStatus').value=l.status||'New';
+    document.getElementById('lNotes').value=l.notes||'';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  async function saveLead() {
+    const name = document.getElementById('lName').value.trim();
+    if (!name) { showToast('⚠️ Enter a name'); return; }
+    const editId = document.getElementById('editId').value;
+    const data = {
+      name, phone:document.getElementById('lPhone').value.trim(),
+      email:document.getElementById('lEmail').value.trim(),
+      nationality:document.getElementById('lNationality').value.trim(),
+      source:document.getElementById('lSource').value,
+      intent:document.getElementById('lIntent').value,
+      budget:document.getElementById('lBudget').value,
+      currency:document.getElementById('lCurrency').value,
+      prop_type:document.getElementById('lPropType').value.trim(),
+      location:document.getElementById('lLocation').value.trim(),
+      status:document.getElementById('lStatus').value,
+      notes:document.getElementById('lNotes').value.trim(),
+    };
+    try {
+      const url = editId ? `/update_lead/${editId}` : '/save_lead';
+      const res  = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json = await res.json();
+      if (json.success) { closeModal(); await load(); showToast(editId?'✅ Updated!':'✅ Lead added!'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function deleteLead(id) {
+    if (!confirm('Delete this lead?')) return;
+    try {
+      const res  = await fetch(`/delete_lead/${id}`,{method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Deleted'); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function openConvert(id) {
+    document.getElementById('convertId').value=id;
+    document.getElementById('convertModal').classList.add('open');
+  }
+
+  async function doConvert(type) {
+    const id = document.getElementById('convertId').value;
+    try {
+      const res  = await fetch(`/convert_lead/${id}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({convert_to:type})});
+      const json = await res.json();
+      if (json.success) {
+        document.getElementById('convertModal').classList.remove('open');
+        await load();
+        showToast(`✅ Converted to ${type}! Redirecting…`);
+        setTimeout(()=>window.location.href=type==='buyer'?`listbuyer.html?prefill=${id}`:`listseller.html?prefill=${id}`,1500);
+      } else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  load();
+</script>
+</body>
+</html>

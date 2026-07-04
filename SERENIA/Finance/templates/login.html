@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    {% if msg %}
+        <div class="alert alert-danger" role="alert">
+            {{ msg }}
+        </div>
+    {% endif %}
+    <h1>Log In</h1>
+    <div class="center-box">
+        <form class="form-group" method="post">
+            <div>
+                <label for="login-name">Username</label>
+                <input autocomplete="off" type="text" id="login-name" name="login-name"><br>
+            </div>
+            <div>
+                <label for="login-password">Password</label>
+                <input autocomplete="off" type="password" id="login-password" name="login-password"><br>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-dark transaction-btn" id="login">Log In</button>
+            </div>
+        </form>
+    </div>
+    <div class="signup-prompt">
+        Don't have an account?<br>
+        <a href="/signup">Sign up now</a>
+    </div>
+{% endblock %}

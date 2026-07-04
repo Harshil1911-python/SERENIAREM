@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Premium Features – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+
+    /* TOP BAR */
+    .top-bar{background:rgba(0,0,0,.5);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:10px 28px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:100}
+    .tb-left{display:flex;align-items:center;gap:14px}
+    .back-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 16px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .back-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.12em;color:#fff}
+    .esc-hint{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.25);letter-spacing:.07em;text-transform:uppercase}
+    #userInfo{display:flex;align-items:center}
+
+    /* HERO */
+    .hero{text-align:center;padding:44px 24px 32px;position:relative}
+    .hero-badge{display:inline-block;background:linear-gradient(135deg,rgba(20,0,204,.4),rgba(91,33,245,.3));border:1px solid rgba(129,140,248,.3);color:#a5b4fc;font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;border-radius:50px;margin-bottom:14px}
+    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.12em;color:#fff;margin-bottom:8px;line-height:1}
+    .hero p{font-size:.9rem;font-weight:700;color:rgba(255,255,255,.4);max-width:500px;margin:0 auto}
+
+    /* CONTENT */
+    .content{max-width:1160px;margin:0 auto;padding:0 24px 80px;display:flex;flex-direction:column;gap:36px}
+
+    /* SECTION */
+    .section-label{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+    .section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+
+    /* FEATURE GRID */
+    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.feat-grid{grid-template-columns:1fr}}
+
+    .feat-grid.two{grid-template-columns:repeat(2,1fr)}
+    @media(max-width:560px){.feat-grid.two{grid-template-columns:1fr}}
+
+    /* FEATURE CARD */
+    .feat-card{background:#1e1e3a;border:1.5px solid rgba(255,255,255,.07);border-radius:18px;padding:22px 20px;cursor:pointer;transition:all .22s;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;text-decoration:none}
+    .feat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);pointer-events:none}
+    .feat-card:hover{border-color:rgba(129,140,248,.35);background:#252548;transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.4)}
+    .feat-card:active{transform:translateY(-1px)}
+
+    .feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .feat-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:#fff;line-height:1}
+    .feat-desc{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);line-height:1.5}
+    .feat-arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:.9rem;color:rgba(255,255,255,.2);transition:all .2s}
+    .feat-card:hover .feat-arrow{color:rgba(255,255,255,.5);right:12px}
+
+    /* WIDE CARD — full row */
+    .feat-card.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:20px;padding:20px 24px}
+    .feat-card.wide .feat-icon{width:52px;height:52px;font-size:1.5rem;flex-shrink:0}
+    .feat-card.wide .feat-text{flex:1}
+
+    /* COLOR VARIANTS */
+    .feat-icon.blue{background:rgba(20,0,204,.3)}
+    .feat-icon.green{background:rgba(22,163,74,.2)}
+    .feat-icon.amber{background:rgba(217,119,6,.2)}
+    .feat-icon.purple{background:rgba(124,58,237,.2)}
+    .feat-icon.teal{background:rgba(8,145,178,.2)}
+    .feat-icon.rose{background:rgba(225,29,72,.2)}
+    .feat-icon.indigo{background:rgba(79,70,229,.2)}
+    .feat-icon.orange{background:rgba(234,88,12,.2)}
+    .feat-icon.gray{background:rgba(255,255,255,.08)}
+
+    /* DASHBOARD HERO CARD */
+    .dashboard-card{background:linear-gradient(135deg,#1400cc,#5B21F5);border:none;color:#fff}
+    .dashboard-card:hover{background:linear-gradient(135deg,#1a0ee0,#6B31FF);border-color:transparent}
+    .dashboard-card .feat-name{font-size:1.3rem}
+    .dashboard-card .feat-desc{color:rgba(255,255,255,.7)}
+    .dashboard-card .feat-arrow{color:rgba(255,255,255,.5)}
+    .dashboard-card:hover .feat-arrow{color:#fff}
+
+    @keyframes pressDown{0%{transform:scale(1)}35%{transform:scale(.97)}70%{transform:scale(1.01) translateY(-3px)}100%{transform:translateY(-3px)}}
+    .feat-card.clicked{animation:pressDown .25s ease forwards}
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="tb-left">
+    <button class="back-btn" onclick="window.location.href='home.html'">← HOME</button>
+    <div class="page-title">✦ PREMIUM</div>
+  </div>
+  <span class="esc-hint">ESC to go back</span>
+  <div id="userInfo"></div>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">⭐ Advanced Tools</div>
+  <h1>PREMIUM FEATURES</h1>
+  <p>Advanced tools for deal tracking, analytics, client management and business operations</p>
+</div>
+
+<div class="content">
+
+  <!-- ANALYTICS & OVERVIEW -->
+  <div>
+    <div class="section-label">📊 Analytics & Overview</div>
+    <div class="feat-grid two">
+      <a class="feat-card dashboard-card wide" href="dashboard.html" onclick="click(this)">
+        <div class="feat-icon" style="background:rgba(255,255,255,.2);font-size:1.8rem;width:56px;height:56px">📊</div>
+        <div class="feat-text">
+          <div class="feat-name">DASHBOARD</div>
+          <div class="feat-desc">KPI cards, charts, recent activity, top properties by price — your full business overview at a glance</div>
+        </div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="commission.html" onclick="click(this)">
+        <div class="feat-icon amber">💼</div>
+        <div class="feat-name">Commission Report</div>
+        <div class="feat-desc">Monthly commission breakdown per agent with printable PDF payslips</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="leaderboard.html" onclick="click(this)">
+        <div class="feat-icon" style="background:rgba(251,191,36,.2)">🏆</div>
+        <div class="feat-name">Agent Leaderboard</div>
+        <div class="feat-desc">Rank agents by deals closed, commission earned, viewings done. Podium + full table</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="ai_tools.html" onclick="click(this)">
+        <div class="feat-icon" style="background:rgba(124,58,237,.25)">🤖</div>
+        <div class="feat-name">AI Tools</div>
+        <div class="feat-desc">AI property descriptions, smart lead scoring, price estimator, email sequences, revenue forecast</div>
+        <div class="feat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SALES PIPELINE -->
+  <div>
+    <div class="section-label">🤝 Sales Pipeline</div>
+    <div class="feat-grid">
+      <a class="feat-card" href="leads.html" onclick="click(this)">
+        <div class="feat-icon rose">🎯</div>
+        <div class="feat-name">Lead Management</div>
+        <div class="feat-desc">Track Instagram, Google, Referral leads through your pipeline. Convert to buyer or seller in one click</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="deals.html" onclick="click(this)">
+        <div class="feat-icon blue">🤝</div>
+        <div class="feat-name">Deal Tracker</div>
+        <div class="feat-desc">Drag-and-drop kanban board. Move deals across Inquiry → Viewing → Negotiation → Closed Won</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="payments.html" onclick="click(this)">
+        <div class="feat-icon green">💰</div>
+        <div class="feat-name">Payment Tracker</div>
+        <div class="feat-desc">Track token amounts, installments, commission payments. Mark received, view pending and overdue</div>
+        <div class="feat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SCHEDULING -->
+  <div>
+    <div class="section-label">📅 Scheduling & Tasks</div>
+    <div class="feat-grid">
+      <a class="feat-card" href="viewings.html" onclick="click(this)">
+        <div class="feat-icon teal">🏠</div>
+        <div class="feat-name">Viewing Scheduler</div>
+        <div class="feat-desc">Book property viewings with buyer, agent and time slot. Calendar view + list view with status tracking</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="tasks.html" onclick="click(this)">
+        <div class="feat-icon purple">✅</div>
+        <div class="feat-name">Tasks & Reminders</div>
+        <div class="feat-desc">Create follow-up tasks with priority and due dates. Color-coded overdue/today/upcoming alerts</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="docexpiry.html" onclick="click(this)">
+        <div class="feat-icon rose">📋</div>
+        <div class="feat-name">Document Expiry</div>
+        <div class="feat-desc">Track Emirates ID, Passport, Visa expiry for clients and employees. 30/60/90 day alerts</div>
+        <div class="feat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div>
+    <div class="section-label">🛠 Tools & Reports</div>
+    <div class="feat-grid">
+      <a class="feat-card" href="brochure.html" onclick="click(this)">
+        <div class="feat-icon amber">📄</div>
+        <div class="feat-name">Property Brochure</div>
+        <div class="feat-desc">Generate a professional print-ready PDF brochure for any property. Photos, specs, pricing, contact</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="compare.html" onclick="click(this)">
+        <div class="feat-icon indigo">⚖️</div>
+        <div class="feat-name">Property Comparison</div>
+        <div class="feat-desc">Compare up to 4 properties side by side — specs, pricing, amenities with best-value highlights</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="messaging.html" onclick="click(this)">
+        <div class="feat-icon blue">📨</div>
+        <div class="feat-name">Bulk Messaging</div>
+        <div class="feat-desc">Send personalized email campaigns to all clients. WhatsApp bulk links. 5 built-in templates</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="invoice.html" onclick="click(this)">
+        <div class="feat-icon green">🧾</div>
+        <div class="feat-name">Invoice Generator</div>
+        <div class="feat-desc">Generate professional payment receipts and invoices with company logo. Print or save as PDF</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="export.html" onclick="click(this)">
+        <div class="feat-icon orange">📤</div>
+        <div class="feat-name">Property Export</div>
+        <div class="feat-desc">Export listings to CSV for Bayut, PropertyFinder, 99acres, MagicBricks. Portal-ready format</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="search.html" onclick="click(this)">
+        <div class="feat-icon gray">🔍</div>
+        <div class="feat-name">Global Search</div>
+        <div class="feat-desc">Search across all properties, clients, employees and deals from one unified search bar</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="chat_inbox.html" onclick="click(this)">
+        <div class="feat-icon" style="background:rgba(20,0,204,.25)">💬</div>
+        <div class="feat-name">Chat Inbox</div>
+        <div class="feat-desc">Real-time messaging with clients through their portal. Full conversation history per client</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="bulkstatus.html" onclick="click(this)">
+        <div class="feat-icon amber">⚡</div>
+        <div class="feat-name">Bulk Status Update</div>
+        <div class="feat-desc">Select multiple properties and update availability to Available, Under Offer, Sold or Rented in one click</div>
+        <div class="feat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SYSTEM -->
+  <div>
+    <div class="section-label">⚙️ System</div>
+    <div class="feat-grid">
+      <a class="feat-card" href="activitylog.html" onclick="click(this)">
+        <div class="feat-icon gray">📜</div>
+        <div class="feat-name">Activity Log</div>
+        <div class="feat-desc">Full audit trail — who added, edited or deleted what and when. Filter by action type or user</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="renewals.html" onclick="click(this)">
+        <div class="feat-icon teal">🔄</div>
+        <div class="feat-name">Renewal Tracker</div>
+        <div class="feat-desc">Track lease expiry dates. 30/60 day alerts. Mark renewed, vacated. Full tenant history</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="/portal_login" target="_blank" onclick="click(this)">
+        <div class="feat-icon purple">🔑</div>
+        <div class="feat-name">Client Portal</div>
+        <div class="feat-desc">Separate login for buyers and sellers. They see their deals, payments, viewings and documents</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="settings.html" onclick="click(this)">
+        <div class="feat-icon" style="background:rgba(255,255,255,.08)">⚙️</div>
+        <div class="feat-name">Settings</div>
+        <div class="feat-desc">Change password, set company branding (logo, colors), backup and restore all data</div>
+        <div class="feat-arrow">→</div>
+      </a>
+      <a class="feat-card" href="propmap.html" onclick="click(this)">
+        <div class="feat-icon green">🗺</div>
+        <div class="feat-name">Property Map</div>
+        <div class="feat-desc">View all properties on an interactive map with clustering, satellite view and filters</div>
+        <div class="feat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Click animation
+  function click(el) {
+    el.classList.add('clicked');
+    setTimeout(() => el.classList.remove('clicked'), 250);
+  }
+
+  // ESC → home
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') window.location.href = 'home.html';
+  });
+</script>
+<script src="session-guard.js"></script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

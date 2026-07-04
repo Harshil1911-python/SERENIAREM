@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property Map – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <!-- Leaflet MarkerCluster -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%;font-family:'Nunito',sans-serif;background:#0a0a1a;overflow:hidden}
+
+    /* ── LAYOUT ── */
+    .layout{display:flex;flex-direction:column;height:100vh}
+
+    /* ── HEADER ── */
+    .header{background:#1400cc;display:flex;align-items:center;padding:0 20px;height:54px;flex-shrink:0;box-shadow:0 3px 16px rgba(20,0,204,.5);z-index:1000;gap:12px}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.08em;flex:1}
+    .header-stats{display:flex;gap:12px;align-items:center;flex-shrink:0}
+    .hstat{background:rgba(255,255,255,.12);border-radius:8px;padding:5px 12px;text-align:center}
+    .hstat-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#fff;line-height:1}
+    .hstat-label{font-size:.6rem;font-weight:900;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em}
+
+    /* ── TOOLBAR ── */
+    .toolbar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.07);padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;z-index:999}
+
+    .filter-group{display:flex;align-items:center;gap:6px}
+    .filter-label{color:rgba(255,255,255,.45);font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+    .filter-select,.search-input{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 12px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;outline:none;appearance:none;-webkit-appearance:none;transition:border-color .2s}
+    .filter-select:focus,.search-input:focus{border-color:#818cf8}
+    .filter-select option{background:#0f0f23;color:#fff}
+    .search-input{min-width:180px}
+    .search-input::placeholder{color:rgba(255,255,255,.25)}
+
+    .layer-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .layer-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+    .layer-btn.active{background:#1400cc;border-color:#1400cc;color:#fff}
+
+    .clear-btn{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.3);color:#f87171;font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;margin-left:auto}
+    .clear-btn:hover{background:rgba(220,38,38,.3)}
+
+    /* ── MAP CONTAINER ── */
+    .map-wrap{flex:1;position:relative}
+    #map{width:100%;height:100%}
+
+    /* ── SIDE PANEL ── */
+    .side-panel{position:absolute;right:0;top:0;bottom:0;width:340px;background:#0f0f23;border-left:1px solid rgba(255,255,255,.08);z-index:800;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;overflow:hidden}
+    .side-panel.open{transform:translateX(0)}
+    .panel-header{background:#1400cc;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .panel-header h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.06em;color:#fff}
+    .panel-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+    .panel-body{flex:1;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
+
+    .prop-card-side{background:#1e1e3a;border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;border:1.5px solid transparent;transition:all .2s}
+    .prop-card-side:hover{border-color:#818cf8;background:#252550}
+    .prop-card-side.active{border-color:#1400cc;background:#1a1a40}
+    .pc-img{width:100%;height:90px;border-radius:8px;object-fit:cover;margin-bottom:10px;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,.2)}
+    .pc-img img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+    .pc-id{font-size:.65rem;font-weight:900;color:#818cf8;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+    .pc-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#fff;letter-spacing:.04em;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pc-sub{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+    .pc-tag{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .pc-tag.cat{background:#1400cc;color:#fff}
+    .pc-price{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#818cf8;letter-spacing:.04em}
+    .pc-coords{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:4px}
+    .pc-detail-btn{width:100%;margin-top:10px;background:#1400cc;color:#fff;border:none;border-radius:8px;padding:8px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+    .pc-detail-btn:hover{background:#2c14ff}
+
+    /* ── CUSTOM LEAFLET MARKERS ── */
+    .custom-marker{
+      background:#1400cc;
+      border:2px solid #fff;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      width:28px;height:28px;
+      box-shadow:0 3px 12px rgba(20,0,204,.5);
+      transition:transform .15s;
+    }
+    .custom-marker.rent{background:#16a34a}
+    .custom-marker.other{background:#d97706}
+    .custom-marker-inner{
+      transform:rotate(45deg);
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.65rem;font-weight:900;color:#fff;
+    }
+
+    /* ── LEAFLET POPUP ── */
+    .leaflet-popup-content-wrapper{background:#0f0f23!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;box-shadow:0 8px 32px rgba(0,0,0,.5)!important;color:#fff!important;padding:0!important;min-width:220px}
+    .leaflet-popup-content{margin:0!important;padding:0!important}
+    .leaflet-popup-tip{background:#0f0f23!important}
+    .popup-inner{padding:14px 16px}
+    .popup-img{width:100%;height:100px;object-fit:cover;border-radius:10px 10px 0 0}
+    .popup-img-placeholder{width:100%;height:60px;background:#1400cc;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,.25)}
+    .popup-id{font-size:.65rem;font-weight:900;color:#818cf8;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+    .popup-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#fff;letter-spacing:.04em;margin-bottom:3px}
+    .popup-sub{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:6px}
+    .popup-price{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:#818cf8;margin-bottom:8px}
+    .popup-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+    .popup-tag{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:4px;text-transform:uppercase}
+    .popup-tag.cat{background:#1400cc;color:#fff}
+    .popup-btn{width:100%;background:#1400cc;color:#fff;border:none;border-radius:7px;padding:8px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+    .popup-btn:hover{background:#2c14ff}
+
+    /* ── NO COORDS BANNER ── */
+    .no-coords-banner{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(217,119,6,.9);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;padding:10px 20px;border-radius:10px;z-index:900;white-space:nowrap;display:none}
+
+    /* ── LOCATION SEARCH RESULT ── */
+    #geocodeResult{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f0f23;border:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;padding:8px 16px;border-radius:10px;z-index:900;display:none;max-width:320px;text-align:center}
+
+    /* ── LOADING ── */
+    .map-loading{position:absolute;inset:0;background:#0a0a1a;display:flex;align-items:center;justify-content:center;z-index:700;flex-direction:column;gap:14px}
+    .map-loading.hidden{display:none}
+    .map-spinner{width:48px;height:48px;border:5px solid rgba(129,140,248,.15);border-top-color:#818cf8;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .map-loading p{color:rgba(255,255,255,.5);font-weight:800;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase}
+
+    @media(max-width:700px){
+      .side-panel{width:100%}
+      .header-stats{display:none}
+      .toolbar{gap:6px}
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='prop.html'">← BACK</button>
+    <div class="header-title">PROPERTY MAP</div>
+    <div class="header-stats">
+      <div class="hstat"><div class="hstat-val" id="hsTotal">—</div><div class="hstat-label">Total</div></div>
+      <div class="hstat"><div class="hstat-val" id="hsMapped">—</div><div class="hstat-label">On Map</div></div>
+      <div class="hstat"><div class="hstat-val" id="hsShown">—</div><div class="hstat-label">Shown</div></div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <!-- Search -->
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search property…" oninput="applyFilters()"/>
+
+    <!-- Category filter -->
+    <div class="filter-group">
+      <span class="filter-label">Type</span>
+      <select class="filter-select" id="fCat" onchange="applyFilters()">
+        <option value="">All</option>
+        <option>Rent</option>
+        <option>Own / Buy</option>
+        <option>Buy / Own</option>
+        <option>Lease</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <!-- Region filter -->
+    <div class="filter-group">
+      <span class="filter-label">Region</span>
+      <select class="filter-select" id="fRegion" onchange="applyFilters()">
+        <option value="">All</option>
+        <option value="UAE">UAE</option>
+        <option value="India">India</option>
+      </select>
+    </div>
+
+    <!-- Map layer -->
+    <div class="filter-group">
+      <span class="filter-label">Map</span>
+      <button class="layer-btn active" id="layerStreet"  onclick="switchLayer('street')">Street</button>
+      <button class="layer-btn"        id="layerSatellite" onclick="switchLayer('satellite')">Satellite</button>
+      <button class="layer-btn"        id="layerDark"    onclick="switchLayer('dark')">Dark</button>
+    </div>
+
+    <!-- Cluster toggle -->
+    <button class="layer-btn" id="clusterBtn" onclick="toggleCluster()">Cluster: ON</button>
+
+    <button class="clear-btn" onclick="clearFilters()">✕ Clear</button>
+  </div>
+
+  <!-- MAP + SIDE PANEL -->
+  <div class="map-wrap">
+    <div class="map-loading" id="mapLoading">
+      <div class="map-spinner"></div>
+      <p>Loading Map…</p>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="no-coords-banner" id="noCoordsBanner">
+      ⚠️ Some properties have no coordinates — they won't appear on the map
+    </div>
+
+    <div id="geocodeResult"></div>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-header">
+        <h3 id="panelTitle">Properties</h3>
+        <button class="panel-close" onclick="closePanel()">✕</button>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+
+<script>
+  let map, markers = [], clusterGroup, allProps = [], filtered = [];
+  let currentLayer = 'street';
+  let clusterEnabled = true;
+  let activeMarker = null;
+
+  // ── Tile layers ──
+  const LAYERS = {
+    street:    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:19}),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution:'© Esri', maxZoom:19}),
+    dark:      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {attribution:'© CARTO', maxZoom:19}),
+  };
+
+  // ── Init map ──
+  function initMap() {
+    map = L.map('map', {
+      center: [25.2048, 55.2708], // Dubai default
+      zoom:   5,
+      zoomControl: true,
+    });
+    LAYERS.street.addTo(map);
+    clusterGroup = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 60,
+      iconCreateFunction: cluster => {
+        const n = cluster.getChildCount();
+        return L.divIcon({
+          html: `<div style="background:#1400cc;color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;border:2px solid #fff;box-shadow:0 3px 12px rgba(20,0,204,.5)">${n}</div>`,
+          iconSize: [38,38], iconAnchor:[19,19]
+        });
+      }
+    });
+    map.addLayer(clusterGroup);
+    document.getElementById('mapLoading').classList.add('hidden');
+  }
+
+  // ── Load properties ──
+  async function loadProps() {
+    try {
+      const res = await fetch('/get_properties');
+      allProps  = await res.json();
+      const mapped = allProps.filter(p => p.lat && p.lng).length;
+      const noCoords = allProps.length - mapped;
+
+      document.getElementById('hsTotal').textContent  = allProps.length;
+      document.getElementById('hsMapped').textContent = mapped;
+
+      if (noCoords > 0) {
+        const b = document.getElementById('noCoordsBanner');
+        b.textContent = `⚠️ ${noCoords} propert${noCoords>1?'ies':'y'} have no coordinates and won't appear on the map`;
+        b.style.display = 'block';
+        setTimeout(() => b.style.display = 'none', 5000);
+      }
+
+      applyFilters();
+
+      // Auto-fit map to markers
+      const withCoords = allProps.filter(p => p.lat && p.lng);
+      if (withCoords.length > 0) {
+        const bounds = L.latLngBounds(withCoords.map(p => [+p.lat, +p.lng]));
+        map.fitBounds(bounds, {padding:[40,40], maxZoom:10});
+      }
+    } catch(e) {
+      document.getElementById('mapLoading').classList.add('hidden');
+      console.error('Failed to load properties', e);
+    }
+  }
+
+  // ── Apply filters & re-render markers ──
+  function applyFilters() {
+    const q      = document.getElementById('searchInput').value.trim().toLowerCase();
+    const cat    = document.getElementById('fCat').value;
+    const region = document.getElementById('fRegion').value;
+
+    filtered = allProps.filter(p => {
+      if (!p.lat || !p.lng) return false;
+      if (q) {
+        const blob = [p.id,p.title,p.city,p.address,p.property_type,p.seller_name].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      if (cat    && p.category !== cat) return false;
+      if (region && (p.region||'UAE') !== region) return false;
+      return true;
+    });
+
+    renderMarkers();
+    document.getElementById('hsShown').textContent = filtered.length;
+    renderSideList();
+  }
+
+  // ── Render markers ──
+  function renderMarkers() {
+    clusterGroup.clearLayers();
+    markers = [];
+
+    filtered.forEach(p => {
+      const lat = parseFloat(p.lat);
+      const lng = parseFloat(p.lng);
+      if (isNaN(lat)||isNaN(lng)) return;
+
+      const cat    = (p.category||'').toLowerCase();
+      const cls    = cat.includes('rent') ? 'rent' : cat.includes('buy')||cat.includes('own') ? '' : 'other';
+      const cur    = p.currency === 'INR' ? '₹' : 'AED';
+      const price  = p.sale_price_aed||p.sale_price_inr||p.monthly_rent_aed||p.monthly_rent_inr;
+      const priceStr = price ? `${cur} ${Number(price).toLocaleString()}` : '';
+      const imgSrc = p.photos&&p.photos.length ? `/photos/${p.photos[0]}` : null;
+
+      const icon = L.divIcon({
+        html: `<div class="custom-marker ${cls}"><div class="custom-marker-inner">🏠</div></div>`,
+        iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28],
+        className: ''
+      });
+
+      const marker = L.marker([lat, lng], {icon});
+
+      // Popup
+      const popupHtml = `
+        ${imgSrc
+          ? `<img class="popup-img" src="${imgSrc}" onerror="this.style.display='none'" />`
+          : `<div class="popup-img-placeholder">🏠</div>`}
+        <div class="popup-inner">
+          <div class="popup-id"># ${esc(p.id)}</div>
+          <div class="popup-title">${esc(p.title||'Untitled')}</div>
+          <div class="popup-sub">${esc([p.city, p.address].filter(Boolean).join(', ')||'—')}</div>
+          ${priceStr ? `<div class="popup-price">${priceStr}</div>` : ''}
+          <div class="popup-tags">
+            ${p.category ? `<span class="popup-tag cat">${esc(p.category)}</span>` : ''}
+            ${p.property_type ? `<span class="popup-tag">${esc(p.property_type)}</span>` : ''}
+            ${p.bedrooms ? `<span class="popup-tag">${p.bedrooms} Bed</span>` : ''}
+            ${p.area_sqft ? `<span class="popup-tag">${p.area_sqft} sqft</span>` : ''}
+          </div>
+          <button class="popup-btn" onclick="window.location.href='propdet.html?id=${esc(p.id)}'">View Details →</button>
+        </div>`;
+
+      marker.bindPopup(L.popup({maxWidth:260, minWidth:220}).setContent(popupHtml));
+      marker.on('click', () => highlightSideCard(p.id));
+      marker._propId = p.id;
+
+      clusterGroup.addLayer(marker);
+      markers.push(marker);
+    });
+  }
+
+  // ── Side panel list ──
+  function renderSideList() {
+    const body = document.getElementById('panelBody');
+    document.getElementById('panelTitle').textContent = `Properties (${filtered.length})`;
+
+    if (!filtered.length) {
+      body.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3);font-weight:700">No properties on map</div>';
+      return;
+    }
+
+    body.innerHTML = filtered.map(p => {
+      const cur   = p.currency === 'INR' ? '₹' : 'AED';
+      const price = p.sale_price_aed||p.sale_price_inr||p.monthly_rent_aed||p.monthly_rent_inr;
+      const priceStr = price ? `${cur} ${Number(price).toLocaleString()}` : 'Price N/A';
+      const imgHtml  = p.photos&&p.photos.length
+        ? `<div class="pc-img"><img src="/photos/${p.photos[0]}" loading="lazy" onerror="this.parentElement.innerHTML='🏠'"/></div>`
+        : `<div class="pc-img">🏠</div>`;
+
+      return `
+        <div class="prop-card-side" id="sc_${p.id}" onclick="focusProp('${p.id}')">
+          ${imgHtml}
+          <div class="pc-id"># ${esc(p.id)}</div>
+          <div class="pc-title">${esc(p.title||'Untitled')}</div>
+          <div class="pc-sub">${esc([p.city, p.address].filter(Boolean).join(', ')||'—')}</div>
+          <div class="pc-tags">
+            ${p.category?`<span class="pc-tag cat">${esc(p.category)}</span>`:''}
+            ${p.property_type?`<span class="pc-tag">${esc(p.property_type)}</span>`:''}
+          </div>
+          <div class="pc-price">${priceStr}</div>
+          <div class="pc-coords">📍 ${parseFloat(p.lat).toFixed(5)}, ${parseFloat(p.lng).toFixed(5)}</div>
+          <button class="pc-detail-btn" onclick="event.stopPropagation();window.location.href='propdet.html?id=${esc(p.id)}'">View Full Details →</button>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Focus a property on map ──
+  function focusProp(id) {
+    const p = filtered.find(x => x.id === id);
+    if (!p || !p.lat || !p.lng) return;
+
+    // Highlight side card
+    highlightSideCard(id);
+
+    // Fly to marker
+    map.flyTo([+p.lat, +p.lng], 15, {duration:1.2});
+
+    // Open popup
+    const m = markers.find(x => x._propId === id);
+    if (m) {
+      clusterGroup.zoomToShowLayer(m, () => {
+        m.openPopup();
+      });
+    }
+  }
+
+  function highlightSideCard(id) {
+    document.querySelectorAll('.prop-card-side').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(`sc_${id}`);
+    if (el) {
+      el.classList.add('active');
+      el.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  }
+
+  // ── Panel toggle ──
+  function openPanel()  { document.getElementById('sidePanel').classList.add('open'); }
+  function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
+
+  // ── Map layer switch ──
+  function switchLayer(type) {
+    Object.values(LAYERS).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); });
+    LAYERS[type].addTo(map);
+    currentLayer = type;
+    document.getElementById('layerStreet').classList.toggle('active',   type==='street');
+    document.getElementById('layerSatellite').classList.toggle('active', type==='satellite');
+    document.getElementById('layerDark').classList.toggle('active',     type==='dark');
+  }
+
+  // ── Cluster toggle ──
+  function toggleCluster() {
+    clusterEnabled = !clusterEnabled;
+    const btn = document.getElementById('clusterBtn');
+    btn.textContent = `Cluster: ${clusterEnabled ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('active', clusterEnabled);
+
+    if (clusterEnabled) {
+      markers.forEach(m => { if (!clusterGroup.hasLayer(m)) clusterGroup.addLayer(m); });
+    } else {
+      markers.forEach(m => {
+        clusterGroup.removeLayer(m);
+        m.addTo(map);
+      });
+    }
+  }
+
+  // ── Clear filters ──
+  function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('fCat').value        = '';
+    document.getElementById('fRegion').value     = '';
+    applyFilters();
+  }
+
+  // ── "View on Map" button from outside ──
+  // Called if URL has ?id=XXXX
+  function checkUrlParam() {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) {
+      setTimeout(() => {
+        openPanel();
+        focusProp(id);
+      }, 800);
+    } else {
+      // Auto-open panel if we have properties
+      if (filtered.length > 0) openPanel();
+    }
+  }
+
+  // ── Also: show properties button in toolbar ──
+  // Add toggle panel button
+  document.querySelector('.toolbar').insertAdjacentHTML('afterbegin',
+    `<button class="layer-btn active" id="togglePanelBtn" onclick="document.getElementById('sidePanel').classList.toggle('open');this.classList.toggle('active')">☰ List</button>`
+  );
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  // ── Boot ──
+  initMap();
+  loadProps().then(() => {
+    checkUrlParam();
+  });
+</script>
+</body>
+</html>

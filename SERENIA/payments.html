@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payments – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-h{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+    .add-btn-h:hover{background:#e8e0ff}
+
+    /* KPI row */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06)}
+    .kpi-cell{padding:14px 20px;border-right:1px solid rgba(255,255,255,.06);text-align:center}
+    .kpi-cell:last-child{border-right:none}
+    .kv{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1}
+    .kl{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+    /* Filter bar */
+    .filter-bar{background:#0f0f23;padding:10px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.06)}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}.fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+    .fsearch{flex:1;max-width:240px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}.fsearch:focus{border-color:#818cf8}
+
+    /* Table */
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 20px 80px}
+    .pay-table{width:100%;border-collapse:separate;border-spacing:0 6px}
+    .pay-table th{text-align:left;padding:8px 14px;font-size:.68rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.09em}
+    .pay-row{background:#1e1e3a;border-radius:12px;cursor:pointer;transition:background .18s}
+    .pay-row:hover{background:#252545}
+    .pay-row td{padding:13px 14px;font-size:.85rem;font-weight:700;vertical-align:middle}
+    .pay-row td:first-child{border-radius:12px 0 0 12px}
+    .pay-row td:last-child{border-radius:0 12px 12px 0}
+
+    .pay-type-badge{font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;display:inline-block}
+    .pay-type-badge.token{background:rgba(20,0,204,.25);color:#818cf8}
+    .pay-type-badge.registration{background:rgba(217,119,6,.2);color:#fbbf24}
+    .pay-type-badge.installment{background:rgba(8,145,178,.2);color:#22d3ee}
+    .pay-type-badge.commission{background:rgba(124,58,237,.2);color:#c4b5fd}
+    .pay-type-badge.rent{background:rgba(22,163,74,.2);color:#4ade80}
+    .pay-type-badge.other{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+
+    .status-badge{font-size:.68rem;font-weight:900;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em}
+    .status-badge.pending{background:rgba(217,119,6,.2);color:#fbbf24}
+    .status-badge.received{background:rgba(22,163,74,.2);color:#4ade80}
+    .status-badge.overdue{background:rgba(220,38,38,.2);color:#f87171}
+    .status-badge.cancelled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+
+    .amount-cell{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#818cf8}
+    .action-btns{display:flex;gap:5px}
+    .act-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45);font-family:'Nunito',sans-serif;font-weight:800;font-size:.7rem;padding:4px 9px;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .act-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+    .act-btn.green:hover{background:rgba(22,163,74,.2);border-color:rgba(22,163,74,.3);color:#4ade80}
+    .act-btn.del:hover{background:rgba(220,38,38,.2);border-color:rgba(220,38,38,.3);color:#f87171}
+
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:#fff;margin-bottom:20px}
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none;resize:vertical}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .field textarea{min-height:60px}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-btns{display:flex;gap:10px;margin-top:10px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    @media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='premium.html'">← BACK</button>
+  <div class="header-title">💰 PAYMENT TRACKER</div>
+  <button class="add-btn-h" onclick="openAdd()">+ ADD PAYMENT</button>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-cell"><div class="kv" id="kTotal">—</div><div class="kl">Total</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#4ade80" id="kReceived">—</div><div class="kl">Received</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#fbbf24" id="kPending">—</div><div class="kl">Pending</div></div>
+  <div class="kpi-cell"><div class="kv" style="color:#f87171" id="kOverdue">—</div><div class="kl">Overdue</div></div>
+</div>
+
+<div class="filter-bar">
+  <button class="fchip active" onclick="setFilter('all',this)">All</button>
+  <button class="fchip" onclick="setFilter('Pending',this)">Pending</button>
+  <button class="fchip" onclick="setFilter('Received',this)">Received</button>
+  <button class="fchip" onclick="setFilter('Overdue',this)">Overdue</button>
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search…" oninput="render()"/>
+</div>
+
+<div class="wrap">
+  <table class="pay-table" id="payTable">
+    <thead><tr>
+      <th>Type</th><th>Deal / Description</th><th>Amount</th>
+      <th>Due Date</th><th>Status</th><th>Actions</th>
+    </tr></thead>
+    <tbody id="payBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Add Payment</div>
+    <input type="hidden" id="editId"/>
+    <div class="field"><label>Payment Type *</label>
+      <select id="pType">
+        <option>Token Amount</option><option>Registration Fee</option>
+        <option>Installment</option><option>Commission</option>
+        <option>Rent</option><option>Maintenance</option>
+        <option>Security Deposit</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Linked Deal</label>
+      <select id="pDeal"><option value="">— Select deal (optional) —</option></select>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Amount *</label>
+        <input type="number" id="pAmount" placeholder="e.g. 50000"/>
+      </div>
+      <div class="field"><label>Currency</label>
+        <select id="pCurrency"><option>AED</option><option>INR</option><option>USD</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Due Date</label>
+        <input type="date" id="pDue"/>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="pStatus">
+          <option>Pending</option><option>Received</option>
+          <option>Overdue</option><option>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Paid By (Buyer/Client Name)</label>
+      <input type="text" id="pPaidBy" placeholder="e.g. Rahul Sharma…"/>
+    </div>
+    <div class="field"><label>Payment Method</label>
+      <select id="pMethod">
+        <option>Bank Transfer</option><option>Cheque</option><option>Cash</option>
+        <option>Online</option><option>Crypto</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Reference / Cheque No.</label>
+      <input type="text" id="pRef" placeholder="e.g. CHQ-001234…"/>
+    </div>
+    <div class="field"><label>Notes</label>
+      <textarea id="pNotes" placeholder="Any additional notes…"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="savePayment()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _payments=[], _deals=[], _filter='all';
+  const today = new Date().toISOString().slice(0,10);
+
+  function effectiveStatus(p) {
+    if (p.status === 'Received' || p.status === 'Cancelled') return p.status;
+    if (p.due_date && p.due_date < today && p.status === 'Pending') return 'Overdue';
+    return p.status || 'Pending';
+  }
+
+  async function load() {
+    try {
+      const [pr, dr] = await Promise.all([fetch('/get_payments'), fetch('/get_deals')]);
+      _payments = await pr.json();
+      _deals    = await dr.json();
+      updateKPIs();
+      render();
+    } catch { document.getElementById('payBody').innerHTML = '<tr><td colspan="6" class="empty">Failed to load</td></tr>'; }
+  }
+
+  function updateKPIs() {
+    const statuses = _payments.map(p => effectiveStatus(p));
+    document.getElementById('kTotal').textContent    = _payments.length;
+    document.getElementById('kReceived').textContent = statuses.filter(s=>s==='Received').length;
+    document.getElementById('kPending').textContent  = statuses.filter(s=>s==='Pending').length;
+    document.getElementById('kOverdue').textContent  = statuses.filter(s=>s==='Overdue').length;
+  }
+
+  function setFilter(f, btn) {
+    _filter = f;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('fsearch').value.trim().toLowerCase();
+    const list = _payments.filter(p => {
+      const s = effectiveStatus(p);
+      if (_filter !== 'all' && s !== _filter) return false;
+      if (q) {
+        const blob = [p.pay_type, p.description, p.paid_by, p.ref_number].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b) => (b.due_date||'').localeCompare(a.due_date||''));
+
+    const body = document.getElementById('payBody');
+    if (!list.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty">No payments found</td></tr>';
+      return;
+    }
+
+    body.innerHTML = list.map(p => {
+      const s    = effectiveStatus(p);
+      const deal = _deals.find(d=>d.id===p.deal_id);
+      const cur  = p.currency||'AED';
+      const typeCls = (p.pay_type||'other').toLowerCase().replace(/[^a-z]/g,'').replace('tokena','token').replace('registr','registration').replace('install','installment').slice(0,12);
+      return `<tr class="pay-row" onclick="openEdit('${p.id}')">
+        <td><span class="pay-type-badge ${typeCls}">${esc(p.pay_type||'Other')}</span></td>
+        <td>
+          <div style="font-weight:800;color:#fff">${esc(deal?deal.title:p.description||'—')}</div>
+          ${p.paid_by?`<div style="font-size:.72rem;color:rgba(255,255,255,.4)">${esc(p.paid_by)}</div>`:''}
+          ${p.payment_method?`<div style="font-size:.7rem;color:rgba(255,255,255,.3)">${esc(p.payment_method)}</div>`:''}
+        </td>
+        <td><span class="amount-cell">${cur} ${Number(p.amount||0).toLocaleString()}</span></td>
+        <td style="color:${s==='Overdue'?'#f87171':s==='Received'?'#4ade80':'rgba(255,255,255,.5)'};font-size:.82rem;font-weight:800">${p.due_date||'—'}</td>
+        <td><span class="status-badge ${s.toLowerCase()}">${s}</span></td>
+        <td><div class="action-btns" onclick="event.stopPropagation()">
+          ${s==='Pending'||s==='Overdue'?`<button class="act-btn green" onclick="markReceived('${p.id}')">✅ Received</button>`:''}
+          <button class="act-btn" onclick="openEdit('${p.id}')">✏️</button>
+          <button class="act-btn del" onclick="deletePayment('${p.id}')">✕</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function populateDealSelect(currentId='') {
+    const sel = document.getElementById('pDeal');
+    sel.innerHTML = '<option value="">— Select deal (optional) —</option>' +
+      _deals.map(d=>`<option value="${d.id}" ${d.id===currentId?'selected':''}>${esc(d.title||d.id)} · ${esc(d.stage||'')}</option>`).join('');
+  }
+
+  function openAdd() {
+    document.getElementById('editId').value='';
+    document.getElementById('modalTitle').textContent='Add Payment';
+    populateDealSelect();
+    ['pAmount','pRef','pNotes','pPaidBy'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pType').value='Token Amount';
+    document.getElementById('pCurrency').value='AED';
+    document.getElementById('pDue').value=today;
+    document.getElementById('pStatus').value='Pending';
+    document.getElementById('pMethod').value='Bank Transfer';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function openEdit(id) {
+    const p=_payments.find(x=>x.id===id); if(!p) return;
+    document.getElementById('editId').value=id;
+    document.getElementById('modalTitle').textContent='Edit Payment';
+    populateDealSelect(p.deal_id||'');
+    document.getElementById('pType').value=p.pay_type||'Token Amount';
+    document.getElementById('pAmount').value=p.amount||'';
+    document.getElementById('pCurrency').value=p.currency||'AED';
+    document.getElementById('pDue').value=p.due_date||'';
+    document.getElementById('pStatus').value=p.status||'Pending';
+    document.getElementById('pPaidBy').value=p.paid_by||'';
+    document.getElementById('pMethod').value=p.payment_method||'Bank Transfer';
+    document.getElementById('pRef').value=p.ref_number||'';
+    document.getElementById('pNotes').value=p.notes||'';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  async function savePayment() {
+    const amount = document.getElementById('pAmount').value;
+    if (!amount) { showToast('⚠️ Enter amount'); return; }
+    const editId = document.getElementById('editId').value;
+    const data = {
+      pay_type:       document.getElementById('pType').value,
+      deal_id:        document.getElementById('pDeal').value,
+      amount,
+      currency:       document.getElementById('pCurrency').value,
+      due_date:       document.getElementById('pDue').value,
+      status:         document.getElementById('pStatus').value,
+      paid_by:        document.getElementById('pPaidBy').value.trim(),
+      payment_method: document.getElementById('pMethod').value,
+      ref_number:     document.getElementById('pRef').value.trim(),
+      notes:          document.getElementById('pNotes').value.trim(),
+    };
+    try {
+      const url = editId ? `/update_payment/${editId}` : '/save_payment';
+      const res  = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json = await res.json();
+      if (json.success) { closeModal(); await load(); showToast(editId?'✅ Updated!':'✅ Payment added!'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function markReceived(id) {
+    try {
+      const res  = await fetch(`/mark_payment_received/${id}`,{method:'POST'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Marked received!'); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function deletePayment(id) {
+    if (!confirm('Delete this payment record?')) return;
+    try {
+      const res  = await fetch(`/delete_payment/${id}`,{method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Deleted'); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  load();
+</script>
+</body>
+</html>

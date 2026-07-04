@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Statement of Profit or Loss
+{% endblock %}
+
+{% block main %}
+    {% if year == "all" or year == today_year %}
+        <h1 class="statement-h1">Statement of Profit or Loss for the year ended {{ today_date }}</h1>
+    {% else %}
+        <h1 class="statement-h1">Statement of Profit or Loss for the year ended 31 December {{ year }}</h1>
+    {% endif %}
+    <div class="statement-container">
+        <div id="choose-year">
+            <label for="year" class="year">Year: </label>
+            <select name="year" class="year" onchange="if (this.value) window.location.href=this.value">
+                <option value="" disabled selected>Select</option>
+                <option value="/sopl?year=all">All</option>
+                {% for yr in yrs %}
+                    <option value="/sopl?year={{ yr[0] }}">{{ yr[0] }}</option>
+                {% endfor %}
+            </select>
+            <a href="/sopl/download-excel?year={{ year }}" class="button-link"><button type="submit" class="btn btn-dark transaction-btn year" id="download-excel">Download as Excel</button></a>
+        </div>
+        <div class="overflow">
+            <table class="table table-bordered">
+                <colgroup>
+                    <col span="1" style="width: 60%;">
+                    <col span="1" style="width: 40%;">
+                </colgroup>
+                <thead>
+                    <th></th>
+                    <th>{{ currency }}</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[0][0]] }}</td>
+                        <td>{{ sopl_list[0][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[3][0]] }}</td>
+                        <td>{{ sopl_list[3][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Gross profit</td>
+                        <td class="td-bold">{{ total[0] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[4][0]] }}</td>
+                        <td>{{ sopl_list[4][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[5][0]] }}</td>
+                        <td>{{ sopl_list[5][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[2][0]] }}</td>
+                        <td>{{ sopl_list[2][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Profit from operations</td>
+                        <td class="td-bold">{{ total[1] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[6][0]] }}</td>
+                        <td>{{ sopl_list[6][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[1][0]] }}</td>
+                        <td>{{ sopl_list[1][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Profit before tax</td>
+                        <td class="td-bold">{{ total[2] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ subtypes[sopl_list[7][0]] }}</td>
+                        <td>{{ sopl_list[7][1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-bold">Profit for the year</td>
+                        <td class="td-bold">{{ total[3] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

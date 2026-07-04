@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    View accounts
+{% endblock %}
+
+{% block main %}
+    {% if success == "true" %}
+        <div class="alert alert-primary" role="alert">
+            Account deleted
+        </div>
+    {% endif %}
+    {% if success == "false" %}
+        <div class="alert alert-danger" role="alert">
+            Unsuccessful. Account must be zero balance.
+        </div>
+    {% endif %}
+    <div class="container2">
+        <h2>Account balances</h2>
+        <div class="overflow">
+            <table class="table display" id="table_id">
+                <thead>
+                    <th scope="col">Account name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Subtype</th>
+                    <th scope="col">Balance ({{ currency }})</th>
+                </thead>
+                <tbody>
+                {% for balance in balances %}
+                    <tr>
+                        <td><a href="/accounts/{{ balance[0] }}">{{ balance[1] }}</a></td>
+                        <td>{{ balance[2] }}</td>
+                        <td>{{ balance[3] }}</td>
+                        <td>{{ balance[4] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

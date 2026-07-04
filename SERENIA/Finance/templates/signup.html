@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sign Up
+{% endblock %}
+
+{% block main %}
+    {% if msg %}
+        <div class="alert alert-danger" role="alert">
+            {{ msg }}
+        </div>
+    {% endif %}
+    <h1>Sign Up</h1>
+    <div class="center-box">
+        <form class="form-group" method="post">
+            <div>
+                <label for="signup-name">Username</label>
+                <input autocomplete="off" type="text" id="signup-name" name="signup-name"><br>
+            </div>
+            <div>
+                <label for="signup-password1">Password</label>
+                <input autocomplete="off" type="password" id="signup-password1" name="signup-password1"><br>
+            </div>
+            <div>
+                <label for="signup-password2">Confirm password</label>
+                <input autocomplete="off" type="password" id="signup-password2" name="signup-password2"><br>
+            </div>
+            <div>
+                <label for="currency">Currency</label>
+                <select name="currency" class="full-width" id="type">
+                    {% for currency in currency_list %}
+                        <option value="{{ currency }}">{{ currency }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <input type="checkbox" name="agree" value="agree" id="agree">
+                <label for="agree" id="agree-label">I agree to the <a href="/terms-of-use">terms of use</a> of SERENIA.</label>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-dark transaction-btn" id="signup">Sign Up</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add an account
+{% endblock %}
+
+{% block main %}
+    {% if primary_msg %}
+        <div class="alert alert-primary" role="alert">
+            {{ primary_msg }}
+        </div>
+    {% endif %}
+
+    {% if alert_msg %}
+        <div class="alert alert-danger" role="alert">
+            {{ alert_msg }}
+        </div>
+    {% endif %}
+
+    <h1>Add an account</h1>
+    <div class="center-box">
+        <form class="form-group" method="post">
+            <div>
+                <label for="type">Account type</label>
+                <select name="type" class="full-width" id="type">
+                    {% for type in types %}
+                        <option value="{{ type[0] }}">{{ type[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="subtype">Account subtype</label>
+                <select name="subtype" class="full-width" id="subtype">
+                    <option value="ppe">Property, plant and equipment</option><option value="investments">Investments</option><option value="intangibles">Intangibles</option>
+                </select>
+            </div>
+            <div>
+                <label for="account-name">Account name</label>
+                <input autocomplete="off" type="text" class="full-width" id="account-name" name="account-name"><br>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-dark transaction-btn" id="save-account">Save</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

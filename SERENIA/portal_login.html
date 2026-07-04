@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Portal – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+
+    .card{background:#1e1e3a;border-radius:24px;padding:40px 40px 36px;width:100%;max-width:420px;border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+
+    .logo-area{text-align:center;margin-bottom:28px}
+    .logo-area img{height:52px;object-fit:contain;margin-bottom:10px;display:none}
+    .brand{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.12em;color:#fff}
+    .portal-label{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+    .field input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:11px;padding:13px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;outline:none;transition:all .2s}
+    .field input::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus{border-color:#818cf8;background:rgba(129,140,248,.07);box-shadow:0 0 0 3px rgba(129,140,248,.1)}
+
+    .pw-wrap{position:relative}
+    .pw-wrap input{padding-right:44px}
+    .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:1rem;transition:color .2s}
+    .pw-toggle:hover{color:rgba(255,255,255,.6)}
+
+    .login-btn{width:100%;background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:12px;padding:14px;cursor:pointer;box-shadow:0 0 24px rgba(20,0,204,.4);transition:all .2s;margin-top:4px}
+    .login-btn:hover{background:#2c14ff;transform:translateY(-2px)}
+    .login-btn:active{transform:translateY(0)}
+
+    .error-msg{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.25);border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;color:#f87171;margin-bottom:14px;display:none}
+    .error-msg.show{display:block}
+
+    .staff-link{text-align:center;margin-top:18px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.25)}
+    .staff-link a{color:rgba(255,255,255,.45);text-decoration:none;font-weight:800;transition:color .2s}
+    .staff-link a:hover{color:#818cf8}
+
+    .divider{border:none;border-top:1px solid rgba(255,255,255,.07);margin:20px 0}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-area">
+      <img id="brandLogo" src="" alt=""/>
+      <div class="brand" id="brandName">SERENIA</div>
+      <div class="portal-label">Client Portal</div>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter your username…" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="Enter your password…" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="pw-toggle" onclick="togglePw()">👁</button>
+      </div>
+    </div>
+
+    <button class="login-btn" onclick="doLogin()" id="loginBtn">LOGIN</button>
+
+    <hr class="divider"/>
+    <div class="staff-link">Staff? <a href="/">Login to Admin Panel →</a></div>
+  </div>
+
+  <script>
+    function togglePw() {
+      const i = document.getElementById('password');
+      i.type  = i.type === 'password' ? 'text' : 'password';
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl    = document.getElementById('errorMsg');
+      const btn      = document.getElementById('loginBtn');
+
+      if (!username || !password) {
+        errEl.textContent = 'Please enter your username and password.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      btn.textContent = 'Logging in…';
+      btn.disabled    = true;
+      errEl.classList.remove('show');
+
+      try {
+        const res  = await fetch('/client_login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({username, password}),
+        });
+        const json = await res.json();
+        if (json.success) {
+          window.location.href = '/portal';
+        } else {
+          errEl.textContent = json.error || 'Invalid username or password.';
+          errEl.classList.add('show');
+          btn.textContent = 'LOGIN';
+          btn.disabled    = false;
+        }
+      } catch {
+        errEl.textContent = 'Server error — please try again.';
+        errEl.classList.add('show');
+        btn.textContent = 'LOGIN';
+        btn.disabled    = false;
+      }
+    }
+
+    // Load branding
+    (async () => {
+      try {
+        const res = await fetch('/get_branding');
+        const b   = await res.json();
+        if (b.company_name) document.getElementById('brandName').textContent = b.company_name;
+        if (b.logo_filename) {
+          const img = document.getElementById('brandLogo');
+          img.src   = '/photos/' + encodeURIComponent(b.logo_filename);
+          img.style.display = 'block';
+        }
+        if (b.primary_color) {
+          document.querySelector('.login-btn').style.background = b.primary_color;
+          document.querySelector('.brand').style.color = b.primary_color;
+        }
+      } catch {}
+    })();
+  </script>
+</body>
+</html>

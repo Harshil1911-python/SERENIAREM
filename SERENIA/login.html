@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SERENIA – Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+
+    body{
+      background:url('bg.png') center/cover no-repeat;
+      background-color:#0a0a1a;
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;
+    }
+
+    .login-card{
+      background:rgba(15,15,35,.92);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:28px;
+      padding:52px 48px 44px;
+      width:100%;max-width:420px;
+      box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(129,140,248,.1);
+      backdrop-filter:blur(20px);
+      animation:cardIn .5s ease both;
+    }
+    @keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+    .logo{
+      text-align:center;
+      margin-bottom:36px;
+    }
+    .logo h1{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:3rem;letter-spacing:.15em;
+      color:#fff;line-height:1;
+    }
+    .logo p{
+      font-size:.82rem;font-weight:800;
+      letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(129,140,248,.8);
+      margin-top:4px;
+    }
+
+    .form-group{margin-bottom:18px}
+    .form-group label{
+      display:block;
+      color:rgba(255,255,255,.5);
+      font-size:.75rem;font-weight:900;
+      letter-spacing:.1em;text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .form-group input{
+      width:100%;
+      background:rgba(255,255,255,.07);
+      border:1.5px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:14px 18px;
+      color:#fff;
+      font-family:'Nunito',sans-serif;
+      font-size:1rem;font-weight:700;
+      outline:none;
+      transition:border-color .2s,background .2s;
+    }
+    .form-group input::placeholder{color:rgba(255,255,255,.2)}
+    .form-group input:focus{
+      border-color:#818cf8;
+      background:rgba(129,140,248,.08);
+    }
+
+    /* Show/hide password */
+    .pw-wrap{position:relative}
+    .pw-wrap input{padding-right:50px}
+    .pw-toggle{
+      position:absolute;right:16px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:rgba(255,255,255,.3);
+      cursor:pointer;font-size:1.1rem;padding:4px;
+      transition:color .2s;
+    }
+    .pw-toggle:hover{color:rgba(255,255,255,.6)}
+
+    .login-btn{
+      width:100%;margin-top:8px;
+      background:#1400cc;color:#fff;
+      border:none;border-radius:14px;
+      padding:16px;
+      font-family:'Nunito',sans-serif;
+      font-size:1.1rem;font-weight:900;
+      letter-spacing:.08em;text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:0 0 24px rgba(20,0,204,.5),0 6px 20px rgba(0,0,0,.3);
+      transition:background .2s,transform .15s,box-shadow .2s;
+    }
+    .login-btn:hover{
+      background:#2c14ff;
+      transform:translateY(-2px);
+      box-shadow:0 0 40px rgba(20,0,204,.7),0 8px 24px rgba(0,0,0,.35);
+    }
+    .login-btn:active{transform:scale(.98)}
+    .login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    .error-msg{
+      background:rgba(220,38,38,.15);
+      border:1px solid rgba(220,38,38,.3);
+      border-radius:10px;
+      padding:11px 16px;
+      color:#f87171;
+      font-size:.88rem;font-weight:800;
+      margin-bottom:16px;
+      display:none;
+      animation:shake .3s ease;
+    }
+    .error-msg.show{display:block}
+    @keyframes shake{
+      0%,100%{transform:translateX(0)}
+      25%{transform:translateX(-6px)}
+      75%{transform:translateX(6px)}
+    }
+
+    .footer-text{
+      text-align:center;
+      margin-top:28px;
+      color:rgba(255,255,255,.2);
+      font-size:.75rem;font-weight:800;
+      letter-spacing:.08em;text-transform:uppercase;
+    }
+
+    /* Loading spinner inside button */
+    .btn-spinner{
+      display:inline-block;
+      width:16px;height:16px;
+      border:2px solid rgba(255,255,255,.3);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin .6s linear infinite;
+      vertical-align:middle;
+      margin-right:8px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* TABS */
+    .login-tabs{display:flex;margin-bottom:28px;background:rgba(255,255,255,.06);border-radius:12px;padding:4px;gap:4px}
+    .login-tab{flex:1;text-align:center;padding:9px 12px;border-radius:9px;font-size:.8rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;color:rgba(255,255,255,.4);transition:all .2s}
+    .login-tab.active{background:#1400cc;color:#fff;box-shadow:0 2px 12px rgba(20,0,204,.4)}
+    .login-tab:hover:not(.active){color:rgba(255,255,255,.7)}
+
+    .tab-panel{display:none}.tab-panel.active{display:block}
+
+    .portal-link{display:block;text-align:center;margin-top:14px;color:rgba(255,255,255,.3);font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;transition:color .2s}
+    .portal-link:hover{color:rgba(255,255,255,.6)}
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="logo">
+      <h1 id="brandName">SERENIA</h1>
+      <p id="brandTagline">Real Estate Management</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('staff',this)">👔 Staff Login</div>
+      <div class="login-tab" onclick="switchLoginTab('client',this)">👤 Client Portal</div>
+    </div>
+
+    <!-- STAFF LOGIN -->
+    <div class="tab-panel active" id="panel-staff">
+      <div class="error-msg" id="errorMsg">⚠️ Invalid username or password</div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Enter username…" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('password').focus()"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="password" placeholder="Enter password…" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+          <button class="pw-toggle" onclick="togglePw()" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">LOGIN</button>
+    </div>
+
+    <!-- CLIENT PORTAL LOGIN -->
+    <div class="tab-panel" id="panel-client">
+      <div class="error-msg" id="clientErrorMsg">⚠️ Invalid username or password</div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="clientUsername" placeholder="Your portal username…" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('clientPassword').focus()"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="clientPassword" placeholder="Your portal password…" autocomplete="current-password" onkeydown="if(event.key==='Enter')doClientLogin()"/>
+          <button class="pw-toggle" onclick="toggleClientPw()" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <button class="login-btn" id="clientLoginBtn" onclick="doClientLogin()" style="background:linear-gradient(135deg,#7c3aed,#1400cc)">ACCESS MY PORTAL</button>
+      <div style="text-align:center;margin-top:14px;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3)">Contact your agent to get your portal credentials</div>
+    </div>
+
+    <div class="footer-text" id="footerText">SERENIA © 2026</div>
+  </div>
+
+  <script>
+    function togglePw() {
+      const inp = document.getElementById('password');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('loginBtn');
+      const err      = document.getElementById('errorMsg');
+
+      if (!username || !password) {
+        showError('Please enter username and password.');
+        return;
+      }
+
+      // Show loading
+      btn.disabled   = true;
+      btn.innerHTML  = '<span class="btn-spinner"></span>LOGGING IN…';
+      err.classList.remove('show');
+
+      try {
+        const res  = await fetch('/login', {
+          method:  'POST',
+          headers: {'Content-Type':'application/json'},
+          body:    JSON.stringify({username, password}),
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          // Redirect based on role
+          window.location.href = json.redirect || '/landpage';
+        } else {
+          showError(json.error || 'Invalid username or password.');
+        }
+      } catch {
+        showError('Could not connect to server.');
+      } finally {
+        btn.disabled  = false;
+        btn.innerHTML = 'LOGIN';
+      }
+    }
+
+    function showError(msg) {
+      const err = document.getElementById('errorMsg');
+      err.textContent = '⚠️ ' + msg;
+      err.classList.remove('show');
+      void err.offsetWidth;
+      err.classList.add('show');
+    }
+
+    function switchLoginTab(tab, btn) {
+      document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+    }
+
+    function toggleClientPw() {
+      const inp = document.getElementById('clientPassword');
+      inp.type  = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    async function doClientLogin() {
+      const username = document.getElementById('clientUsername').value.trim();
+      const password = document.getElementById('clientPassword').value;
+      const btn      = document.getElementById('clientLoginBtn');
+      const err      = document.getElementById('clientErrorMsg');
+      if (!username || !password) {
+        err.textContent = '⚠️ Enter your username and password';
+        err.classList.add('show'); return;
+      }
+      btn.disabled  = true;
+      btn.innerHTML = '<span class="btn-spinner"></span>LOGGING IN…';
+      err.classList.remove('show');
+      try {
+        const res  = await fetch('/client_login', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({username, password}),
+        });
+        const json = await res.json();
+        if (json.success) {
+          window.location.href = '/portal';
+        } else {
+          err.textContent = '⚠️ ' + (json.error || 'Invalid credentials');
+          err.classList.add('show');
+        }
+      } catch {
+        err.textContent = '⚠️ Could not connect';
+        err.classList.add('show');
+      } finally {
+        btn.disabled  = false;
+        btn.innerHTML = 'ACCESS MY PORTAL';
+      }
+    }
+
+    // Load branding
+    (async () => {
+      try {
+        const res = await fetch('/get_branding');
+        const b   = await res.json();
+        if (b.company_name) {
+          document.getElementById('brandName').textContent    = b.company_name;
+          document.getElementById('footerText').textContent   = b.company_name + ' © ' + new Date().getFullYear();
+          document.title = b.company_name + ' – Login';
+        }
+        if (b.tagline) document.getElementById('brandTagline').textContent = b.tagline;
+        if (b.primary_color) {
+          document.querySelectorAll('.login-tab.active').forEach(t => t.style.background = b.primary_color);
+          document.querySelectorAll('.login-btn').forEach(b2 => { if (!b2.style.background.includes('7c3aed')) b2.style.background = b.primary_color; });
+        }
+      } catch {}
+    })();
+  </script>
+
+</body>
+</html>

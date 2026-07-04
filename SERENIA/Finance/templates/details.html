@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Account details
+{% endblock %}
+
+{% block main %}
+    <div class="container2">
+        <h1>{{ account_details[0] }}</h1>
+        <div class="details-container overflow">
+            <table class="table">
+                <tr>
+                    <th>Account type</th>
+                    <td>{{ account_details[1] }}</td>
+                </tr>
+                <tr>
+                    <th>Account subtype</th>
+                    <td>{{ account_details[2] }}</td>
+                </tr>
+                <tr>
+                    <th>Balance</th>
+                    <td>{{ account_details[3] }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="edit-delete">
+            <a href="/delete-account/{{ id }}" class="button-link" id="delete-account-link"><button class="btn btn-dark transaction-btn" id="login">Delete account</button></a>
+        </div>
+        <h2>Recent transactions</h2>
+        <div class="overflow">
+            <table class="table display" id="table_id">
+                <thead>
+                    <th scope="col">Date (UTC)</th>
+                    <th scope="col">Debit</th>
+                    <th scope="col">Credit</th>
+                    <th scope="col">Particular</th>
+                    <th scope="col">Amount ({{ currency }})</th>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                    {% for item in transaction %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Search – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .search-hero{padding:32px 24px 24px;max-width:780px;margin:0 auto}
+    .search-bar-wrap{position:relative;margin-bottom:10px}
+    .search-bar-wrap input{width:100%;background:#1e1e3a;border:2px solid rgba(129,140,248,.3);border-radius:16px;padding:16px 20px 16px 52px;color:#fff;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;outline:none;transition:all .2s}
+    .search-bar-wrap input:focus{border-color:#818cf8;background:#252545;box-shadow:0 0 0 4px rgba(129,140,248,.1)}
+    .search-bar-wrap input::placeholder{color:rgba(255,255,255,.25)}
+    .search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1.2rem;pointer-events:none}
+    .search-clear{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.5);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;display:none}
+    .search-bar-wrap input:not(:placeholder-shown) ~ .search-clear{display:block}
+    .search-hint{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.3);text-align:center}
+
+    .filters-row{display:flex;gap:8px;flex-wrap:wrap;max-width:780px;margin:0 auto 6px;padding:0 24px}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}.fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+
+    .results-wrap{max-width:780px;margin:0 auto;padding:6px 24px 80px}
+    .results-count{font-size:.75rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+
+    .section-group{margin-bottom:24px}
+    .section-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)}
+    .section-icon{font-size:1rem}
+    .section-label{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.08em;color:rgba(255,255,255,.5)}
+    .section-count{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:.68rem;font-weight:900;padding:2px 8px;border-radius:5px;margin-left:auto}
+
+    .result-item{display:flex;align-items:center;gap:12px;background:#1e1e3a;border-radius:12px;padding:13px 16px;border:1.5px solid transparent;cursor:pointer;transition:all .2s;margin-bottom:7px;text-decoration:none}
+    .result-item:hover{border-color:rgba(129,140,248,.3);background:#252545;transform:translateX(3px)}
+    .result-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .result-avatar.prop{background:rgba(20,0,204,.3)}
+    .result-avatar.seller{background:rgba(124,58,237,.25)}
+    .result-avatar.buyer{background:rgba(10,124,62,.2)}
+    .result-avatar.emp{background:rgba(217,119,6,.2)}
+    .result-avatar.deal{background:rgba(20,0,204,.2)}
+    .result-avatar.lead{background:rgba(225,29,72,.2)}
+    .result-info{flex:1;min-width:0}
+    .result-name{font-weight:800;font-size:.9rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .result-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .result-tag{font-size:.65rem;font-weight:900;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+    .result-tag.prop{background:rgba(20,0,204,.2);color:#818cf8}
+    .result-tag.seller{background:rgba(124,58,237,.2);color:#c4b5fd}
+    .result-tag.buyer{background:rgba(10,124,62,.2);color:#4ade80}
+    .result-tag.emp{background:rgba(217,119,6,.2);color:#fbbf24}
+    .result-tag.deal{background:rgba(74,222,128,.15);color:#4ade80}
+    .result-tag.lead{background:rgba(225,29,72,.15);color:#f87171}
+
+    .highlight{background:rgba(129,140,248,.2);color:#a5b4fc;border-radius:3px;padding:0 2px}
+
+    .empty-state{text-align:center;padding:60px 20px}
+    .empty-icon{font-size:3.5rem;margin-bottom:14px}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;color:rgba(255,255,255,.3);margin-bottom:6px}
+    .empty-sub{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.2)}
+
+    .loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:rgba(255,255,255,.3);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.8rem}
+    .spinner{width:24px;height:24px;border:3px solid rgba(129,140,248,.15);border-top-color:#818cf8;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">🔍 GLOBAL SEARCH</div>
+</div>
+
+<div class="search-hero">
+  <div class="search-bar-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search properties, clients, employees, deals…" oninput="onInput()" autofocus/>
+    <button class="search-clear" onclick="clearSearch()">✕ Clear</button>
+  </div>
+  <div class="search-hint">Search across everything — press Enter or type to search</div>
+</div>
+
+<div class="filters-row">
+  <button class="fchip active" onclick="setType('all',this)">All</button>
+  <button class="fchip" onclick="setType('prop',this)">🏠 Properties</button>
+  <button class="fchip" onclick="setType('seller',this)">👤 Sellers</button>
+  <button class="fchip" onclick="setType('buyer',this)">🛒 Buyers</button>
+  <button class="fchip" onclick="setType('emp',this)">👔 Employees</button>
+  <button class="fchip" onclick="setType('deal',this)">🤝 Deals</button>
+  <button class="fchip" onclick="setType('lead',this)">🎯 Leads</button>
+</div>
+
+<div class="results-wrap">
+  <div id="resultsCount" class="results-count"></div>
+  <div id="results"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start Typing to Search</div><div class="empty-sub">Search across all properties, clients, employees, deals and leads</div></div></div>
+</div>
+
+<script>
+  let _data = {props:[], sellers:[], buyers:[], emps:[], deals:[], leads:[]};
+  let _type = 'all', _q = '', _debounce = null, _loaded = false;
+
+  async function loadAll() {
+    document.getElementById('results').innerHTML = '<div class="loading"><div class="spinner"></div>Loading data…</div>';
+    try {
+      const [pr, sr, br, er, dr, lr] = await Promise.all([
+        fetch('/get_properties'), fetch('/get_sellers'), fetch('/get_buyers'),
+        fetch('/get_employees'),  fetch('/get_deals'),   fetch('/get_leads'),
+      ]);
+      _data.props   = await pr.json();
+      _data.sellers = await sr.json();
+      _data.buyers  = await br.json();
+      _data.emps    = await er.json();
+      _data.deals   = await dr.json();
+      _data.leads   = await lr.json();
+      _loaded = true;
+      document.getElementById('results').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start Typing to Search</div><div class="empty-sub">Search across all properties, clients, employees, deals and leads</div></div>';
+    } catch {
+      document.getElementById('results').innerHTML = '<div class="empty-state"><div class="empty-title">Failed to load</div></div>';
+    }
+  }
+
+  function onInput() {
+    clearTimeout(_debounce);
+    _q = document.getElementById('searchInput').value.trim();
+    if (!_q) { document.getElementById('results').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start Typing</div></div>'; document.getElementById('resultsCount').textContent=''; return; }
+    _debounce = setTimeout(render, 180);
+  }
+
+  function setType(t, btn) {
+    _type = t;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    if (_q) render();
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    _q = '';
+    document.getElementById('results').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start Typing</div></div>';
+    document.getElementById('resultsCount').textContent = '';
+    document.getElementById('searchInput').focus();
+  }
+
+  function match(text) {
+    return (text||'').toLowerCase().includes(_q.toLowerCase());
+  }
+
+  function hi(text) {
+    if (!text) return '';
+    const re = new RegExp(`(${_q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    return esc(text).replace(re, '<span class="highlight">$1</span>');
+  }
+
+  function render() {
+    if (!_loaded) return;
+    const q = _q.toLowerCase();
+    const results = [];
+
+    if (_type === 'all' || _type === 'prop') {
+      _data.props.filter(p =>
+        match(p.title)||match(p.city)||match(p.address)||match(p.id)||match(p.seller_name)||match(p.property_type)
+      ).forEach(p => results.push({
+        type:'prop', icon:'🏠', label:'Property',
+        name: p.title||p.id,
+        sub:  [p.city, p.property_type, p.sale_price_aed?'AED '+Number(p.sale_price_aed).toLocaleString():''].filter(Boolean).join(' · '),
+        link: `propdet.html?id=${p.id}`,
+      }));
+    }
+    if (_type === 'all' || _type === 'seller') {
+      _data.sellers.filter(s => match(s.seller_name)||match(s.phone)||match(s.email)||match(s.nationality))
+      .forEach(s => results.push({
+        type:'seller', icon:'👤', label:'Seller',
+        name: s.seller_name,
+        sub:  [s.phone, s.email, s.nationality].filter(Boolean).join(' · '),
+        link: `sellerdet.html?id=${s.id}`,
+      }));
+    }
+    if (_type === 'all' || _type === 'buyer') {
+      _data.buyers.filter(b => match(b.buyer_name)||match(b.phone)||match(b.email)||match(b.nationality))
+      .forEach(b => results.push({
+        type:'buyer', icon:'🛒', label:'Buyer',
+        name: b.buyer_name,
+        sub:  [b.phone, b.email, b.intent, b.nationality].filter(Boolean).join(' · '),
+        link: `buyerdet.html?id=${b.id}`,
+      }));
+    }
+    if (_type === 'all' || _type === 'emp') {
+      _data.emps.filter(e => match(e.emp_name)||match(e.phone)||match(e.email)||match(e.department)||match(e.role))
+      .forEach(e => results.push({
+        type:'emp', icon:'👔', label:'Employee',
+        name: e.emp_name,
+        sub:  [e.role, e.department, e.phone].filter(Boolean).join(' · '),
+        link: `empdet.html?id=${e.id}`,
+      }));
+    }
+    if (_type === 'all' || _type === 'deal') {
+      _data.deals.filter(d => match(d.title)||match(d.deal_type)||match(d.stage)||match(d.id))
+      .forEach(d => results.push({
+        type:'deal', icon:'🤝', label:'Deal',
+        name: d.title||d.id,
+        sub:  [d.deal_type, d.stage, d.currency&&d.value?d.currency+' '+Number(d.value).toLocaleString():''].filter(Boolean).join(' · '),
+        link: `deals.html`,
+      }));
+    }
+    if (_type === 'all' || _type === 'lead') {
+      _data.leads.filter(l => match(l.name)||match(l.phone)||match(l.email)||match(l.source)||match(l.status))
+      .forEach(l => results.push({
+        type:'lead', icon:'🎯', label:'Lead',
+        name: l.name,
+        sub:  [l.source, l.intent, l.status, l.phone].filter(Boolean).join(' · '),
+        link: `leads.html`,
+      }));
+    }
+
+    document.getElementById('resultsCount').textContent = results.length
+      ? `${results.length} result${results.length!==1?'s':''} for "${_q}"`
+      : '';
+
+    if (!results.length) {
+      document.getElementById('results').innerHTML = `<div class="empty-state"><div class="empty-icon">😶</div><div class="empty-title">No Results</div><div class="empty-sub">Nothing matched "${esc(_q)}" — try a different keyword</div></div>`;
+      return;
+    }
+
+    // Group by type
+    const groups = {};
+    const typeInfo = {prop:{icon:'🏠',label:'Properties'},seller:{icon:'👤',label:'Sellers'},buyer:{icon:'🛒',label:'Buyers'},emp:{icon:'👔',label:'Employees'},deal:{icon:'🤝',label:'Deals'},lead:{icon:'🎯',label:'Leads'}};
+    results.forEach(r => { if(!groups[r.type]) groups[r.type]=[]; groups[r.type].push(r); });
+
+    document.getElementById('results').innerHTML = Object.entries(groups).map(([type, items]) => {
+      const ti = typeInfo[type];
+      return `<div class="section-group">
+        <div class="section-head">
+          <span class="section-icon">${ti.icon}</span>
+          <span class="section-label">${ti.label}</span>
+          <span class="section-count">${items.length}</span>
+        </div>
+        ${items.slice(0,15).map(r => `
+          <a class="result-item" href="${r.link}">
+            <div class="result-avatar ${r.type}">${r.icon}</div>
+            <div class="result-info">
+              <div class="result-name">${hi(r.name)}</div>
+              <div class="result-sub">${hi(r.sub)}</div>
+            </div>
+            <span class="result-tag ${r.type}">${r.label}</span>
+          </a>`).join('')}
+        ${items.length>15?`<div style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3);text-align:center;padding:6px">+${items.length-15} more — refine your search</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  loadAll();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>
