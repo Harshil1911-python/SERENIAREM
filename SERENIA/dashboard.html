@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+
+    .header{background:#1400cc;display:flex;align-items:center;gap:16px;padding:14px 28px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 18px;border-radius:10px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;color:#fff;letter-spacing:.07em;flex:1}
+    .header-date{color:rgba(255,255,255,.5);font-size:.8rem;font-weight:800;letter-spacing:.05em}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:24px 24px 80px;display:flex;flex-direction:column;gap:20px}
+
+    /* KPI ROW */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:500px){.kpi-row{grid-template-columns:1fr 1fr}}
+
+    .kpi{background:#1e1e3a;border-radius:16px;padding:20px 22px;border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;animation:fadeUp .5s ease both}
+    .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+    .kpi.blue::before{background:#1400cc}
+    .kpi.green::before{background:#16a34a}
+    .kpi.amber::before{background:#d97706}
+    .kpi.purple::before{background:#7c3aed}
+    .kpi.pink::before{background:#db2777}
+    .kpi.teal::before{background:#0891b2}
+    .kpi.rose::before{background:#e11d48}
+    .kpi.indigo::before{background:#4f46e5}
+    .kpi-icon{font-size:1.6rem;margin-bottom:8px}
+    .kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:#fff;line-height:1;margin-bottom:4px}
+    .kpi-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em}
+    .kpi-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.25);margin-top:4px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CHARTS ROW */
+    .charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    @media(max-width:900px){.charts-row{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.charts-row{grid-template-columns:1fr}}
+
+    .chart-card{background:#1e1e3a;border-radius:16px;padding:20px 22px;border:1px solid rgba(255,255,255,.07);animation:fadeUp .5s ease both}
+    .chart-title{font-size:.82rem;font-weight:900;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+
+    /* Donut chart */
+    .donut-wrap{position:relative;display:flex;justify-content:center;align-items:center;margin-bottom:14px}
+    .donut-center{position:absolute;text-align:center}
+    .donut-center-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;line-height:1}
+    .donut-center-label{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em}
+
+    /* Legend */
+    .legend{display:flex;flex-direction:column;gap:6px}
+    .legend-item{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800}
+    .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .legend-name{flex:1;color:rgba(255,255,255,.6)}
+    .legend-val{color:#fff;font-family:'Bebas Neue',sans-serif;font-size:.95rem}
+    .legend-pct{color:rgba(255,255,255,.3);font-size:.7rem}
+
+    /* Bar chart */
+    .bar-chart{display:flex;flex-direction:column;gap:8px}
+    .bar-row{display:flex;align-items:center;gap:10px}
+    .bar-label{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.5);width:70px;text-align:right;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar-track{flex:1;background:rgba(255,255,255,.06);border-radius:50px;height:10px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:50px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+    .bar-count{font-size:.75rem;font-weight:900;color:rgba(255,255,255,.5);width:24px;text-align:right;flex-shrink:0}
+
+    /* Activity feed */
+    .activity-row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    @media(max-width:700px){.activity-row{grid-template-columns:1fr}}
+
+    .feed{display:flex;flex-direction:column;gap:0}
+    .feed-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .feed-item:last-child{border-bottom:none}
+    .feed-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .feed-icon.prop{background:rgba(20,0,204,.3)}
+    .feed-icon.seller{background:rgba(124,58,237,.3)}
+    .feed-icon.buyer{background:rgba(10,124,62,.3)}
+    .feed-icon.emp{background:rgba(217,119,6,.3)}
+    .feed-text{flex:1;min-width:0}
+    .feed-main{font-size:.84rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .feed-time{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:2px}
+
+    /* Top properties */
+    .top-list{display:flex;flex-direction:column;gap:8px}
+    .top-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .18s}
+    .top-item:hover{background:rgba(255,255,255,.07)}
+    .top-rank{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:rgba(255,255,255,.25);width:20px;flex-shrink:0}
+    .top-thumb{width:36px;height:36px;border-radius:7px;object-fit:cover;background:#1400cc;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:rgba(255,255,255,.3);overflow:hidden}
+    .top-thumb img{width:100%;height:100%;object-fit:cover}
+    .top-info{flex:1;min-width:0}
+    .top-title{font-size:.82rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .top-sub{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35)}
+    .top-price{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:#818cf8;flex-shrink:0}
+
+    /* Nationality breakdown */
+    .nat-list{display:flex;flex-direction:column;gap:7px}
+    .nat-row{display:flex;align-items:center;gap:8px}
+    .nat-flag{font-size:1.1rem;flex-shrink:0}
+    .nat-name{flex:1;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em}
+    .nat-bar-track{width:80px;background:rgba(255,255,255,.06);border-radius:50px;height:6px;overflow:hidden;flex-shrink:0}
+    .nat-bar-fill{height:100%;background:#818cf8;border-radius:50px;transition:width .8s ease}
+    .nat-count{font-size:.75rem;font-weight:900;color:rgba(255,255,255,.4);width:20px;text-align:right;flex-shrink:0}
+
+    .loading-dash{display:flex;flex-direction:column;gap:12px;padding:40px 0;align-items:center;color:rgba(255,255,255,.3);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .spinner{width:40px;height:40px;border:4px solid rgba(129,140,248,.15);border-top-color:#818cf8;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Refresh button */
+    .refresh-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.05em;text-transform:uppercase}
+    .refresh-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+  <div class="header-title">📊 DASHBOARD</div>
+  <div class="header-date" id="headerDate"></div>
+  <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
+</div>
+
+<div class="wrap" id="wrap">
+  <div class="loading-dash"><div class="spinner"></div><span>Loading analytics…</span></div>
+</div>
+
+<script>
+  // Set date
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  function fmt(n){return Number(n).toLocaleString()}
+
+  async function loadDashboard() {
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = '<div class="loading-dash"><div class="spinner"></div><span>Loading analytics…</span></div>';
+
+    try {
+      const [pr, sr, br, er] = await Promise.all([
+        fetch('/get_properties'), fetch('/get_sellers'),
+        fetch('/get_buyers'),    fetch('/get_employees'),
+      ]);
+      const props   = await pr.json();
+      const sellers = await sr.json();
+      const buyers  = await br.json();
+      const emps    = await er.json();
+
+      renderDashboard(props, sellers, buyers, emps);
+    } catch(e) {
+      wrap.innerHTML = '<div class="loading-dash">Failed to load data</div>';
+    }
+  }
+
+  function renderDashboard(props, sellers, buyers, emps) {
+    // ── Compute KPIs ──
+    const buyProps   = props.filter(p => (p.category||'').toLowerCase().includes('buy') || (p.category||'').toLowerCase().includes('own'));
+    const rentProps  = props.filter(p => (p.category||'').toLowerCase().includes('rent'));
+    const otherProps = props.filter(p => !buyProps.includes(p) && !rentProps.includes(p));
+    const uaeProps   = props.filter(p => (p.region||'UAE') === 'UAE');
+    const indProps   = props.filter(p => p.region === 'India');
+    const activeEmps = emps.filter(e => e.status === 'Active');
+    const withCoords = props.filter(p => p.lat && p.lng);
+
+    // Average price
+    const pricesAED = props.filter(p=>p.sale_price_aed).map(p=>+p.sale_price_aed);
+    const avgAED    = pricesAED.length ? Math.round(pricesAED.reduce((a,b)=>a+b,0)/pricesAED.length) : 0;
+    const pricesINR = props.filter(p=>p.sale_price_inr).map(p=>+p.sale_price_inr);
+    const avgINR    = pricesINR.length ? Math.round(pricesINR.reduce((a,b)=>a+b,0)/pricesINR.length) : 0;
+
+    // Property types breakdown
+    const typeMap = {};
+    props.forEach(p => { const t = p.property_type||'Other'; typeMap[t] = (typeMap[t]||0)+1; });
+    const topTypes = Object.entries(typeMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+    // Nationality breakdown (clients)
+    const natMap = {};
+    [...sellers, ...buyers].forEach(c => {
+      const n = c.nationality||'Unknown';
+      natMap[n] = (natMap[n]||0)+1;
+    });
+    const topNats = Object.entries(natMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    // Dept breakdown (employees)
+    const deptMap = {};
+    emps.forEach(e => { const d = e.department||'Other'; deptMap[d] = (deptMap[d]||0)+1; });
+    const topDepts = Object.entries(deptMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    // Recent activity (last 10 by created_at)
+    const allItems = [
+      ...props.map(p   => ({type:'prop',   name:p.title||'Untitled', time:p.updated_at||p.created_at||''})),
+      ...sellers.map(s => ({type:'seller', name:s.seller_name||'?',  time:s.updated_at||s.created_at||''})),
+      ...buyers.map(b  => ({type:'buyer',  name:b.buyer_name||'?',   time:b.updated_at||b.created_at||''})),
+      ...emps.map(e    => ({type:'emp',    name:e.emp_name||'?',      time:e.updated_at||e.created_at||''})),
+    ].filter(x=>x.time).sort((a,b)=>b.time.localeCompare(a.time)).slice(0,8);
+
+    // Top properties by price
+    const topProps = [...props]
+      .filter(p => p.sale_price_aed || p.sale_price_inr)
+      .sort((a,b) => (+b.sale_price_aed||+b.sale_price_inr||0) - (+a.sale_price_aed||+a.sale_price_inr||0))
+      .slice(0,5);
+
+    // Colors
+    const COLORS = ['#1400cc','#16a34a','#d97706','#7c3aed','#db2777','#0891b2','#e11d48','#4f46e5'];
+
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = `
+      <!-- KPI ROW 1 -->
+      <div class="kpi-row">
+        ${kpi('🏠','blue', props.length,   'Total Properties', `${uaeProps.length} UAE · ${indProps.length} India`)}
+        ${kpi('👥','purple', sellers.length+buyers.length, 'Total Clients', `${sellers.length} sellers · ${buyers.length} buyers`)}
+        ${kpi('👔','amber', emps.length, 'Employees', `${activeEmps.length} active · ${emps.length-activeEmps.length} inactive`)}
+        ${kpi('📍','teal', withCoords.length, 'On Map', `${props.length-withCoords.length} missing coords`)}
+      </div>
+
+      <!-- KPI ROW 2 -->
+      <div class="kpi-row">
+        ${kpi('🛒','green', buyProps.length,  'For Sale / Buy', `${Math.round(buyProps.length/Math.max(props.length,1)*100)}% of total`)}
+        ${kpi('🏡','indigo', rentProps.length, 'For Rent',       `${Math.round(rentProps.length/Math.max(props.length,1)*100)}% of total`)}
+        ${avgAED ? kpi('💰','rose', 'AED '+fmt(avgAED), 'Avg Sale Price (UAE)', `${pricesAED.length} properties`) : kpi('💰','rose', avgINR?'₹'+fmt(avgINR):'—', 'Avg Sale Price', '')}
+        ${kpi('📋','pink', sellers.length, 'Active Sellers', `${buyers.length} buyers registered`)}
+      </div>
+
+      <!-- CHARTS ROW 1 -->
+      <div class="charts-row">
+        <!-- Property category donut -->
+        <div class="chart-card" style="animation-delay:.1s">
+          <div class="chart-title">Category Split</div>
+          ${donutChart([
+            {label:'For Sale',  val:buyProps.length,   color:'#1400cc'},
+            {label:'For Rent',  val:rentProps.length,  color:'#16a34a'},
+            {label:'Other',     val:otherProps.length, color:'#d97706'},
+          ], props.length, 'Total')}
+        </div>
+
+        <!-- Property types bar -->
+        <div class="chart-card" style="animation-delay:.2s">
+          <div class="chart-title">Property Types</div>
+          ${barChart(topTypes, COLORS)}
+        </div>
+
+        <!-- Region split -->
+        <div class="chart-card" style="animation-delay:.3s">
+          <div class="chart-title">Region Split</div>
+          ${donutChart([
+            {label:'UAE',   val:uaeProps.length, color:'#1400cc'},
+            {label:'India', val:indProps.length, color:'#d97706'},
+          ], props.length, 'Props')}
+        </div>
+      </div>
+
+      <!-- CHARTS ROW 2 -->
+      <div class="charts-row">
+        <!-- Employee departments -->
+        <div class="chart-card" style="animation-delay:.35s">
+          <div class="chart-title">Employee Departments</div>
+          ${barChart(topDepts, ['#818cf8','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe'])}
+        </div>
+
+        <!-- Client nationality -->
+        <div class="chart-card" style="animation-delay:.4s">
+          <div class="chart-title">Client Nationalities</div>
+          <div class="nat-list">
+            ${topNats.length ? topNats.map(([nat,count],i) => {
+              const pct = Math.round(count/(sellers.length+buyers.length)*100);
+              return `<div class="nat-row">
+                <span class="nat-flag">${natFlag(nat)}</span>
+                <span class="nat-name">${esc(nat)}</span>
+                <div class="nat-bar-track"><div class="nat-bar-fill" style="width:${pct}%;background:${COLORS[i%COLORS.length]}"></div></div>
+                <span class="nat-count">${count}</span>
+              </div>`;
+            }).join('') : '<div style="color:rgba(255,255,255,.25);font-size:.8rem;text-align:center;padding:20px">No clients yet</div>'}
+          </div>
+        </div>
+
+        <!-- Buyer intents -->
+        <div class="chart-card" style="animation-delay:.45s">
+          <div class="chart-title">Buyer Intents</div>
+          ${(() => {
+            const imap = {};
+            buyers.forEach(b => { const i = b.intent||'Unknown'; imap[i]=(imap[i]||0)+1; });
+            const top = Object.entries(imap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+            return barChart(top, ['#4ade80','#22d3ee','#818cf8','#f472b6','#fb923c','#a3e635']);
+          })()}
+        </div>
+      </div>
+
+      <!-- ACTIVITY + TOP PROPERTIES -->
+      <div class="activity-row">
+        <div class="chart-card" style="animation-delay:.5s">
+          <div class="chart-title">Recent Activity</div>
+          <div class="feed">
+            ${allItems.length ? allItems.map(item => {
+              const icons = {prop:'🏠',seller:'👤',buyer:'🛒',emp:'👔'};
+              const cls   = {prop:'prop',seller:'seller',buyer:'buyer',emp:'emp'};
+              const types = {prop:'Property',seller:'Seller',buyer:'Buyer',emp:'Employee'};
+              return `<div class="feed-item">
+                <div class="feed-icon ${cls[item.type]}">${icons[item.type]}</div>
+                <div class="feed-text">
+                  <div class="feed-main">${esc(item.name)} <span style="color:rgba(255,255,255,.3);font-size:.72rem">${types[item.type]}</span></div>
+                  <div class="feed-time">${item.time}</div>
+                </div>
+              </div>`;
+            }).join('') : '<div style="color:rgba(255,255,255,.25);font-size:.8rem;padding:20px;text-align:center">No activity yet</div>'}
+          </div>
+        </div>
+
+        <div class="chart-card" style="animation-delay:.55s">
+          <div class="chart-title">Top Properties by Price</div>
+          <div class="top-list">
+            ${topProps.length ? topProps.map((p,i) => {
+              const cur   = p.currency === 'INR' ? '₹' : 'AED';
+              const price = p.sale_price_aed || p.sale_price_inr;
+              const img   = p.photos&&p.photos.length ? `<img src="/photos/${p.photos[0]}" loading="lazy"/>` : '🏠';
+              return `<div class="top-item" onclick="window.location.href='propdet.html?id=${esc(p.id)}'">
+                <span class="top-rank">${i+1}</span>
+                <div class="top-thumb">${img}</div>
+                <div class="top-info">
+                  <div class="top-title">${esc(p.title||'Untitled')}</div>
+                  <div class="top-sub">${esc(p.city||'—')} · ${esc(p.property_type||'')}</div>
+                </div>
+                <div class="top-price">${cur} ${fmt(price)}</div>
+              </div>`;
+            }).join('') : '<div style="color:rgba(255,255,255,.25);font-size:.8rem;padding:20px;text-align:center">No priced properties</div>'}
+          </div>
+        </div>
+      </div>`;
+
+    // Animate bars after render
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill, .nat-bar-fill').forEach(el => {
+        el.style.width = el.dataset.w || el.style.width;
+      });
+    }, 100);
+  }
+
+  function kpi(icon, color, val, label, sub) {
+    return `<div class="kpi ${color}">
+      <div class="kpi-icon">${icon}</div>
+      <div class="kpi-val">${val}</div>
+      <div class="kpi-label">${label}</div>
+      ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+    </div>`;
+  }
+
+  function donutChart(segments, total, centerLabel) {
+    const r = 54, cx = 70, cy = 70, stroke = 14;
+    const circ = 2 * Math.PI * r;
+    let offset = -Math.PI / 2;
+    const paths = segments.filter(s=>s.val>0).map(s => {
+      const pct  = s.val / Math.max(total, 1);
+      const dash = pct * circ;
+      const gap  = circ - dash;
+      const x1   = cx + r * Math.cos(offset);
+      const y1   = cy + r * Math.sin(offset);
+      offset    += pct * 2 * Math.PI;
+      const x2   = cx + r * Math.cos(offset);
+      const y2   = cy + r * Math.sin(offset);
+      const large = pct > 0.5 ? 1 : 0;
+      return `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="${s.color}" opacity="0.85"/>`;
+    });
+    // Inner circle
+    const inner = `<circle cx="${cx}" cy="${cy}" r="${r-stroke}" fill="#1e1e3a"/>`;
+
+    return `
+      <div class="donut-wrap">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="${r}" fill="rgba(255,255,255,.04)"/>
+          ${paths.join('')}
+          ${inner}
+        </svg>
+        <div class="donut-center">
+          <div class="donut-center-val">${total}</div>
+          <div class="donut-center-label">${centerLabel}</div>
+        </div>
+      </div>
+      <div class="legend">
+        ${segments.map(s => `
+          <div class="legend-item">
+            <div class="legend-dot" style="background:${s.color}"></div>
+            <span class="legend-name">${esc(s.label)}</span>
+            <span class="legend-val">${s.val}</span>
+            <span class="legend-pct">${total > 0 ? Math.round(s.val/total*100) : 0}%</span>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  function barChart(items, colors) {
+    const max = Math.max(...items.map(i=>i[1]), 1);
+    if (!items.length) return '<div style="color:rgba(255,255,255,.25);font-size:.8rem;padding:20px;text-align:center">No data</div>';
+    return `<div class="bar-chart">
+      ${items.map(([label,count],i) => {
+        const pct = Math.round(count/max*100);
+        return `<div class="bar-row">
+          <span class="bar-label">${esc(label)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+          <span class="bar-count">${count}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  function natFlag(nat) {
+    const flags = {
+      'Indian':'🇮🇳','UAE':'🇦🇪','Emirati':'🇦🇪','Pakistani':'🇵🇰','British':'🇬🇧',
+      'American':'🇺🇸','Canadian':'🇨🇦','Australian':'🇦🇺','Russian':'🇷🇺','Chinese':'🇨🇳',
+      'Filipino':'🇵🇭','Egyptian':'🇪🇬','Jordanian':'🇯🇴','Lebanese':'🇱🇧','German':'🇩🇪',
+    };
+    return flags[nat] || '🌍';
+  }
+
+  loadDashboard();
+</script>
+</body>
+</html>

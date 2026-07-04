@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Inbox – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0;overflow:hidden}
+
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:12px 20px;box-shadow:0 4px 20px rgba(20,0,204,.4);flex-shrink:0;z-index:10}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.07em;text-transform:uppercase;padding:6px 14px;border-radius:8px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#fff;letter-spacing:.07em;flex:1}
+    .unread-badge{background:#f87171;color:#fff;font-size:.72rem;font-weight:900;padding:3px 9px;border-radius:50px;min-width:24px;text-align:center}
+
+    /* LAYOUT */
+    .chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 54px)}
+
+    /* SIDEBAR */
+    .sidebar{background:#0f0f23;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;overflow:hidden}
+    .sidebar-search{padding:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .sidebar-search input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;outline:none}
+    .sidebar-search input::placeholder{color:rgba(255,255,255,.25)}
+    .sidebar-search input:focus{border-color:#818cf8}
+    .conv-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+
+    .conv-item{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .18s}
+    .conv-item:hover{background:rgba(255,255,255,.04)}
+    .conv-item.active{background:rgba(20,0,204,.2);border-left:3px solid #1400cc}
+    .conv-avatar{width:38px;height:38px;border-radius:50%;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;color:#fff;text-transform:uppercase;flex-shrink:0}
+    .conv-avatar.buyer{background:#0a7c3e}
+    .conv-avatar.seller{background:#7c3aed}
+    .conv-info{flex:1;min-width:0}
+    .conv-name{font-weight:800;font-size:.88rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .conv-preview{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+    .conv-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+    .conv-time{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.3)}
+    .conv-unread{background:#f87171;color:#fff;font-size:.65rem;font-weight:900;padding:2px 7px;border-radius:50px;min-width:20px;text-align:center}
+    .conv-type-badge{font-size:.6rem;font-weight:900;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+    .conv-type-badge.buyer{background:rgba(10,124,62,.2);color:#4ade80}
+    .conv-type-badge.seller{background:rgba(124,58,237,.2);color:#c4b5fd}
+
+    .empty-convos{text-align:center;padding:40px 20px;color:rgba(255,255,255,.25);font-size:.85rem;font-weight:700}
+
+    /* CHAT PANEL */
+    .chat-panel{display:flex;flex-direction:column;background:#131328}
+    .chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.2);gap:12px}
+    .chat-empty .icon{font-size:3.5rem}
+    .chat-empty .label{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em}
+    .chat-empty .sub{font-size:.8rem;font-weight:700}
+
+    /* CHAT HEADER */
+    .chat-head{background:#1e1e3a;border-bottom:1px solid rgba(255,255,255,.07);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .chat-head-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;color:#fff;text-transform:uppercase;flex-shrink:0}
+    .chat-head-name{font-weight:800;font-size:.95rem;color:#fff;flex:1}
+    .chat-head-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4)}
+    .chat-online{width:8px;height:8px;background:#4ade80;border-radius:50%;flex-shrink:0}
+
+    /* MESSAGES */
+    .messages-wrap{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+
+    .msg-row{display:flex;gap:10px;max-width:70%;animation:msgIn .2s ease}
+    @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .msg-row.agent{align-self:flex-end;flex-direction:row-reverse}
+    .msg-row.client{align-self:flex-start}
+    .msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0;margin-top:auto}
+    .msg-avatar.agent{background:#1400cc}
+    .msg-avatar.client{background:#0a7c3e}
+    .msg-bubble{padding:10px 14px;border-radius:14px;font-size:.88rem;font-weight:700;line-height:1.55;word-break:break-word}
+    .msg-bubble.agent{background:#1400cc;color:#fff;border-radius:14px 14px 4px 14px}
+    .msg-bubble.client{background:#1e1e3a;color:#e2e8f0;border-radius:14px 14px 14px 4px;border:1px solid rgba(255,255,255,.08)}
+    .msg-time{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:4px;text-align:right}
+    .msg-row.client .msg-time{text-align:left}
+    .msg-sender{font-size:.65rem;font-weight:800;color:rgba(255,255,255,.4);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+
+    .date-divider{text-align:center;font-size:.68rem;font-weight:800;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.08em;padding:4px 0;display:flex;align-items:center;gap:10px}
+    .date-divider::before,.date-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+
+    /* INPUT */
+    .chat-input-wrap{padding:12px 16px;background:#1e1e3a;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+    .chat-input{flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;outline:none;resize:none;max-height:120px;min-height:42px;transition:border-color .2s;line-height:1.5}
+    .chat-input::placeholder{color:rgba(255,255,255,.25)}
+    .chat-input:focus{border-color:#1400cc}
+    .send-btn{background:#1400cc;border:none;border-radius:10px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0;transition:background .2s}
+    .send-btn:hover{background:#2c14ff}
+    .send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    .no-conv-selected{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.2);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;flex-direction:column;gap:12px}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">💬 CHAT INBOX</div>
+  <div class="unread-badge" id="totalUnread" style="display:none">0</div>
+</div>
+
+<div class="chat-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-search">
+      <input type="text" id="convSearch" placeholder="🔍 Search clients…" oninput="filterConvos()"/>
+    </div>
+    <div class="conv-list" id="convList">
+      <div class="empty-convos">Loading conversations…</div>
+    </div>
+  </div>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-empty">
+      <div class="icon">💬</div>
+      <div class="label">Select a conversation</div>
+      <div class="sub">Click a client on the left to start chatting</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let _convos=[], _activeId=null, _pollTimer=null, _lastMsgCount=0;
+
+  async function loadConvos() {
+    try {
+      const res = await fetch('/chat/conversations');
+      _convos   = await res.json();
+      renderConvoList();
+      updateUnreadBadge();
+    } catch {}
+  }
+
+  function filterConvos() {
+    renderConvoList(document.getElementById('convSearch').value.trim().toLowerCase());
+  }
+
+  function renderConvoList(q='') {
+    const list = q ? _convos.filter(c => c.client_name?.toLowerCase().includes(q)) : _convos;
+    const el   = document.getElementById('convList');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-convos">No conversations yet.<br/>Create one from a client\'s page.</div>';
+      return;
+    }
+    el.innerHTML = list.map(c => {
+      const initials = (c.client_name||'?').slice(0,2).toUpperCase();
+      const unread   = c.unread_agent || 0;
+      const time     = c.last_time ? c.last_time.slice(11,16) : '';
+      return `<div class="conv-item ${c.id===_activeId?'active':''}" onclick="openConvo('${c.id}')">
+        <div class="conv-avatar ${c.client_type}">${initials}</div>
+        <div class="conv-info">
+          <div class="conv-name">${esc(c.client_name)}</div>
+          <div class="conv-preview">${esc(c.last_message||'No messages yet')}</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">${time}</span>
+          ${unread ? `<span class="conv-unread">${unread}</span>` : ''}
+          <span class="conv-type-badge ${c.client_type}">${c.client_type}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function updateUnreadBadge() {
+    const total = _convos.reduce((s,c) => s+(c.unread_agent||0), 0);
+    const badge = document.getElementById('totalUnread');
+    if (total > 0) { badge.textContent = total; badge.style.display = 'block'; }
+    else badge.style.display = 'none';
+  }
+
+  async function openConvo(id) {
+    _activeId     = id;
+    _lastMsgCount = 0;
+    if (_pollTimer) clearInterval(_pollTimer);
+    renderConvoList();
+    await buildChatUI(id);
+    // Poll only messages area every 5s — never touches the input
+    _pollTimer = setInterval(() => pollMessages(id), 5000);
+  }
+
+  async function buildChatUI(id) {
+    try {
+      const res  = await fetch(`/chat/conversation/${id}`);
+      const conv = await res.json();
+      if (!conv || conv.error) return;
+      const c = _convos.find(x => x.id === id);
+      if (c) c.unread_agent = 0;
+      updateUnreadBadge();
+      const msgs     = conv.messages || [];
+      _lastMsgCount  = msgs.length;
+      const initials = (conv.client_name||'?').slice(0,2).toUpperCase();
+
+      // Build full UI once — input is part of this structure, won't be touched again
+      document.getElementById('chatPanel').innerHTML = `
+        <div class="chat-head">
+          <div class="chat-head-avatar ${conv.client_type}">${initials}</div>
+          <div>
+            <div class="chat-head-name">${esc(conv.client_name)}</div>
+            <div class="chat-head-sub">${conv.client_type} · <span id="msgCount">${msgs.length}</span> messages</div>
+          </div>
+          <div class="chat-online" title="Active"></div>
+        </div>
+        <div class="messages-wrap" id="msgsWrap">
+          ${renderMsgs(msgs, initials)}
+        </div>
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chatInput"
+            placeholder="Type a message… (Enter to send, Shift+Enter = new line)"
+            rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+          <button class="send-btn" onclick="sendMsg()" title="Send">➤</button>
+        </div>`;
+
+      scrollBottom();
+    } catch {}
+  }
+
+  async function pollMessages(id) {
+    // Skip poll if user is actively typing
+    const inp = document.getElementById('chatInput');
+    if (inp && inp.value.length > 0) return;
+
+    try {
+      const res  = await fetch(`/chat/conversation/${id}`);
+      const conv = await res.json();
+      if (!conv || conv.error) return;
+      const msgs = conv.messages || [];
+      if (msgs.length === _lastMsgCount) return; // nothing new
+      _lastMsgCount = msgs.length;
+
+      const initials = (conv.client_name||'?').slice(0,2).toUpperCase();
+      const wrap     = document.getElementById('msgsWrap');
+      const countEl  = document.getElementById('msgCount');
+      if (!wrap) return;
+
+      // Only near-bottom → auto scroll
+      const atBottom = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 80;
+      wrap.innerHTML = renderMsgs(msgs, initials);
+      if (countEl) countEl.textContent = msgs.length;
+      if (atBottom) scrollBottom();
+
+      const c = _convos.find(x => x.id === id);
+      if (c) { c.unread_agent = 0; c.last_message = msgs[msgs.length-1]?.text||''; }
+      updateUnreadBadge();
+    } catch {}
+  }
+
+  function renderMsgs(msgs, initials) {
+    if (!msgs.length) return '<div style="text-align:center;color:rgba(255,255,255,.2);padding:40px;font-weight:700">No messages yet. Say hello!</div>';
+    let lastDate = '';
+    return msgs.map(m => {
+      const side    = m.sender_type === 'agent' ? 'agent' : 'client';
+      const dateStr = (m.time||'').slice(0,10);
+      let divider   = '';
+      if (dateStr && dateStr !== lastDate) {
+        lastDate = dateStr;
+        divider  = `<div class="date-divider">${new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})}</div>`;
+      }
+      const time = (m.time||'').slice(11,16);
+      return `${divider}<div class="msg-row ${side}">
+        <div class="msg-avatar ${side}">${side==='agent'?'👔':initials}</div>
+        <div>
+          <div class="msg-sender">${esc(m.sender_name)}</div>
+          <div class="msg-bubble ${side}">${esc(m.text)}</div>
+          <div class="msg-time">${time}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function scrollBottom() {
+    setTimeout(() => { const w=document.getElementById('msgsWrap'); if(w) w.scrollTop=w.scrollHeight; }, 60);
+  }
+
+  async function sendMsg() {
+    const inp  = document.getElementById('chatInput');
+    if (!inp) return;
+    const text = inp.value.trim();
+    if (!text || !_activeId) return;
+    inp.value = '';
+    inp.style.height = 'auto';
+    inp.focus();
+    try {
+      await fetch('/chat/send', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({conversation_id: _activeId, text}),
+      });
+      _lastMsgCount = 0; // force refresh
+      await pollMessages(_activeId);
+    } catch {}
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  loadConvos();
+  setInterval(loadConvos, 15000); // sidebar refresh every 15s only
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

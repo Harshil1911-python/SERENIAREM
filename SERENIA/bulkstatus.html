@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bulk Status Update – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .toolbar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .fsearch{flex:1;max-width:260px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}.fsearch:focus{border-color:#818cf8}
+    .fsel{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none;appearance:none}
+    .fsel option{background:#0f0f23}
+
+    /* ACTION BAR */
+    .action-bar{background:#1e1e3a;border-bottom:2px solid rgba(255,255,255,.07);padding:10px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:56px;z-index:99}
+    .sel-info{font-size:.82rem;font-weight:900;color:rgba(255,255,255,.5);min-width:120px}
+    .sel-info span{color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1rem}
+    .action-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em}
+    .avail-btn{font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid;border-radius:8px;padding:7px 14px;cursor:pointer;transition:all .2s}
+    .avail-btn.available{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.3);color:#4ade80}
+    .avail-btn.available:hover{background:rgba(22,163,74,.3)}
+    .avail-btn.offer{background:rgba(217,119,6,.15);border-color:rgba(217,119,6,.3);color:#fbbf24}
+    .avail-btn.offer:hover{background:rgba(217,119,6,.3)}
+    .avail-btn.sold{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.3);color:#f87171}
+    .avail-btn.sold:hover{background:rgba(220,38,38,.3)}
+    .avail-btn.rented{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.3);color:#c4b5fd}
+    .avail-btn.rented:hover{background:rgba(124,58,237,.3)}
+    .sel-all-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em}
+    .sel-all-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+    .clear-sel-btn{background:rgba(220,38,38,.1);border:1.5px solid rgba(220,38,38,.2);color:#f87171;font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;display:none}
+    .clear-sel-btn:hover{background:rgba(220,38,38,.2)}
+
+    /* LIST */
+    .wrap{max-width:1000px;margin:0 auto;padding:16px 20px 80px}
+    .prop-row{background:#1e1e3a;border-radius:12px;padding:14px 16px;border:2px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:14px;margin-bottom:8px;cursor:pointer;transition:all .2s;user-select:none}
+    .prop-row:hover{background:#252545;border-color:rgba(129,140,248,.2)}
+    .prop-row.selected{background:rgba(20,0,204,.15);border-color:#1400cc}
+    .prop-check{width:18px;height:18px;border-radius:5px;border:2px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.85rem}
+    .prop-row.selected .prop-check{background:#1400cc;border-color:#1400cc;color:#fff}
+    .prop-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#252545;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden}
+    .prop-thumb img{width:100%;height:100%;object-fit:cover}
+    .prop-info{flex:1;min-width:0}
+    .prop-name{font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .prop-sub{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+    .avail-tag{font-size:.68rem;font-weight:900;padding:4px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;cursor:pointer;transition:all .2s}
+    .avail-tag.Available{background:rgba(22,163,74,.2);color:#4ade80}
+    .avail-tag.Under-Offer{background:rgba(217,119,6,.2);color:#fbbf24}
+    .avail-tag.Sold{background:rgba(220,38,38,.2);color:#f87171}
+    .avail-tag.Rented{background:rgba(124,58,237,.2);color:#c4b5fd}
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:700}
+
+    /* PROGRESS OVERLAY */
+    .prog-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center}
+    .prog-overlay.open{display:flex}
+    .prog-box{background:#1e1e3a;border-radius:20px;padding:28px 32px;width:340px;border:1px solid rgba(255,255,255,.1);text-align:center}
+    .prog-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.07em;color:#fff;margin-bottom:16px}
+    .prog-bar-wrap{background:rgba(255,255,255,.08);border-radius:50px;height:8px;overflow:hidden;margin-bottom:12px}
+    .prog-bar{height:100%;background:#1400cc;border-radius:50px;transition:width .3s ease;width:0%}
+    .prog-status{font-size:.85rem;font-weight:700;color:rgba(255,255,255,.5)}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">⚡ BULK STATUS UPDATE</div>
+</div>
+
+<div class="toolbar">
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search properties…" oninput="render()"/>
+  <select class="fsel" id="fRegion" onchange="render()">
+    <option value="">All Regions</option>
+    <option>UAE</option><option>India</option>
+  </select>
+  <select class="fsel" id="fCat" onchange="render()">
+    <option value="">All Categories</option>
+    <option>For Sale</option><option>For Rent</option>
+  </select>
+  <select class="fsel" id="fAvail" onchange="render()">
+    <option value="">All Availability</option>
+    <option>Available</option><option>Under Offer</option>
+    <option>Sold</option><option>Rented</option>
+  </select>
+</div>
+
+<div class="action-bar">
+  <div class="sel-info"><span id="selCount">0</span> selected</div>
+  <button class="sel-all-btn" onclick="selectAll()">☑ Select All</button>
+  <button class="clear-sel-btn" id="clearSelBtn" onclick="clearSel()">✕ Clear</button>
+  <span class="action-label">Set to:</span>
+  <button class="avail-btn available" onclick="bulkSet('Available')">✅ Available</button>
+  <button class="avail-btn offer"     onclick="bulkSet('Under Offer')">🔶 Under Offer</button>
+  <button class="avail-btn sold"      onclick="bulkSet('Sold')">🔴 Sold</button>
+  <button class="avail-btn rented"    onclick="bulkSet('Rented')">🟣 Rented</button>
+</div>
+
+<div class="wrap" id="wrap"><div class="empty">Loading…</div></div>
+
+<div class="prog-overlay" id="progOverlay">
+  <div class="prog-box">
+    <div class="prog-title">Updating…</div>
+    <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+    <div class="prog-status" id="progStatus">0 / 0</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _props=[], _selected=new Set();
+
+  async function load() {
+    try {
+      const res = await fetch('/get_properties');
+      _props    = await res.json();
+      render();
+    } catch { document.getElementById('wrap').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function getFiltered() {
+    const q      = document.getElementById('fsearch').value.trim().toLowerCase();
+    const region = document.getElementById('fRegion').value;
+    const cat    = document.getElementById('fCat').value;
+    const avail  = document.getElementById('fAvail').value;
+    return _props.filter(p => {
+      if (region && (p.region||'UAE') !== region) return false;
+      if (cat    && (p.category||'')  !== cat)    return false;
+      if (avail  && (p.availability||'Available') !== avail) return false;
+      if (q && ![p.title,p.city,p.id,p.address,p.property_type].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  function render() {
+    const list = getFiltered();
+    updateSelUI();
+    if (!list.length) { document.getElementById('wrap').innerHTML='<div class="empty">No properties found</div>'; return; }
+    document.getElementById('wrap').innerHTML = list.map(p => {
+      const sel   = _selected.has(p.id);
+      const avail = p.availability || 'Available';
+      const cls   = avail.replace(' ','-');
+      const thumb = p.photos?.length ? `<img src="/photos/${p.photos[0]}" loading="lazy" onerror="this.style.display='none'"/>` : '🏠';
+      return `<div class="prop-row ${sel?'selected':''}" onclick="toggleSel('${p.id}')">
+        <div class="prop-check">${sel?'✓':''}</div>
+        <div class="prop-thumb">${thumb}</div>
+        <div class="prop-info">
+          <div class="prop-name">${esc(p.title||'Untitled')}</div>
+          <div class="prop-sub">${esc([p.city, p.property_type, p.region||'UAE'].filter(Boolean).join(' · '))}</div>
+        </div>
+        <span class="avail-tag ${cls}">${avail}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleSel(id) {
+    _selected.has(id) ? _selected.delete(id) : _selected.add(id);
+    render();
+  }
+
+  function selectAll() {
+    getFiltered().forEach(p => _selected.add(p.id));
+    render();
+  }
+
+  function clearSel() {
+    _selected.clear();
+    render();
+  }
+
+  function updateSelUI() {
+    const n = _selected.size;
+    document.getElementById('selCount').textContent  = n;
+    document.getElementById('clearSelBtn').style.display = n ? 'block' : 'none';
+  }
+
+  async function bulkSet(status) {
+    if (!_selected.size) { showToast('⚠️ Select properties first'); return; }
+    const ids = [..._selected];
+    const total = ids.length;
+
+    document.getElementById('progOverlay').classList.add('open');
+    document.getElementById('progBar').style.width = '0%';
+    document.getElementById('progStatus').textContent = `0 / ${total}`;
+
+    let done = 0;
+    for (const id of ids) {
+      try {
+        await fetch(`/update_property_availability/${id}`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({availability: status}),
+        });
+        // Update local data
+        const p = _props.find(x=>x.id===id);
+        if (p) p.availability = status;
+      } catch {}
+      done++;
+      const pct = Math.round(done/total*100);
+      document.getElementById('progBar').style.width   = pct+'%';
+      document.getElementById('progStatus').textContent = `${done} / ${total}`;
+    }
+
+    document.getElementById('progOverlay').classList.remove('open');
+    _selected.clear();
+    render();
+    showToast(`✅ Updated ${total} properties to "${status}"`);
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

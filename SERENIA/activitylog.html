@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Activity Log – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .clear-btn{background:rgba(220,38,38,.2);border:1.5px solid rgba(220,38,38,.35);color:#f87171;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;padding:7px 16px;border-radius:9px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .2s}
+    .clear-btn:hover{background:rgba(220,38,38,.35)}
+
+    .toolbar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}
+    .fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+    .fsearch{flex:1;max-width:260px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}
+    .fsearch:focus{border-color:#818cf8}
+
+    .wrap{max-width:940px;margin:0 auto;padding:20px 20px 80px}
+
+    /* TIMELINE */
+    .timeline{display:flex;flex-direction:column;gap:0;position:relative}
+    .timeline::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:rgba(255,255,255,.07)}
+
+    .log-item{display:flex;gap:14px;padding:10px 0;position:relative}
+    .log-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:4px;position:relative;z-index:1;border:2px solid #0a0a1a}
+    .log-dot.created{background:#4ade80}
+    .log-dot.updated{background:#818cf8}
+    .log-dot.deleted{background:#f87171}
+    .log-dot.login{background:#fbbf24}
+    .log-dot.other{background:#22d3ee}
+
+    .log-card{flex:1;background:#1e1e3a;border-radius:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.05)}
+    .log-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+    .log-action{font-size:.8rem;font-weight:800;color:#fff}
+    .log-time{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.3);white-space:nowrap;flex-shrink:0}
+    .log-entity{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:3px}
+    .log-user{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:5px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
+    .log-details{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:5px;font-style:italic}
+
+    .action-badge{font-size:.65rem;font-weight:900;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-right:5px}
+    .action-badge.created{background:rgba(74,222,128,.15);color:#4ade80}
+    .action-badge.updated{background:rgba(129,140,248,.12);color:#818cf8}
+    .action-badge.deleted{background:rgba(248,113,113,.15);color:#f87171}
+    .action-badge.login{background:rgba(251,191,36,.12);color:#fbbf24}
+    .action-badge.other{background:rgba(34,211,238,.1);color:#22d3ee}
+
+    .entity-badge{font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
+
+    .empty{text-align:center;padding:60px;color:rgba(255,255,255,.2);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .total-count{text-align:right;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+  <div class="header-title">📜 ACTIVITY LOG</div>
+  <button class="clear-btn" onclick="clearLog()">🗑 Clear Log</button>
+</div>
+
+<div class="toolbar">
+  <button class="fchip active" onclick="setFilter('all',this)">All</button>
+  <button class="fchip" onclick="setFilter('Created',this)">Created</button>
+  <button class="fchip" onclick="setFilter('Updated',this)">Updated</button>
+  <button class="fchip" onclick="setFilter('Deleted',this)">Deleted</button>
+  <button class="fchip" onclick="setFilter('Login',this)">Logins</button>
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search log…" oninput="render()"/>
+</div>
+
+<div class="wrap">
+  <div class="total-count" id="totalCount"></div>
+  <div class="timeline" id="timeline"><div class="empty">Loading…</div></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _logs=[], _filter='all';
+
+  async function load() {
+    try {
+      const res = await fetch('/get_activity_log');
+      _logs = await res.json();
+      render();
+    } catch { document.getElementById('timeline').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function setFilter(f, btn) {
+    _filter=f;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function actionClass(action) {
+    const a = (action||'').toLowerCase();
+    if (a.includes('creat')||a.includes('add')||a.includes('save')||a.includes('book')) return 'created';
+    if (a.includes('updat')||a.includes('edit')||a.includes('stage')||a.includes('status')) return 'updated';
+    if (a.includes('delet')||a.includes('remov')) return 'deleted';
+    if (a.includes('login')||a.includes('logout')) return 'login';
+    return 'other';
+  }
+
+  function dotClass(action) { return actionClass(action); }
+
+  function render() {
+    const q = document.getElementById('fsearch').value.trim().toLowerCase();
+    const list = _logs.filter(l => {
+      if (_filter !== 'all' && !l.action?.toLowerCase().startsWith(_filter.toLowerCase())) return false;
+      if (q) {
+        const blob = [l.action,l.entity_type,l.entity_name,l.user,l.details].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+
+    document.getElementById('totalCount').textContent = `${list.length} entries`;
+
+    if (!list.length) {
+      document.getElementById('timeline').innerHTML = '<div class="empty">No log entries found</div>';
+      return;
+    }
+
+    document.getElementById('timeline').innerHTML = list.map(l => {
+      const ac  = actionClass(l.action);
+      return `<div class="log-item">
+        <div class="log-dot ${dotClass(l.action)}" style="margin-left:12px"></div>
+        <div class="log-card">
+          <div class="log-top">
+            <div class="log-action">
+              <span class="action-badge ${ac}">${esc(l.action||'?')}</span>
+              <span class="entity-badge">${esc(l.entity_type||'?')}</span>
+              <span style="color:#fff;font-weight:800">${esc(l.entity_name||'')}</span>
+            </div>
+            <div class="log-time">${esc(l.time||'')}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+            <span class="log-user">👤 ${esc(l.user||'?')} · ${esc(l.role||'')}</span>
+          </div>
+          ${l.details?`<div class="log-details">${esc(l.details)}</div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function clearLog() {
+    if (!confirm('Clear entire activity log? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/clear_activity_log',{method:'POST'});
+      const json = await res.json();
+      if (json.success) { _logs=[]; render(); showToast('✅ Log cleared'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  load();
+</script>
+</body>
+</html>

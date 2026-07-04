@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clients – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+
+    body{
+      background-image:url('clientsbg.png');
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-color:#f5ece0;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    /* HEADER */
+    .header{background:#1400cc;text-align:center;padding:22px 20px 18px;position:relative}
+    .header h1{font-size:3rem;font-weight:900;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.35);border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:.05em;transition:background .2s,transform .15s}
+    .back-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-50%) scale(1.05)}
+
+    /* CONTENT */
+    .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;gap:0}
+
+    /* CENTER STAT CARD */
+    .stat-card{
+      background:#fff;
+      border-radius:22px;
+      padding:28px 48px;
+      text-align:center;
+      box-shadow:0 8px 32px rgba(0,0,0,.15);
+      min-width:280px;
+      animation:fadeUp .5s ease both;
+      position:relative;
+      z-index:2;
+    }
+    .stat-label{font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#111;line-height:1.3;margin-bottom:10px}
+    .stat-value{font-size:3.2rem;font-weight:900;color:#111;line-height:1}
+
+    /* CONNECTOR LINES */
+    .connector-wrap{
+      position:relative;
+      width:100%;
+      max-width:800px;
+      height:160px;
+      margin-top:-10px;
+    }
+    .connector-wrap svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}
+
+    /* BOTTOM BUTTONS ROW */
+    .btn-row{
+      display:flex;
+      justify-content:space-between;
+      width:100%;
+      max-width:800px;
+      gap:40px;
+      margin-top:-20px;
+      animation:fadeUp .5s ease .25s both;
+    }
+
+    .choice-btn{
+      flex:1;
+      background:#1400cc;
+      color:#fff;
+      font-family:'Nunito',sans-serif;
+      font-size:2.2rem;
+      font-weight:900;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      border:none;
+      border-radius:22px;
+      padding:30px 20px;
+      cursor:pointer;
+      box-shadow:0 6px 28px rgba(20,0,204,.45),0 4px 14px rgba(0,0,0,.2);
+      transition:background .18s,transform .15s,box-shadow .18s;
+    }
+    .choice-btn:hover{
+      background:#2c14ff;
+      transform:translateY(-4px) scale(1.03);
+      box-shadow:0 12px 40px rgba(20,0,204,.65),0 6px 20px rgba(0,0,0,.25);
+    }
+    .choice-btn:active{transform:scale(.97)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:600px){
+      .header h1{font-size:2rem}
+      .btn-row{gap:16px}
+      .choice-btn{font-size:1.5rem;padding:22px 10px}
+      .connector-wrap{height:120px}
+    }
+  </style>
+  <!-- Preload nav background images -->
+  <link rel="preload" href="homebg.png" as="image"/>
+  <link rel="preload" href="propbg.png" as="image"/>
+  <link rel="preload" href="clientsbg.png" as="image"/>
+  <script>
+    // Preload backgrounds for instant feel
+    ['homebg.png','propbg.png','clientsbg.png','sellerbg.png','buyerbg.png','empbg.png'].forEach(s=>{new Image().src=s});
+  </script>
+</head>
+<body>
+
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+    <h1>CLIENTS</h1>
+  </div>
+
+  <div class="content">
+
+    <div class="stat-card">
+      <div class="stat-label">Total Clients Listed</div>
+      <div class="stat-value" id="statTotal">—</div>
+    </div>
+
+    <!-- SVG connector lines from card to buttons -->
+    <div class="connector-wrap">
+      <svg id="connectorSvg" preserveAspectRatio="none">
+        <!-- Lines drawn by JS after layout -->
+      </svg>
+    </div>
+
+    <div class="btn-row" id="btnRow">
+      <button class="choice-btn" onclick="goTo('buyer.html')">BUYER</button>
+      <button class="choice-btn" onclick="goTo('seller.html')">SELLER</button>
+      <button class="choice-btn" style="background:#0a7c3e;box-shadow:0 0 28px rgba(10,124,62,.5)" onclick="goTo('messaging.html')" onmouseover="this.style.background='#0d9e4f'" onmouseout="this.style.background='#0a7c3e'">📨 MESSAGE</button>
+    </div>
+
+  </div>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res  = await fetch('/get_clients');
+        const data = await res.json();
+        animateCount('statTotal', data.length);
+      } catch {
+        document.getElementById('statTotal').textContent = '0';
+      }
+    }
+
+    function animateCount(id, target) {
+      const el = document.getElementById(id);
+      if (!target) { el.textContent = '0'; return; }
+      let n = 0;
+      const step = Math.ceil(target / 30);
+      const t = setInterval(() => {
+        n = Math.min(n + step, target);
+        el.textContent = n;
+        if (n >= target) clearInterval(t);
+      }, 20);
+    }
+
+    function goTo(page) { window.location.href = page; }
+
+    // Draw connector lines from stat card center-bottom to each button center-top
+    function drawLines() {
+      const svg    = document.getElementById('connectorSvg');
+      const wrap   = document.querySelector('.connector-wrap');
+      const card   = document.querySelector('.stat-card');
+      const row    = document.getElementById('btnRow');
+      const btns   = row.querySelectorAll('.choice-btn');
+
+      const wRect  = wrap.getBoundingClientRect();
+      const cRect  = card.getBoundingClientRect();
+
+      // Card bottom-center relative to wrapper
+      const cx = cRect.left + cRect.width / 2 - wRect.left;
+      const cy = 0; // top of wrapper aligns with card bottom approx
+
+      svg.innerHTML = '';
+      btns.forEach(btn => {
+        const bRect = btn.getBoundingClientRect();
+        const bx = bRect.left + bRect.width / 2 - wRect.left;
+        const by = wRect.height;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+        line.setAttribute('x2', bx); line.setAttribute('y2', by);
+        line.setAttribute('stroke', '#1a1a2e');
+        line.setAttribute('stroke-width', '2');
+        svg.appendChild(line);
+      });
+    }
+
+    loadStats();
+    window.addEventListener('load', drawLines);
+    window.addEventListener('resize', drawLines);
+  </script>
+
+<script src="branding-loader.js"></script>
+</body>
+</html>

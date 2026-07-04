@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property Export – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .wrap{max-width:900px;margin:0 auto;padding:24px 20px 80px;display:flex;flex-direction:column;gap:18px}
+
+    .card{background:#1e1e3a;border-radius:16px;padding:22px 26px;border:1px solid rgba(255,255,255,.07)}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;color:#818cf8;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)}
+
+    /* FORMAT CARDS */
+    .format-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:600px){.format-grid{grid-template-columns:1fr 1fr}}
+    .fmt-card{background:#252545;border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .2s;text-align:center}
+    .fmt-card:hover{border-color:rgba(129,140,248,.4);background:#2d2d55}
+    .fmt-card.selected{border-color:#1400cc;background:rgba(20,0,204,.2)}
+    .fmt-icon{font-size:1.8rem;margin-bottom:6px}
+    .fmt-name{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.06em;color:#fff;margin-bottom:4px}
+    .fmt-desc{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);line-height:1.4}
+    .fmt-badge{display:inline-block;background:rgba(20,0,204,.25);color:#818cf8;font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+
+    /* FILTERS */
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .field select,.field input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;outline:none;appearance:none;transition:border-color .2s}
+    .field select:focus,.field input:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    /* COLUMN SELECTOR */
+    .col-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .col-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 12px;cursor:pointer;transition:all .18s}
+    .col-chip:hover{border-color:rgba(129,140,248,.3)}
+    .col-chip.on{background:rgba(20,0,204,.2);border-color:#1400cc}
+    .col-chip input{accent-color:#818cf8;width:14px;height:14px;cursor:pointer}
+    .col-chip span{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em}
+    .col-chip.on span{color:#fff}
+
+    /* PREVIEW TABLE */
+    .preview-table-wrap{overflow-x:auto;max-height:260px;overflow-y:auto;border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+    .preview-table{width:100%;border-collapse:collapse;font-size:.78rem}
+    .preview-table th{background:#1400cc;color:#fff;padding:8px 12px;text-align:left;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;position:sticky;top:0}
+    .preview-table td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.7);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+    .preview-table tr:hover td{background:rgba(255,255,255,.03)}
+
+    .export-btn{background:#16a34a;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:12px;padding:14px;width:100%;cursor:pointer;box-shadow:0 0 18px rgba(22,163,74,.3);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .export-btn:hover{background:#15803d;transform:translateY(-1px)}
+    .count-badge{background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:.85rem}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">📤 PROPERTY EXPORT</div>
+</div>
+
+<div class="wrap">
+
+  <!-- FORMAT SELECTION -->
+  <div class="card">
+    <div class="card-title">Export Format</div>
+    <div class="format-grid">
+      <div class="fmt-card selected" onclick="selectFormat('csv',this)">
+        <div class="fmt-icon">📄</div>
+        <div class="fmt-name">CSV</div>
+        <div class="fmt-desc">Universal format works with Excel, Google Sheets</div>
+        <div class="fmt-badge">Universal</div>
+      </div>
+      <div class="fmt-card" onclick="selectFormat('bayut',this)">
+        <div class="fmt-icon">🏙</div>
+        <div class="fmt-name">Bayut Format</div>
+        <div class="fmt-desc">Ready for Bayut.com bulk upload. UAE properties</div>
+        <div class="fmt-badge">UAE Portal</div>
+      </div>
+      <div class="fmt-card" onclick="selectFormat('propertyfinder',this)">
+        <div class="fmt-icon">🔍</div>
+        <div class="fmt-name">PropertyFinder</div>
+        <div class="fmt-desc">PropertyFinder.ae compatible CSV format</div>
+        <div class="fmt-badge">UAE Portal</div>
+      </div>
+      <div class="fmt-card" onclick="selectFormat('99acres',this)">
+        <div class="fmt-icon">🇮🇳</div>
+        <div class="fmt-name">99acres</div>
+        <div class="fmt-desc">Ready for 99acres.com India portal upload</div>
+        <div class="fmt-badge">India Portal</div>
+      </div>
+      <div class="fmt-card" onclick="selectFormat('magicbricks',this)">
+        <div class="fmt-icon">🧱</div>
+        <div class="fmt-name">MagicBricks</div>
+        <div class="fmt-desc">MagicBricks India portal compatible format</div>
+        <div class="fmt-badge">India Portal</div>
+      </div>
+      <div class="fmt-card" onclick="selectFormat('excel',this)">
+        <div class="fmt-icon">📊</div>
+        <div class="fmt-name">Excel (XLSX)</div>
+        <div class="fmt-desc">Full data export for internal analysis and reports</div>
+        <div class="fmt-badge">Internal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="card">
+    <div class="card-title">Filter Properties</div>
+    <div class="form-2">
+      <div class="field"><label>Region</label>
+        <select id="fRegion" onchange="updatePreview()">
+          <option value="">All Regions</option>
+          <option>UAE</option><option>India</option>
+        </select>
+      </div>
+      <div class="field"><label>Category</label>
+        <select id="fCat" onchange="updatePreview()">
+          <option value="">All Categories</option>
+          <option>For Sale</option><option>For Rent</option><option>Commercial</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="field"><label>Property Type</label>
+        <select id="fType" onchange="updatePreview()">
+          <option value="">All Types</option>
+          <option>Apartment</option><option>Villa</option><option>Townhouse</option>
+          <option>Office</option><option>Plot</option><option>Warehouse</option>
+        </select>
+      </div>
+      <div class="field"><label>Availability</label>
+        <select id="fAvail" onchange="updatePreview()">
+          <option value="">All</option>
+          <option>Available</option><option>Under Offer</option>
+          <option>Sold</option><option>Rented</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUMN SELECTOR -->
+  <div class="card">
+    <div class="card-title">Columns to Export</div>
+    <div class="col-grid" id="colGrid"></div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="card">
+    <div class="card-title">Preview <span style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3);text-transform:none;letter-spacing:0" id="previewCount"></span></div>
+    <div class="preview-table-wrap">
+      <table class="preview-table" id="previewTable"></table>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <button class="export-btn" onclick="doExport()">
+    ⬇️ DOWNLOAD EXPORT <span class="count-badge" id="exportCount">0 properties</span>
+  </button>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _props=[], _format='csv';
+
+  const ALL_COLS = [
+    {key:'id',         label:'ID',           on:true},
+    {key:'title',      label:'Title',        on:true},
+    {key:'property_type',label:'Type',       on:true},
+    {key:'category',   label:'Category',     on:true},
+    {key:'city',       label:'City',         on:true},
+    {key:'address',    label:'Address',      on:true},
+    {key:'bedrooms',   label:'Bedrooms',     on:true},
+    {key:'bathrooms',  label:'Bathrooms',    on:true},
+    {key:'area_sqft',  label:'Area (sqft)',  on:true},
+    {key:'sale_price_aed',label:'Price AED', on:true},
+    {key:'sale_price_inr',label:'Price INR', on:false},
+    {key:'monthly_rent_aed',label:'Rent AED',on:false},
+    {key:'monthly_rent_inr',label:'Rent INR',on:false},
+    {key:'seller_name',label:'Seller',       on:false},
+    {key:'seller_phone',label:'Seller Phone',on:false},
+    {key:'description',label:'Description',  on:true},
+    {key:'amenities',  label:'Amenities',    on:false},
+    {key:'availability',label:'Availability',on:true},
+    {key:'region',     label:'Region',       on:true},
+    {key:'lat',        label:'Latitude',     on:false},
+    {key:'lng',        label:'Longitude',    on:false},
+  ];
+
+  // Portal-specific column presets
+  const PRESETS = {
+    bayut:          ['title','property_type','category','city','address','bedrooms','bathrooms','area_sqft','sale_price_aed','monthly_rent_aed','description','lat','lng'],
+    propertyfinder: ['title','property_type','category','city','address','bedrooms','bathrooms','area_sqft','sale_price_aed','monthly_rent_aed','description','seller_phone'],
+    '99acres':      ['title','property_type','category','city','address','bedrooms','bathrooms','area_sqft','sale_price_inr','monthly_rent_inr','description','seller_name'],
+    magicbricks:    ['title','property_type','category','city','address','bedrooms','bathrooms','area_sqft','sale_price_inr','monthly_rent_inr','description'],
+    csv:            null,  // all selected
+    excel:          null,
+  };
+
+  async function load() {
+    try {
+      const res = await fetch('/get_properties');
+      _props    = await res.json();
+      renderCols();
+      updatePreview();
+    } catch { showToast('❌ Failed to load'); }
+  }
+
+  function selectFormat(fmt, el) {
+    _format = fmt;
+    document.querySelectorAll('.fmt-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    // Apply preset columns
+    const preset = PRESETS[fmt];
+    if (preset) {
+      ALL_COLS.forEach(c => c.on = preset.includes(c.key));
+    }
+    renderCols();
+    updatePreview();
+  }
+
+  function renderCols() {
+    document.getElementById('colGrid').innerHTML = ALL_COLS.map((c,i) => `
+      <label class="col-chip ${c.on?'on':''}" id="chip_${i}">
+        <input type="checkbox" ${c.on?'checked':''} onchange="ALL_COLS[${i}].on=this.checked;document.getElementById('chip_${i}').classList.toggle('on',this.checked);updatePreview()"/>
+        <span>${c.label}</span>
+      </label>`).join('');
+  }
+
+  function getFiltered() {
+    const region = document.getElementById('fRegion').value;
+    const cat    = document.getElementById('fCat').value;
+    const type   = document.getElementById('fType').value;
+    const avail  = document.getElementById('fAvail').value;
+    return _props.filter(p => {
+      if (region && (p.region||'UAE') !== region) return false;
+      if (cat    && (p.category||'') !== cat)    return false;
+      if (type   && (p.property_type||'') !== type) return false;
+      if (avail  && (p.availability||'Available') !== avail) return false;
+      return true;
+    });
+  }
+
+  function getSelectedCols() {
+    return ALL_COLS.filter(c => c.on);
+  }
+
+  function updatePreview() {
+    const filtered = getFiltered();
+    const cols     = getSelectedCols();
+    document.getElementById('previewCount').textContent = `(${filtered.length} properties)`;
+    document.getElementById('exportCount').textContent  = `${filtered.length} properties`;
+
+    const preview  = filtered.slice(0, 8);
+    const table    = document.getElementById('previewTable');
+    table.innerHTML = `
+      <thead><tr>${cols.map(c=>`<th>${c.label}</th>`).join('')}</tr></thead>
+      <tbody>${preview.map(p=>`<tr>${cols.map(c=>`<td>${esc(Array.isArray(p[c.key])?(p[c.key]||[]).join(', '):p[c.key]||'')}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  }
+
+  function doExport() {
+    const filtered = getFiltered();
+    const cols     = getSelectedCols();
+    if (!filtered.length) { showToast('⚠️ No properties match filters'); return; }
+
+    const rows = [
+      cols.map(c => c.label),
+      ...filtered.map(p => cols.map(c => {
+        const v = p[c.key];
+        return Array.isArray(v) ? v.join('; ') : (v||'');
+      }))
+    ];
+
+    if (_format === 'excel') {
+      exportExcel(rows, cols, filtered);
+    } else {
+      exportCSV(rows);
+    }
+    showToast(`✅ Exported ${filtered.length} properties!`);
+  }
+
+  function exportCSV(rows) {
+    const csv  = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `serenia_${_format}_export_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportExcel(rows) {
+    // Simple TSV for Excel compatibility
+    const tsv  = rows.map(r => r.map(v => String(v).replace(/\t/g,' ')).join('\t')).join('\n');
+    const blob = new Blob([tsv], {type:'application/vnd.ms-excel'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `serenia_export_${new Date().toISOString().slice(0,10)}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  function showToast(m,d=3000){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  load();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

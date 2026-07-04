@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Details – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--blue:#1400cc;--indigo:#818cf8;--bg:#0f0f23;--card:#1e1e3a;--border:rgba(255,255,255,.07);--text:#e2e8f0;--gray:#64748b}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text)}
+
+    .header{background:#1400cc;display:flex;align-items:center;gap:16px;padding:16px 32px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;letter-spacing:.07em;text-transform:uppercase;padding:9px 18px;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;letter-spacing:.06em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .id-badge{background:rgba(255,255,255,.18);color:#fff;font-size:.8rem;font-weight:900;letter-spacing:.1em;padding:6px 14px;border-radius:8px;flex-shrink:0}
+
+    .body-wrap{max-width:1040px;margin:0 auto;padding:36px 32px 80px;display:flex;flex-direction:column;gap:22px}
+
+    /* HERO */
+    .hero-card{background:var(--card);border-radius:20px;padding:30px 34px;box-shadow:0 4px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:28px;border:1px solid var(--border);position:relative}
+    .status-badge{position:absolute;top:18px;right:20px;font-size:.78rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:5px 14px;border-radius:8px}
+    .status-badge.active{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(22,163,74,.3)}
+    .status-badge.inactive{background:rgba(220,38,38,.2);color:#f87171;border:1px solid rgba(220,38,38,.3)}
+    .hero-avatar{width:110px;height:110px;border-radius:50%;border:4px solid var(--indigo);background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,255,255,.2);overflow:hidden;flex-shrink:0}
+    .hero-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .hero-info h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;color:#fff;margin-bottom:6px}
+    .role-dept{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+    .badge{display:inline-block;font-size:.75rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:4px 12px;border-radius:7px}
+    .badge.role{background:rgba(129,140,248,.2);color:var(--indigo);border:1px solid rgba(129,140,248,.2)}
+    .badge.dept{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1)}
+    .hero-contact{font-size:.88rem;font-weight:700;color:var(--gray);line-height:1.8}
+
+    /* PERFORMANCE STATS */
+    .perf-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .perf-card{background:var(--card);border-radius:14px;padding:18px 20px;text-align:center;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.2)}
+    .perf-label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);margin-bottom:6px}
+    .perf-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:var(--indigo)}
+
+    /* INFO GRID */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .info-card{background:var(--card);border-radius:16px;padding:22px 26px;box-shadow:0 2px 14px rgba(0,0,0,.25);border:1px solid var(--border)}
+    .info-card.full{grid-column:1/-1}
+    .info-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.07em;color:var(--indigo);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+    .detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--border);gap:12px}
+    .detail-row:last-child{border-bottom:none}
+    .detail-key{font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);flex-shrink:0}
+    .detail-val{font-size:.9rem;font-weight:800;color:var(--text);text-align:right}
+    .detail-val.big{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--indigo);letter-spacing:.04em}
+
+    /* TAGS */
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:7px}
+    .tag{background:rgba(255,255,255,.07);color:var(--indigo);font-size:.75rem;font-weight:900;letter-spacing:.05em;text-transform:uppercase;padding:4px 11px;border-radius:6px;border:1px solid rgba(129,140,248,.2)}
+    .tag.submitted{background:rgba(22,163,74,.15);color:#4ade80;border-color:rgba(22,163,74,.2)}
+
+    /* ASSIGNED PROPS / CLIENTS */
+    .assign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:4px}
+    .mini-card{background:linear-gradient(135deg,#1400cc,#2c14ff);border-radius:13px;padding:16px 18px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(20,0,204,.25)}
+    .mini-card:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 28px rgba(20,0,204,.4)}
+    .mini-card.client{background:linear-gradient(135deg,#1e3a1e,#1e4a2a)}
+    .mini-id{font-size:.65rem;font-weight:900;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+    .mini-title{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:#fff;letter-spacing:.04em;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mini-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55)}
+    .mini-arrow{float:right;color:rgba(255,255,255,.4);font-size:1rem;margin-top:-20px}
+
+    /* DOC PHOTOS */
+    .doc-photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+    .doc-photo-item{width:110px;height:82px;border-radius:9px;overflow:hidden;cursor:pointer;transition:transform .2s;border:1px solid var(--border)}
+    .doc-photo-item:hover{transform:scale(1.06)}
+    .doc-photo-item img{width:100%;height:100%;object-fit:cover}
+
+    /* LIGHTBOX */
+    .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.97);flex-direction:column;align-items:center;justify-content:center;gap:14px}
+    .lightbox.open{display:flex}
+    .lb-img{max-width:92vw;max-height:85vh;object-fit:contain;border-radius:10px}
+    .lb-close{position:fixed;top:18px;right:22px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-size:1.3rem;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .lb-close:hover{background:rgba(255,255,255,.2)}
+
+    .loading-wrap{display:flex;justify-content:center;padding:100px}
+    .spinner{width:52px;height:52px;border:5px solid rgba(129,140,248,.15);border-top-color:var(--indigo);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .not-found{text-align:center;padding:100px 20px;color:var(--gray)}
+    .not-found .em{font-size:4rem;margin-bottom:16px}
+    .not-found p{font-weight:800;font-size:1.2rem;text-transform:uppercase;color:rgba(255,255,255,.3)}
+
+    @media(max-width:700px){
+      .info-grid{grid-template-columns:1fr}.info-card.full{grid-column:1}
+      .perf-row{grid-template-columns:repeat(2,1fr)}
+      .hero-card{flex-direction:column;text-align:center}
+      .body-wrap{padding:20px 16px 60px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title" id="headerTitle">Loading…</div>
+  <div class="id-badge" id="headerID"></div>
+  <a id="editBtn" href="#" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;flex-shrink:0">✏️ EDIT</a>
+  <button onclick="doDelete()" style="background:rgba(220,38,38,.2);border:1.5px solid rgba(220,38,38,.4);color:#f87171;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;padding:8px 16px;border-radius:10px;cursor:pointer;flex-shrink:0">🗑 DELETE</button>
+</div>
+
+<div class="body-wrap" id="bodyWrap">
+  <div class="loading-wrap"><div class="spinner"></div></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img class="lb-img" id="lbImg" src="" alt=""/>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const eId    = params.get('id');
+
+  async function load() {
+    if (!eId) { showNotFound(); return; }
+    try {
+      const res  = await fetch('/get_employees');
+      const emps = await res.json();
+      const emp  = emps.find(e => e.id === eId);
+      if (!emp) { showNotFound(); return; }
+      render(emp);
+    } catch { showNotFound(); }
+  }
+
+  function render(e) {
+    document.title = `${e.emp_name||'Employee'} – SERENIA`;
+    document.getElementById('headerTitle').textContent = e.emp_name || 'Employee';
+    document.getElementById('headerID').textContent    = `# ${e.id}`;
+    document.getElementById('editBtn').href = 'editemp.html?id=' + e.id;
+
+    const isActive = e.status !== 'Inactive';
+    const cur      = e.currency === 'INR' ? '₹' : 'AED';
+    const salary   = e.salary ? `${cur} ${Number(e.salary).toLocaleString()}` : '—';
+
+    // Commission display
+    let commStr = '—';
+    if (e.commission_type === 'percent' && e.commission_value) commStr = `${e.commission_value}%`;
+    else if (e.commission_type === 'fixed' && e.commission_value) commStr = `${cur} ${Number(e.commission_value).toLocaleString()}`;
+
+    const photoSrc = e.photo_filename
+      ? `/emp_docs/${encodeURIComponent(e.emp_name)}/${e.photo_filename}` : null;
+
+    const heroAvatar = photoSrc
+      ? `<div class="hero-avatar"><img src="${photoSrc}" onerror="this.parentElement.innerHTML='👤'"/></div>`
+      : `<div class="hero-avatar">👤</div>`;
+
+    const props   = e.assigned_properties || [];
+    const clients = e.assigned_clients    || [];
+    const docs    = e.docs_submitted      || [];
+    const docPhotos = e.doc_photo_filenames || [];
+
+    const rows = arr => arr.filter(r=>r[1]).map(([k,v])=>`
+      <div class="detail-row">
+        <span class="detail-key">${k}</span>
+        <span class="detail-val">${esc(v)}</span>
+      </div>`).join('');
+
+    const infoRows = rows([
+      ['Phone',        e.phone],
+      ['Email',        e.email],
+      ['Nationality',  e.nationality],
+      ['Joining Date', e.joining_date],
+      ['Currency',     e.currency],
+      ['Listed On',    e.created_at],
+    ]);
+
+    const docPhotosHtml = docPhotos.length
+      ? `<div class="doc-photo-grid">${
+          docPhotos.map(f=>`
+            <div class="doc-photo-item" onclick="openLb('/emp_docs/${encodeURIComponent(e.emp_name)}/${f}')">
+              <img src="/emp_docs/${encodeURIComponent(e.emp_name)}/${f}" loading="lazy"/>
+            </div>`).join('')
+        }</div>`
+      : '<span style="color:rgba(255,255,255,.3);font-size:.85rem;font-weight:700">No document photos</span>';
+
+    document.getElementById('bodyWrap').innerHTML = `
+
+      <!-- HERO -->
+      <div class="hero-card">
+        <div class="status-badge ${isActive?'active':'inactive'}">${isActive?'● Active':'● Inactive'}</div>
+        ${heroAvatar}
+        <div class="hero-info">
+          <h2>${esc(e.emp_name||'Unknown')}</h2>
+          <div class="role-dept">
+            ${e.role?`<span class="badge role">${esc(e.role)}</span>`:''}
+            ${e.department?`<span class="badge dept">${esc(e.department)}</span>`:''}
+          </div>
+          <div class="hero-contact">
+            ${e.phone?`📞 ${esc(e.phone)}<br>`:''}
+            ${e.email?`✉️ ${esc(e.email)}`:''}
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE STATS -->
+      <div class="perf-row">
+        <div class="perf-card">
+          <div class="perf-label">Properties<br>Assigned</div>
+          <div class="perf-value">${props.length}</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-label">Clients<br>Assigned</div>
+          <div class="perf-value">${clients.length}</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-label">Monthly<br>Salary</div>
+          <div class="perf-value" style="font-size:1.3rem">${salary}</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-label">Commission</div>
+          <div class="perf-value" style="font-size:1.3rem">${commStr}</div>
+        </div>
+      </div>
+
+      <!-- INFO GRID -->
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h2>Personal Info</h2>
+          ${infoRows||'<span style="color:rgba(255,255,255,.3)">—</span>'}
+        </div>
+
+        <div class="info-card">
+          <h2>Compensation</h2>
+          <div class="detail-row"><span class="detail-key">Salary</span><span class="detail-val big">${salary}</span></div>
+          <div class="detail-row"><span class="detail-key">Commission Type</span><span class="detail-val">${esc(e.commission_type||'None')}</span></div>
+          <div class="detail-row"><span class="detail-key">Commission Value</span><span class="detail-val">${commStr}</span></div>
+          ${e.notes?`<div class="detail-row" style="margin-top:8px"><span class="detail-key">Notes</span><span class="detail-val" style="font-size:.85rem">${esc(e.notes)}</span></div>`:''}
+        </div>
+
+        <!-- ASSIGNED PROPERTIES -->
+        <div class="info-card full">
+          <h2>Assigned Properties (${props.length})</h2>
+          ${props.length
+            ? `<div class="assign-grid">${props.map(p=>`
+                <div class="mini-card" onclick="window.location.href='propdet.html?id=${esc(p.id)}'">
+                  <div class="mini-id"># ${esc(p.id)}</div>
+                  <div class="mini-title">${esc(p.title||'Untitled')}</div>
+                  <div class="mini-sub">${esc([p.property_type,p.city].filter(Boolean).join(' · '))}</div>
+                  <div class="mini-arrow">→</div>
+                </div>`).join('')}</div>`
+            : '<span style="color:rgba(255,255,255,.3);font-size:.85rem;font-weight:700">No properties assigned</span>'}
+        </div>
+
+        <!-- ASSIGNED CLIENTS -->
+        <div class="info-card full">
+          <h2>Assigned Clients (${clients.length})</h2>
+          ${clients.length
+            ? `<div class="assign-grid">${clients.map(c=>`
+                <div class="mini-card client" onclick="window.location.href='${c.type==='Buyer'?'buyerdet':'sellerdet'}.html?id=${esc(c.id)}'">
+                  <div class="mini-id"># ${esc(c.id)} · ${esc(c.type||'')}</div>
+                  <div class="mini-title">${esc(c.name||'Unknown')}</div>
+                  <div class="mini-sub">${esc(c.type||'')}</div>
+                  <div class="mini-arrow">→</div>
+                </div>`).join('')}</div>`
+            : '<span style="color:rgba(255,255,255,.3);font-size:.85rem;font-weight:700">No clients assigned</span>'}
+        </div>
+
+        <!-- DOCS SUBMITTED -->
+        ${docs.length?`
+        <div class="info-card full">
+          <h2>Docs Submitted</h2>
+          <div class="tags-wrap">${docs.map(d=>`<span class="tag submitted">✓ ${esc(d)}</span>`).join('')}</div>
+        </div>`:''}
+
+        <!-- DOC PHOTOS -->
+        <div class="info-card full">
+          <h2>Document Photos</h2>
+          ${docPhotosHtml}
+        </div>
+
+      </div>`;
+  }
+
+  function openLb(src){document.getElementById('lbImg').src=src;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden'}
+  function closeLb(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow=''}
+  document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLb()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb()});
+
+  function showNotFound(){
+    document.getElementById('headerTitle').textContent='Not Found';
+    document.getElementById('bodyWrap').innerHTML=`<div class="not-found"><div class="em">🔍</div><p>Employee not found</p></div>`;
+  }
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  async function doDelete() {
+    if (!confirm('Delete this employee? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/delete_employee/' + eId, {method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { alert('Employee deleted.'); window.location.href = 'emp.html'; }
+      else alert('Error: ' + (json.error||'Unknown'));
+    } catch { alert('Server error'); }
+  }
+
+  load();
+</script>
+</body>
+</html>

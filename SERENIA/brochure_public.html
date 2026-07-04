@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property Brochure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f4f4f8;color:#1a1a2e}
+    .top-bar{background:#1400cc;padding:12px 24px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(20,0,204,.3)}
+    .brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.1em;color:#fff}
+    .badge{background:rgba(255,255,255,.2);color:#fff;font-size:.7rem;font-weight:900;padding:3px 10px;border-radius:5px;text-transform:uppercase;letter-spacing:.07em}
+    .print-btn{margin-left:auto;background:#fff;color:#1400cc;border:none;border-radius:8px;padding:7px 16px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;transition:background .2s}
+    .print-btn:hover{background:#e8e0ff}
+    .wrap{max-width:780px;margin:0 auto;padding:32px 24px 60px;background:#fff;min-height:calc(100vh - 60px)}
+    .error-box{text-align:center;padding:80px 40px}
+    .error-box h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.08em;color:#dc2626;margin-bottom:12px}
+    .error-box p{color:#888;font-weight:700}
+    .loading{text-align:center;padding:80px;color:#888;font-weight:700}
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand" id="brandName">SERENIA</div>
+  <div class="badge">Property Brochure</div>
+  <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<div class="wrap" id="wrap">
+  <div class="loading">Loading brochure…</div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const propId = params.get('id');
+  const token  = params.get('token');
+
+  async function load() {
+    if (!propId || !token) {
+      showError('Invalid Link', 'This brochure link is missing required parameters.');
+      return;
+    }
+    try {
+      // Verify token
+      const vRes  = await fetch(`/get_brochure_token/${propId}`);
+      const vData = await vRes.json();
+      if (vData.token !== token) {
+        showError('Invalid Link', 'This brochure link is invalid or has been revoked.');
+        return;
+      }
+
+      // Load property + branding
+      const [pr, br] = await Promise.all([fetch('/get_properties'), fetch('/get_branding')]);
+      const props    = await pr.json();
+      const branding = await br.json();
+      const p        = props.find(x => x.id === propId);
+
+      if (!p) {
+        showError('Property Not Found', 'This property may have been removed.');
+        return;
+      }
+
+      const company = branding.company_name  || 'SERENIA';
+      const primary = branding.primary_color || '#1400cc';
+      const logoSrc = branding.logo_filename ? `/photos/${branding.logo_filename}` : null;
+
+      document.getElementById('brandName').textContent = company;
+      document.title = `${p.title || 'Property'} – ${company}`;
+
+      const cur       = p.currency === 'INR' ? '₹' : 'AED';
+      const salePrice = p.sale_price_aed || p.sale_price_inr;
+      const rentPrice = p.monthly_rent_aed || p.monthly_rent_inr;
+      const fmt       = n => n ? Number(n).toLocaleString() : '';
+      const photos    = p.photos || [];
+
+      const logoHtml = logoSrc
+        ? `<img src="${logoSrc}" style="height:40px;object-fit:contain;max-width:140px" onerror="this.style.display='none'"/>`
+        : `<div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.12em;color:${primary}">${company}</div>`;
+
+      document.getElementById('wrap').innerHTML = `
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid ${primary}">
+          <div>${logoHtml}<div style="font-size:.75rem;font-weight:700;color:#888;margin-top:4px">${branding.tagline||'Real Estate'}</div></div>
+          <div style="text-align:right">
+            <div style="background:${primary};color:#fff;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">#${p.id}</div>
+            ${p.category?`<div style="background:#f4f4f8;color:#555;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:800;text-transform:uppercase">${p.category}</div>`:''}
+          </div>
+        </div>
+
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:#1a1a2e;margin-bottom:4px">${p.title||'Untitled Property'}</h1>
+        <div style="font-size:13px;font-weight:700;color:#888;margin-bottom:20px">${[p.address,p.city,p.state].filter(Boolean).join(', ')||'—'}</div>
+
+        ${photos.length ? `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px">
+          ${photos.slice(0,6).map((ph,i)=>`<img src="/photos/${ph}" style="width:100%;height:${i===0?'220px':'100px'};object-fit:cover;border-radius:8px;${i===0?'grid-column:1/4;grid-row:1':''}" onerror="this.style.display='none'"/>`).join('')}
+        </div>` : ''}
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+          ${salePrice?`<div style="background:${primary};color:#fff;border-radius:10px;padding:14px;text-align:center"><div style="font-size:10px;font-weight:800;text-transform:uppercase;opacity:.7;margin-bottom:4px">Sale Price</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px">${cur} ${fmt(salePrice)}</div></div>`:''}
+          ${rentPrice?`<div style="background:#0a7c3e;color:#fff;border-radius:10px;padding:14px;text-align:center"><div style="font-size:10px;font-weight:800;text-transform:uppercase;opacity:.7;margin-bottom:4px">Monthly Rent</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px">${cur} ${fmt(rentPrice)}</div></div>`:''}
+          ${p.area_sqft?`<div style="background:#f4f4f8;border-radius:10px;padding:14px;text-align:center"><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;margin-bottom:4px">Area</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1a1a2e">${fmt(p.area_sqft)} sqft</div></div>`:''}
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px">
+          ${[['🛏','Bedrooms',p.bedrooms],['🚿','Bathrooms',p.bathrooms],['🏢','Type',p.property_type],['📍','Region',p.region||'UAE']].filter(r=>r[2]).map(([icon,label,val])=>`
+          <div style="border:1.5px solid #e8e0f0;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:18px;margin-bottom:4px">${icon}</div>
+            <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">${label}</div>
+            <div style="font-size:14px;font-weight:800;color:#1a1a2e">${val}</div>
+          </div>`).join('')}
+        </div>
+
+        ${p.description?`<div style="margin-bottom:20px"><h3 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:8px">Description</h3><p style="font-size:13px;font-weight:700;color:#444;line-height:1.7">${p.description}</p></div>`:''}
+        ${p.amenities?.length?`<div style="margin-bottom:20px"><h3 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px">Amenities</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${p.amenities.map(a=>`<span style="background:#f4f4f8;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:700;color:#444">${a}</span>`).join('')}</div></div>`:''}
+        ${p.seller_name?`<div style="background:#f8f4ff;border-radius:8px;padding:14px 18px;margin-top:20px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:6px">Contact</div><div style="font-size:13px;font-weight:800;color:#1a1a2e">${p.seller_name}</div>${p.seller_phone?`<div style="font-size:12px;color:#666;margin-top:2px">📞 ${p.seller_phone}</div>`:''}</div>`:''}
+
+        <div style="margin-top:28px;padding-top:12px;border-top:1px solid #e0d8ff;display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aaa">
+          <span>${company} · ${new Date().toLocaleDateString()}</span>
+          <span>Ref: ${p.id}</span>
+        </div>
+      `;
+    } catch (e) {
+      showError('Error Loading Brochure', 'Please try again or contact the agent.');
+    }
+  }
+
+  function showError(title, msg) {
+    document.getElementById('wrap').innerHTML = `<div class="error-box"><h2>${title}</h2><p>${msg}</p></div>`;
+  }
+
+  load();
+</script>
+</body>
+</html>

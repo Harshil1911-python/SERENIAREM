@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Employee – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+    body{background:#1a1a2e}
+    .page-header{background:#1400cc;text-align:center;padding:26px 20px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .page-header h1{font-size:2.4rem;font-weight:900;letter-spacing:.06em;color:#fff;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s,transform .15s}
+    .back-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-50%) scale(1.05)}
+    .scroll-wrap{max-width:920px;margin:0 auto;padding:32px 24px 80px;display:flex;flex-direction:column;gap:24px}
+    .card{background:#252540;border-radius:22px;padding:32px 36px;box-shadow:0 8px 32px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);animation:fadeUp .5s ease both}
+    .card:nth-child(2){animation-delay:.08s}
+    .card:nth-child(3){animation-delay:.16s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .card-title{color:#818cf8;font-weight:900;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .form-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+    .form-row:last-child{margin-bottom:0}
+    .form-row label{color:rgba(255,255,255,.7);font-weight:900;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;min-width:210px;flex-shrink:0}
+    .form-row input,.form-row select,.form-row textarea{flex:1;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;padding:12px 18px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#fff;outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none}
+    .form-row textarea{border-radius:14px;resize:vertical;min-height:50px}
+    .form-row input::placeholder,.form-row textarea::placeholder{color:rgba(255,255,255,.25)}
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:#818cf8;background:rgba(129,140,248,.08)}
+    .form-row select option{background:#252540;color:#fff}
+    .select-wrap{flex:1;position:relative}
+    .select-wrap select{width:100%;padding-right:44px;cursor:pointer}
+    .select-wrap .arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:#818cf8}
+    .prefix-wrap{flex:1;display:flex;align-items:center;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;overflow:hidden;transition:border-color .2s}
+    .prefix-wrap:focus-within{border-color:#818cf8}
+    .prefix-wrap .prefix{padding:12px 12px 12px 18px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;color:#818cf8;user-select:none;white-space:nowrap}
+    .prefix-wrap input{flex:1;background:transparent;border:none;border-radius:0;padding:12px 18px 12px 4px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#fff;outline:none;appearance:none}
+    .prefix-wrap input::placeholder{color:rgba(255,255,255,.25)}
+    .status-toggle-wrap{flex:1;display:flex;gap:10px}
+    .status-btn{flex:1;padding:11px 10px;border-radius:50px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .status-btn.active-sel{background:#16a34a;border-color:#16a34a;color:#fff}
+    .status-btn.inactive-sel{background:#dc2626;border-color:#dc2626;color:#fff}
+    .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+    .photo-upload-row .field-label{color:rgba(255,255,255,.7);font-weight:900;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;min-width:210px;flex-shrink:0}
+    .photo-preview{width:96px;height:96px;border-radius:50%;border:3px solid #818cf8;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;overflow:hidden;flex-shrink:0}
+    .photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .photo-change-btn{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:background .2s}
+    .photo-change-btn:hover{background:rgba(255,255,255,.18)}
+    /* Multi select */
+    .ms-panel{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 18px}
+    .ms-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .ms-header h3{color:rgba(255,255,255,.6);font-weight:900;font-size:.88rem;text-transform:uppercase;letter-spacing:.06em}
+    .ms-search{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:50px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;outline:none;width:160px}
+    .ms-search::placeholder{color:rgba(255,255,255,.25)}
+    .ms-search:focus{border-color:#818cf8}
+    .ms-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;scrollbar-color:#818cf8 transparent}
+    .ms-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:9px;padding:8px 12px;cursor:pointer;border:1.5px solid transparent;transition:all .18s}
+    .ms-item:hover{background:rgba(129,140,248,.1)}
+    .ms-item.selected{border-color:#818cf8;background:rgba(129,140,248,.12)}
+    .ms-item input[type="checkbox"]{width:15px;height:15px;accent-color:#818cf8;cursor:pointer;flex-shrink:0}
+    .ms-item-id{font-size:.62rem;font-weight:900;color:#818cf8;letter-spacing:.08em;text-transform:uppercase}
+    .ms-item-title{font-size:.84rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ms-item-sub{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+    .ms-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .chip{display:flex;align-items:center;gap:5px;background:#818cf8;color:#fff;border-radius:50px;padding:4px 12px;font-size:.72rem;font-weight:800}
+    .chip .crm{cursor:pointer;opacity:.7}
+    .chip .crm:hover{opacity:1}
+    .check-panel{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 22px}
+    .check-panel h3{color:rgba(255,255,255,.6);font-weight:900;font-size:.88rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+    .check-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin-bottom:12px}
+    .check-item{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .check-item input[type="checkbox"]{width:16px;height:16px;accent-color:#818cf8;cursor:pointer;flex-shrink:0}
+    .check-item span{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:#818cf8}
+    .doc-thumb-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .doc-thumb{width:68px;height:52px;border-radius:8px;overflow:hidden;position:relative;flex-shrink:0}
+    .doc-thumb img{width:100%;height:100%;object-fit:cover}
+    .doc-thumb .rm{position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:#fff;border:none;border-radius:50%;width:15px;height:15px;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .add-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:9px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:background .2s,transform .15s;margin-top:8px}
+    .add-btn:hover{background:rgba(255,255,255,.18);transform:scale(1.04)}
+    .add-btn .plus{width:20px;height:20px;background:#818cf8;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900}
+    .submit-wrap{text-align:center;padding:8px 0}
+    .submit-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:60px;padding:20px 90px;cursor:pointer;box-shadow:0 0 28px rgba(20,0,204,.6);transition:background .2s,transform .15s}
+    .submit-btn:hover{background:#2c14ff;transform:translateY(-3px) scale(1.03)}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 32px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#252540;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;min-width:300px;box-shadow:0 12px 48px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:12px}
+    .modal-box h3{color:#818cf8;font-weight:900;font-size:1.05rem;text-transform:uppercase}
+    .modal-box input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:50px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;color:#fff}
+    .modal-box input:focus{border-color:#818cf8}
+    .modal-btns{display:flex;gap:10px}
+    .modal-btns button{flex:1;border:none;border-radius:50px;padding:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .modal-btns .confirm{background:#1400cc;color:#fff}
+    .modal-btns .cancel{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+    .loading{text-align:center;padding:80px;color:#818cf8;font-weight:900;font-size:1.2rem}
+    @media(max-width:640px){.form-row{flex-direction:column;align-items:flex-start}.form-row label{min-width:unset}.check-list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="page-header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <h1>EDIT EMPLOYEE</h1>
+</div>
+<div class="scroll-wrap" id="scrollWrap"><div class="loading">Loading employee…</div></div>
+<div id="toast"></div>
+<div class="modal-overlay" id="addDocModal">
+  <div class="modal-box"><h3>Add Document</h3>
+    <input type="text" id="addDocInput" placeholder="Document name…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="document.getElementById('addDocModal').classList.remove('open')">Cancel</button>
+      <button class="confirm" onclick="saveDocItem()">Add</button>
+    </div>
+  </div>
+</div>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const empId  = params.get('id');
+  let _emp=null,_photoFile=null,_newDocPhotos=[],_allProps=[],_allClients=[],_selProps=new Set(),_selClients=new Set(),_empStatus='Active';
+
+  function setStatus(s){
+    _empStatus=s;
+    document.getElementById('btnActive').className='status-btn'+(s==='Active'?' active-sel':'');
+    document.getElementById('btnInactive').className='status-btn'+(s==='Inactive'?' inactive-sel':'');
+  }
+
+  async function load(){
+    if(!empId) return;
+    try{
+      const [er,pr,sr,br]=await Promise.all([fetch('/get_employees'),fetch('/get_properties'),fetch('/get_sellers'),fetch('/get_buyers')]);
+      const emps=await er.json(); _allProps=await pr.json();
+      const sellers=await sr.json(); const buyers=await br.json();
+      _allClients=[...sellers.map(s=>({id:s.id,name:s.seller_name,type:'Seller',role:s.role})),...buyers.map(b=>({id:b.id,name:b.buyer_name,type:'Buyer',role:b.intent}))];
+      _emp=emps.find(e=>e.id===empId);
+      if(!_emp){document.getElementById('scrollWrap').innerHTML='<div class="loading">Employee not found</div>';return;}
+      (_emp.assigned_property_ids||[]).forEach(id=>_selProps.add(id));
+      (_emp.assigned_client_ids||[]).forEach(id=>_selClients.add(id));
+      _empStatus=_emp.status||'Active';
+      renderForm();
+    }catch{document.getElementById('scrollWrap').innerHTML='<div class="loading">Error loading</div>';}
+  }
+
+  function renderMsList(type){
+    const isProp=type==='prop';
+    const q=document.getElementById(isProp?'propSearch':'clientSearch')?document.getElementById(isProp?'propSearch':'clientSearch').value.trim().toLowerCase():'';
+    const items=isProp?_allProps:_allClients;
+    const selSet=isProp?_selProps:_selClients;
+    const filtered=q?items.filter(x=>[x.id,isProp?x.title:x.name,isProp?x.city:x.role].join(' ').toLowerCase().includes(q)):items;
+    const listEl=document.getElementById(isProp?'propList':'clientList');
+    if(!listEl) return;
+    listEl.innerHTML=filtered.map(x=>{
+      const sel=selSet.has(x.id);
+      const title=isProp?(x.title||'Untitled'):x.name;
+      const sub=isProp?[x.property_type,x.city].filter(Boolean).join(' · '):`${x.type} · ${x.role||''}`;
+      return `<div class="ms-item ${sel?'selected':''}" onclick="toggleItem('${type}','${x.id}')">
+        <input type="checkbox" ${sel?'checked':''} onclick="event.stopPropagation();toggleItem('${type}','${x.id}')"/>
+        <div style="flex:1;min-width:0">
+          <div class="ms-item-id">#${x.id}</div>
+          <div class="ms-item-title">${esc(title)}</div>
+          <div class="ms-item-sub">${esc(sub)}</div>
+        </div>
+      </div>`;
+    }).join('');
+    updateChips(type);
+  }
+
+  function toggleItem(type,id){
+    const sel=type==='prop'?_selProps:_selClients;
+    sel.has(id)?sel.delete(id):sel.add(id);
+    renderMsList(type);
+  }
+  function updateChips(type){
+    const isProp=type==='prop';
+    const sel=isProp?_selProps:_selClients;
+    const all=isProp?_allProps:_allClients;
+    const el=document.getElementById(isProp?'propChips':'clientChips');
+    if(!el) return;
+    el.innerHTML=[...sel].map(id=>{const x=all.find(i=>i.id===id);const label=x?(isProp?(x.title||x.id):x.name):id;return`<div class="chip">${esc(label)}<span class="crm" onclick="toggleItem('${type}','${id}')">✕</span></div>`;}).join('');
+  }
+
+  function renderForm(){
+    const e=_emp;
+    const photoSrc=e.photo_filename?`/emp_docs/${encodeURIComponent(e.emp_name)}/${e.photo_filename}`:null;
+    const docPhotos=(e.doc_photo_filenames||[]).map(f=>`<div class="doc-thumb"><img src="/emp_docs/${encodeURIComponent(e.emp_name)}/${f}"/><button class="rm" onclick="this.parentElement.remove()">✕</button></div>`).join('');
+    const allDocs=['Emirates ID','Aadhaar Card','PAN Card','Passport Copy','Visa Copy','Employment Contract','RERA Certificate','Offer Letter','Bank Details','NDA Signed'];
+    const docHTML=[...new Set([...allDocs,...(e.docs_submitted||[])])].map(d=>`<label class="check-item"><input type="checkbox" value="${d}" ${(e.docs_submitted||[]).includes(d)?'checked':''}/><span>${d.toUpperCase()}</span></label>`).join('');
+    const roles=['Agent','Senior Agent','Property Manager','Sales Manager','Branch Manager','Admin','Coordinator','Legal Advisor','Finance Officer','HR Manager','Other'];
+    const depts=['Sales','Rental','Legal','Finance','Admin','HR','Other'];
+
+    document.getElementById('scrollWrap').innerHTML=`
+      <div class="card">
+        <div class="card-title">Personal Information</div>
+        <div class="photo-upload-row">
+          <label class="field-label">Photo:</label>
+          <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
+            ${photoSrc?`<img src="${photoSrc}"/>`:'👤'}
+          </div>
+          <button class="photo-change-btn" onclick="document.getElementById('photoInput').click()">Change Photo</button>
+          <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)"/>
+        </div>
+        <div class="form-row"><label>Full Name:</label><input type="text" id="empName" value="${esc(e.emp_name||'')}"/></div>
+        <div class="form-row"><label>Phone:</label><input type="tel" id="phone" value="${esc(e.phone||'')}"/></div>
+        <div class="form-row"><label>Email:</label><input type="email" id="email" value="${esc(e.email||'')}"/></div>
+        <div class="form-row"><label>Nationality:</label><input type="text" id="nationality" value="${esc(e.nationality||'')}"/></div>
+        <div class="form-row"><label>Joining Date:</label><input type="date" id="joiningDate" value="${e.joining_date||''}"/></div>
+        <div class="form-row"><label>Status:</label>
+          <div class="status-toggle-wrap">
+            <button class="status-btn ${_empStatus==='Active'?'active-sel':''}" id="btnActive" onclick="setStatus('Active')">✓ Active</button>
+            <button class="status-btn ${_empStatus==='Inactive'?'inactive-sel':''}" id="btnInactive" onclick="setStatus('Inactive')">✗ Inactive</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Role & Compensation</div>
+        <div class="form-row"><label>Role:</label>
+          <div class="select-wrap"><select id="role">
+            ${roles.map(r=>`<option ${e.role===r?'selected':''}>${r}</option>`).join('')}
+            ${e.role&&!roles.includes(e.role)?`<option selected>${e.role}</option>`:''}
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Department:</label>
+          <div class="select-wrap"><select id="department">
+            ${depts.map(d=>`<option ${e.department===d?'selected':''}>${d}</option>`).join('')}
+            ${e.department&&!depts.includes(e.department)?`<option selected>${e.department}</option>`:''}
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Salary:</label>
+          <div class="prefix-wrap"><span class="prefix" id="salaryPrefix">${e.currency==='INR'?'₹':'AED'}</span>
+          <input type="number" id="salary" value="${e.salary||''}"/></div>
+        </div>
+        <div class="form-row"><label>Currency:</label>
+          <div class="select-wrap"><select id="currency" onchange="document.getElementById('salaryPrefix').textContent=this.value==='INR'?'₹':'AED'">
+            <option ${e.currency==='AED'?'selected':''}>AED</option>
+            <option ${e.currency==='INR'?'selected':''}>INR</option>
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Commission Type:</label>
+          <div class="select-wrap"><select id="commType">
+            <option ${!e.commission_type?'selected':''} value="">None</option>
+            <option ${e.commission_type==='percent'?'selected':''} value="percent">Percentage (%)</option>
+            <option ${e.commission_type==='fixed'?'selected':''} value="fixed">Fixed Amount</option>
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Commission Value:</label><input type="number" id="commValue" value="${e.commission_value||''}"/></div>
+        <div class="form-row"><label>Notes:</label><textarea id="notes">${esc(e.notes||'')}</textarea></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Assigned Properties</div>
+        <div class="ms-panel">
+          <div class="ms-header"><h3>Select Properties</h3>
+            <input type="text" class="ms-search" id="propSearch" placeholder="🔍 Search…" oninput="renderMsList('prop')"/>
+          </div>
+          <div class="ms-list" id="propList"></div>
+          <div class="ms-chips" id="propChips"></div>
+        </div>
+        <div class="card-title" style="margin-top:20px">Assigned Clients</div>
+        <div class="ms-panel">
+          <div class="ms-header"><h3>Select Clients</h3>
+            <input type="text" class="ms-search" id="clientSearch" placeholder="🔍 Search…" oninput="renderMsList('client')"/>
+          </div>
+          <div class="ms-list" id="clientList"></div>
+          <div class="ms-chips" id="clientChips"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Documents</div>
+        <div class="check-panel">
+          <div class="check-list" id="docsList">${docHTML}</div>
+          <button class="add-btn" onclick="document.getElementById('addDocInput').value='';document.getElementById('addDocModal').classList.add('open')">Add <span class="plus">+</span></button>
+        </div>
+        <div class="card-title" style="margin-top:20px">Document Photos</div>
+        <div class="doc-thumb-grid" id="docPhotoGrid">${docPhotos}</div>
+        <button class="add-btn" onclick="document.getElementById('docPhotoInput').click()">Add Doc Photos <span class="plus">+</span></button>
+        <input type="file" id="docPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDocPhotos(this)"/>
+      </div>
+
+      <div class="submit-wrap">
+        <button class="submit-btn" id="saveBtn" onclick="saveChanges()">SAVE CHANGES</button>
+      </div>`;
+
+    renderMsList('prop'); renderMsList('client');
+  }
+
+  function handlePhoto(input){const f=input.files[0];if(!f)return;_photoFile=f;const r=new FileReader();r.onload=e=>{document.getElementById('photoPreview').innerHTML=`<img src="${e.target.result}"/>`;};r.readAsDataURL(f);}
+  function handleDocPhotos(input){Array.from(input.files).forEach(f=>{_newDocPhotos.push(f);const div=document.createElement('div');div.className='doc-thumb';const img=document.createElement('img');const r=new FileReader();r.onload=e=>{img.src=e.target.result;};r.readAsDataURL(f);const btn=document.createElement('button');btn.className='rm';btn.textContent='✕';const i=_newDocPhotos.length-1;btn.onclick=()=>{_newDocPhotos.splice(i,1);div.remove();};div.appendChild(img);div.appendChild(btn);document.getElementById('docPhotoGrid').appendChild(div);});input.value='';}
+  function saveDocItem(){const val=document.getElementById('addDocInput').value.trim();if(!val)return;const label=document.createElement('label');label.className='check-item';label.innerHTML=`<input type="checkbox" value="${val}" checked/><span>${val.toUpperCase()}</span>`;document.getElementById('docsList').appendChild(label);document.getElementById('addDocModal').classList.remove('open');}
+  function getChecked(id){return[...document.querySelectorAll(`#${id} input[type="checkbox"]:checked`)].map(c=>c.value)}
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  async function saveChanges(){
+    const selPropsArr=[..._selProps].map(id=>{const p=_allProps.find(x=>x.id===id);return p?{id:p.id,title:p.title,property_type:p.property_type,city:p.city}:{id};});
+    const selClientsArr=[..._selClients].map(id=>{const c=_allClients.find(x=>x.id===id);return c?{id:c.id,name:c.name,type:c.type}:{id};});
+    const data={
+      emp_name:document.getElementById('empName').value.trim(),
+      phone:document.getElementById('phone').value.trim(),
+      email:document.getElementById('email').value.trim(),
+      nationality:document.getElementById('nationality').value.trim(),
+      joining_date:document.getElementById('joiningDate').value,
+      status:_empStatus,
+      role:document.getElementById('role').value,
+      department:document.getElementById('department').value,
+      salary:document.getElementById('salary').value,
+      currency:document.getElementById('currency').value,
+      commission_type:document.getElementById('commType').value,
+      commission_value:document.getElementById('commValue').value,
+      notes:document.getElementById('notes').value.trim(),
+      docs_submitted:getChecked('docsList'),
+      assigned_properties:selPropsArr,
+      assigned_property_ids:[..._selProps],
+      assigned_clients:selClientsArr,
+      assigned_client_ids:[..._selClients],
+    };
+    const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='SAVING…';
+    const fd=new FormData();fd.append('data',JSON.stringify(data));
+    if(_photoFile)fd.append('emp_photo',_photoFile);
+    _newDocPhotos.forEach(f=>fd.append('doc_photos',f));
+    try{
+      const res=await fetch(`/update_employee/${empId}`,{method:'POST',body:fd});
+      const json=await res.json();
+      if(json.success){showToast('✅ Employee updated!',3000);setTimeout(()=>window.location.href=`empdet.html?id=${empId}`,1500);}
+      else{showToast('❌ '+(json.error||'Error'));btn.disabled=false;btn.textContent='SAVE CHANGES';}
+    }catch{showToast('❌ Server error');btn.disabled=false;btn.textContent='SAVE CHANGES';}
+  }
+  load();
+</script>
+</body>
+</html>

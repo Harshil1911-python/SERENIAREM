@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Tools – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    .ai-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    @media(max-width:800px){.ai-grid{grid-template-columns:1fr}}
+
+    .ai-card{background:#1e1e3a;border-radius:18px;padding:24px 26px;border:1.5px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:14px}
+    .ai-card-header{display:flex;align-items:center;gap:12px}
+    .ai-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .ai-icon.purple{background:rgba(124,58,237,.25)}
+    .ai-icon.blue{background:rgba(20,0,204,.25)}
+    .ai-icon.green{background:rgba(22,163,74,.2)}
+    .ai-icon.amber{background:rgba(217,119,6,.2)}
+    .ai-icon.teal{background:rgba(8,145,178,.2)}
+    .ai-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:#fff}
+    .ai-desc{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.4);line-height:1.5;margin-top:2px}
+
+    .field label{display:block;color:rgba(255,255,255,.4);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .field select,.field input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;outline:none;appearance:none;transition:border-color .2s}
+    .field select:focus,.field input:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    .ai-btn{background:#1400cc;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;letter-spacing:.07em;text-transform:uppercase;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;justify-content:center}
+    .ai-btn:hover{background:#2c14ff;transform:translateY(-1px)}
+    .ai-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .ai-btn.green{background:#16a34a}.ai-btn.green:hover{background:#15803d}
+    .ai-btn.purple{background:#7c3aed}.ai-btn.purple:hover{background:#6d28d9}
+    .ai-btn.amber{background:#d97706}.ai-btn.amber:hover{background:#b45309}
+
+    .result-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;font-size:.88rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.7;min-height:60px;white-space:pre-wrap;display:none;position:relative}
+    .result-box.show{display:block}
+    .copy-result-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;padding:4px 10px;cursor:pointer;transition:all .2s}
+    .copy-result-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+
+    .loading-dots{display:none;text-align:center;padding:20px;color:rgba(255,255,255,.4);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
+    .loading-dots.show{display:block}
+    .dots{animation:blink 1.2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+    /* SCORE DISPLAY */
+    .score-display{display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;gap:12px;align-items:center}
+    .score-display.show{display:flex}
+    .score-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;flex-shrink:0}
+    .score-info{flex:1;min-width:0}
+    .score-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+    .score-reason{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.6);line-height:1.5}
+
+    /* ESTIMATE DISPLAY */
+    .estimate-display{display:none;background:rgba(20,0,204,.12);border:1px solid rgba(20,0,204,.25);border-radius:12px;padding:16px}
+    .estimate-display.show{display:block}
+    .est-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .est-label{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+    .est-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#818cf8}
+    .est-suggested{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff}
+    .est-reasoning{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:8px;line-height:1.5;border-top:1px solid rgba(255,255,255,.07);padding-top:8px}
+
+    /* EMAIL SEQUENCE */
+    .email-seq{display:none;flex-direction:column;gap:10px}
+    .email-seq.show{display:flex}
+    .email-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px}
+    .email-day{font-size:.68rem;font-weight:900;color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+    .email-subject{font-weight:800;color:#fff;font-size:.88rem;margin-bottom:6px}
+    .email-body{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);line-height:1.6;max-height:100px;overflow:hidden;position:relative}
+    .email-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,rgba(30,30,58,1))}
+    .use-email-btn{margin-top:8px;background:rgba(20,0,204,.2);border:1px solid rgba(20,0,204,.3);color:#818cf8;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .use-email-btn:hover{background:rgba(20,0,204,.35)}
+
+    /* LEAD SCORES TABLE */
+    .scores-table{width:100%;border-collapse:separate;border-spacing:0 5px}
+    .scores-table th{text-align:left;padding:6px 12px;font-size:.65rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em}
+    .scores-table td{padding:10px 12px;font-size:.85rem;font-weight:700;background:#252545;vertical-align:middle}
+    .scores-table tr td:first-child{border-radius:9px 0 0 9px}
+    .scores-table tr td:last-child{border-radius:0 9px 9px 0}
+    .score-bar-mini{height:6px;border-radius:3px;transition:width .8s ease}
+
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;padding:12px 28px;border-radius:60px;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <div class="header-title">🤖 AI TOOLS</div>
+</div>
+
+<div class="wrap">
+
+  <div class="ai-grid">
+
+    <!-- AI PROPERTY DESCRIPTION -->
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-icon purple">✍️</div>
+        <div>
+          <div class="ai-title">Property Description Generator</div>
+          <div class="ai-desc">AI writes a professional listing description in seconds</div>
+        </div>
+      </div>
+      <div class="field"><label>Select Property</label>
+        <select id="descPropSel"><option value="">— Choose a property —</option></select>
+      </div>
+      <button class="ai-btn purple" onclick="generateDesc()" id="descBtn">✨ GENERATE DESCRIPTION</button>
+      <div class="loading-dots" id="descLoading"><span class="dots">AI is writing your description…</span></div>
+      <div class="result-box" id="descResult">
+        <button class="copy-result-btn" onclick="copyResult('descResult')">📋 Copy</button>
+        <div id="descText"></div>
+      </div>
+      <div id="applyDescBtn" style="display:none">
+        <button class="ai-btn green" onclick="applyDescription()" style="width:100%">✅ APPLY TO PROPERTY</button>
+      </div>
+    </div>
+
+    <!-- AI PRICE ESTIMATOR -->
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-icon blue">💰</div>
+        <div>
+          <div class="ai-title">Property Price Estimator</div>
+          <div class="ai-desc">Get an AI price estimate based on your portfolio data</div>
+        </div>
+      </div>
+      <div class="form-2">
+        <div class="field"><label>Type</label>
+          <select id="estType"><option>Apartment</option><option>Villa</option><option>Townhouse</option><option>Office</option><option>Plot</option></select>
+        </div>
+        <div class="field"><label>Bedrooms</label>
+          <select id="estBeds"><option>Studio</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select>
+        </div>
+      </div>
+      <div class="form-2">
+        <div class="field"><label>Area (sqft)</label>
+          <input type="number" id="estArea" placeholder="e.g. 1200"/></div>
+        <div class="field"><label>Region</label>
+          <select id="estRegion"><option>UAE</option><option>India</option></select></div>
+      </div>
+      <div class="form-2">
+        <div class="field"><label>City</label>
+          <input type="text" id="estCity" placeholder="e.g. Dubai Marina"/></div>
+        <div class="field"><label>Category</label>
+          <select id="estCat"><option>For Sale</option><option>For Rent</option></select></div>
+      </div>
+      <button class="ai-btn" onclick="estimatePrice()" id="estBtn">📊 ESTIMATE PRICE</button>
+      <div class="loading-dots" id="estLoading"><span class="dots">Analyzing market data…</span></div>
+      <div class="estimate-display" id="estDisplay">
+        <div class="est-row">
+          <span class="est-label">Suggested Price</span>
+          <span class="est-suggested" id="estSuggested">—</span>
+        </div>
+        <div class="est-row">
+          <span class="est-label">Range</span>
+          <span class="est-val" id="estRange">—</span>
+        </div>
+        <div class="est-row">
+          <span class="est-label">Per Sqft</span>
+          <span class="est-val" id="estPerSqft">—</span>
+        </div>
+        <div class="est-reasoning" id="estReasoning"></div>
+      </div>
+    </div>
+
+    <!-- SMART LEAD SCORING -->
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-icon amber">🎯</div>
+        <div>
+          <div class="ai-title">Smart Lead Scoring</div>
+          <div class="ai-desc">AI scores all leads 1-10. Focus on the hottest prospects</div>
+        </div>
+      </div>
+      <div class="field"><label>Score Specific Lead (optional)</label>
+        <select id="scoreLead"><option value="">— Score ALL leads —</option></select>
+      </div>
+      <button class="ai-btn amber" onclick="scoreLeads()" id="scoreBtn">🔥 SCORE LEADS</button>
+      <div class="loading-dots" id="scoreLoading"><span class="dots">AI is analyzing leads…</span></div>
+      <div id="scoresWrap" style="display:none">
+        <table class="scores-table">
+          <thead><tr><th>Lead</th><th>Score</th><th>Reason</th><th></th></tr></thead>
+          <tbody id="scoresBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EMAIL SEQUENCE GENERATOR -->
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-icon green">📧</div>
+        <div>
+          <div class="ai-title">Email Sequence Generator</div>
+          <div class="ai-desc">3-email drip campaign for any lead, ready to send</div>
+        </div>
+      </div>
+      <div class="field"><label>Select Lead</label>
+        <select id="seqLead"><option value="">— Choose a lead —</option></select>
+      </div>
+      <button class="ai-btn green" onclick="genEmailSeq()" id="seqBtn">📩 GENERATE SEQUENCE</button>
+      <div class="loading-dots" id="seqLoading"><span class="dots">Writing your email sequence…</span></div>
+      <div class="email-seq" id="emailSeq"></div>
+    </div>
+
+    <!-- AI REVENUE FORECAST -->
+    <div class="ai-card" style="grid-column:1/-1">
+      <div class="ai-card-header">
+        <div class="ai-icon teal">📈</div>
+        <div>
+          <div class="ai-title">Revenue Forecasting</div>
+          <div class="ai-desc">Expected revenue this month and next quarter based on your pipeline</div>
+        </div>
+      </div>
+      <div id="forecastWrap">
+        <button class="ai-btn" onclick="loadForecast()" id="forecastBtn">📈 CALCULATE FORECAST</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _props=[], _leads=[], _descPropId=null, _descText='';
+
+  async function loadData() {
+    try {
+      const [pr, lr] = await Promise.all([fetch('/get_properties'), fetch('/get_leads')]);
+      _props = await pr.json();
+      _leads = await lr.json();
+      populateSelects();
+    } catch {}
+  }
+
+  function populateSelects() {
+    const dp = document.getElementById('descPropSel');
+    const sl = document.getElementById('scoreLead');
+    const sq = document.getElementById('seqLead');
+    dp.innerHTML = '<option value="">— Choose a property —</option>' +
+      _props.map(p => `<option value="${p.id}">${esc(p.title||p.id)} · ${esc(p.city||'')}</option>`).join('');
+    const leadOpts = '<option value="">— Score ALL leads —</option>' +
+      _leads.map(l => `<option value="${l.id}">${esc(l.name)} · ${l.source||''}</option>`).join('');
+    sl.innerHTML = leadOpts;
+    const seqOpts = '<option value="">— Choose a lead —</option>' +
+      _leads.filter(l=>l.status!=='Converted'&&l.status!=='Lost').map(l =>
+        `<option value="${l.id}">${esc(l.name)} · ${l.intent||''}</option>`).join('');
+    sq.innerHTML = seqOpts;
+  }
+
+  // ── DESCRIPTION ──
+  async function generateDesc() {
+    const id = document.getElementById('descPropSel').value;
+    if (!id) { showToast('⚠️ Select a property'); return; }
+    _descPropId = id;
+    setLoading('desc', true);
+    try {
+      const res  = await fetch(`/ai/describe_property/${id}`, {method:'POST'});
+      const json = await res.json();
+      if (json.success) {
+        _descText = json.description;
+        document.getElementById('descText').textContent = _descText;
+        document.getElementById('descResult').classList.add('show');
+        document.getElementById('applyDescBtn').style.display = 'block';
+        showToast('✅ Description generated!');
+      } else {
+        showToast('❌ ' + (json.error||'Error — check ANTHROPIC_API_KEY'));
+      }
+    } catch { showToast('❌ Server error'); }
+    setLoading('desc', false);
+  }
+
+  async function applyDescription() {
+    if (!_descPropId || !_descText) return;
+    try {
+      const fd = new FormData();
+      fd.append('data', JSON.stringify({description: _descText}));
+      const res  = await fetch(`/update_property/${_descPropId}`, {method:'POST', body:fd});
+      const json = await res.json();
+      if (json.success) showToast('✅ Description saved to property!');
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Error saving'); }
+  }
+
+  function copyResult(id) {
+    const text = document.getElementById(id === 'descResult' ? 'descText' : id)?.textContent || '';
+    navigator.clipboard.writeText(text).then(() => showToast('📋 Copied!'));
+  }
+
+  // ── PRICE ESTIMATOR ──
+  async function estimatePrice() {
+    setLoading('est', true);
+    try {
+      const res  = await fetch('/ai/estimate_price', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          property_type: document.getElementById('estType').value,
+          bedrooms:      document.getElementById('estBeds').value,
+          area_sqft:     document.getElementById('estArea').value,
+          city:          document.getElementById('estCity').value,
+          region:        document.getElementById('estRegion').value,
+          category:      document.getElementById('estCat').value,
+        }),
+      });
+      const json = await res.json();
+      if (json.success && json.estimate) {
+        const e = json.estimate;
+        const cur = e.currency||'AED';
+        const fmt = n => `${cur} ${Number(n).toLocaleString()}`;
+        document.getElementById('estSuggested').textContent = fmt(e.suggested_price);
+        document.getElementById('estRange').textContent     = `${fmt(e.min_price)} – ${fmt(e.max_price)}`;
+        document.getElementById('estPerSqft').textContent   = e.per_sqft ? `${cur} ${e.per_sqft}/sqft` : '—';
+        document.getElementById('estReasoning').textContent = e.reasoning||'';
+        document.getElementById('estDisplay').classList.add('show');
+      } else showToast('❌ '+(json.error||'Could not estimate — check API key'));
+    } catch { showToast('❌ Server error'); }
+    setLoading('est', false);
+  }
+
+  // ── LEAD SCORING ──
+  async function scoreLeads() {
+    const specificId = document.getElementById('scoreLead').value;
+    setLoading('score', true);
+    try {
+      let scores = {};
+      if (specificId) {
+        const res  = await fetch(`/ai/score_lead/${specificId}`, {method:'POST'});
+        const json = await res.json();
+        scores[specificId] = json;
+      } else {
+        const res  = await fetch('/ai/score_all_leads', {method:'POST'});
+        const json = await res.json();
+        scores     = json.scores || {};
+      }
+      renderScores(scores);
+    } catch { showToast('❌ Server error'); }
+    setLoading('score', false);
+  }
+
+  function renderScores(scores) {
+    const tbody = document.getElementById('scoresBody');
+    const wrap  = document.getElementById('scoresWrap');
+    const leadsToShow = Object.keys(scores).length > 0 ? _leads.filter(l => scores[l.id]) : [];
+    if (!leadsToShow.length) { showToast('⚠️ No scores returned'); return; }
+
+    const sorted = leadsToShow.map(l => ({...l, ...scores[l.id]})).sort((a,b) => b.score - a.score);
+    const colors = ['#f87171','#fb923c','#fbbf24','#4ade80','#4ade80'];
+    tbody.innerHTML = sorted.map(l => {
+      const sc  = Math.min(10, Math.max(1, l.score||5));
+      const col = sc >= 8 ? '#4ade80' : sc >= 6 ? '#fbbf24' : sc >= 4 ? '#fb923c' : '#f87171';
+      return `<tr>
+        <td style="color:#fff;font-weight:800">${esc(l.name)}<div style="font-size:.68rem;color:rgba(255,255,255,.35)">${esc(l.source||'')} · ${esc(l.intent||'')}</div></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:${col}">${sc}</span>
+            <div style="flex:1;background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden">
+              <div class="score-bar-mini" style="width:${sc*10}%;background:${col}"></div>
+            </div>
+            ${l.hot?'<span style="font-size:.65rem;background:rgba(248,113,113,.2);color:#f87171;padding:2px 7px;border-radius:4px;font-weight:900">🔥 HOT</span>':''}
+          </div>
+        </td>
+        <td style="color:rgba(255,255,255,.45);font-size:.78rem">${esc(l.reason||'')}</td>
+        <td><a href="leads.html" style="color:#818cf8;font-size:.75rem;font-weight:800;text-decoration:none">View →</a></td>
+      </tr>`;
+    }).join('');
+    wrap.style.display = 'block';
+    showToast(`✅ Scored ${sorted.length} leads`);
+  }
+
+  // ── EMAIL SEQUENCE ──
+  async function genEmailSeq() {
+    const id = document.getElementById('seqLead').value;
+    if (!id) { showToast('⚠️ Select a lead'); return; }
+    setLoading('seq', true);
+    try {
+      const res  = await fetch(`/ai/email_sequence/${id}`, {method:'POST'});
+      const json = await res.json();
+      if (json.success && json.sequence) {
+        const seq = json.sequence;
+        const seqEl = document.getElementById('emailSeq');
+        seqEl.innerHTML = [seq.email1, seq.email2, seq.email3].filter(Boolean).map((e,i) => `
+          <div class="email-item">
+            <div class="email-day">📅 ${i===0?'Day 0 — Immediate':i===1?'Day 3 — Follow Up':'Day 7 — Close'}</div>
+            <div class="email-subject">Subject: ${esc(e.subject||'')}</div>
+            <div class="email-body">${esc(e.body||'')}</div>
+            <button class="use-email-btn" onclick="copyEmail(${i})">📋 Copy Email ${i+1}</button>
+          </div>`).join('');
+        seqEl.classList.add('show');
+        window._emailSeq = json.sequence;
+        showToast('✅ Email sequence ready!');
+      } else showToast('❌ '+(json.error||'Error — check API key'));
+    } catch { showToast('❌ Server error'); }
+    setLoading('seq', false);
+  }
+
+  function copyEmail(i) {
+    const seq = window._emailSeq;
+    const e   = [seq.email1,seq.email2,seq.email3][i];
+    if (!e) return;
+    navigator.clipboard.writeText(`Subject: ${e.subject}\n\n${e.body}`).then(() => showToast('📋 Email copied!'));
+  }
+
+  // ── REVENUE FORECAST ──
+  async function loadForecast() {
+    document.getElementById('forecastBtn').disabled = true;
+    document.getElementById('forecastBtn').textContent = '⏳ Calculating…';
+    try {
+      const [dr, payr] = await Promise.all([fetch('/get_deals'), fetch('/get_payments')]);
+      const deals      = await dr.json();
+      const payments   = await payr.json();
+      const today      = new Date();
+      const thisMonth  = today.toISOString().slice(0,7);
+      const nextMonth  = new Date(today.getFullYear(), today.getMonth()+1, 1).toISOString().slice(0,7);
+
+      // Stage probabilities
+      const PROB = {Inquiry:.1, Viewing:.25, Negotiation:.5, Documentation:.8, 'Closed Won':1, 'Closed Lost':0};
+
+      const active = deals.filter(d => !['Closed Won','Closed Lost'].includes(d.stage));
+      const forecast_this  = active.reduce((s,d) => s + (+d.value||0)*(PROB[d.stage]||0.3), 0);
+      const forecast_next  = active.filter(d => !d.close_date || d.close_date >= nextMonth)
+                                   .reduce((s,d) => s + (+d.value||0)*(PROB[d.stage]||0.3)*0.4, 0);
+      const closed_value   = deals.filter(d=>d.stage==='Closed Won').reduce((s,d)=>s+(+d.value||0),0);
+      const pending_pay    = payments.filter(p=>p.status==='Pending').reduce((s,p)=>s+(+p.amount||0),0);
+      const commission_exp = active.reduce((s,d) => {
+        const prob = PROB[d.stage]||0.3;
+        const comm = d.commission_amount ? +d.commission_amount : (+d.value||0)*(+d.commission_pct||2)/100;
+        return s + comm*prob;
+      }, 0);
+
+      const cur = deals[0]?.currency||'AED';
+      const fmt = n => `${cur} ${Math.round(n).toLocaleString()}`;
+
+      document.getElementById('forecastWrap').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+          ${[
+            ['📅 This Month Forecast', fmt(forecast_this), '#818cf8'],
+            ['📆 Next Quarter Est.', fmt(forecast_this+forecast_next), '#22d3ee'],
+            ['💼 Expected Commission', fmt(commission_exp), '#4ade80'],
+          ].map(([label,val,color]) => `
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;text-align:center">
+              <div style="font-size:.7rem;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">${label}</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:${color}">${val}</div>
+            </div>`).join('')}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+          ${[
+            ['✅ Total Closed Value', fmt(closed_value), '#4ade80'],
+            ['⏳ Pending Payments', fmt(pending_pay), '#fbbf24'],
+          ].map(([label,val,color]) => `
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center">
+              <div style="font-size:.7rem;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">${label}</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:${color}">${val}</div>
+            </div>`).join('')}
+        </div>
+        <div style="margin-top:12px;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.25);text-align:center">
+          Based on ${active.length} active deals with weighted stage probabilities. Forecast is indicative only.
+        </div>`;
+    } catch { showToast('❌ Failed to load forecast'); }
+  }
+
+  function setLoading(key, on) {
+    const btns   = {desc:'descBtn',est:'estBtn',score:'scoreBtn',seq:'seqBtn'};
+    const loads  = {desc:'descLoading',est:'estLoading',score:'scoreLoading',seq:'seqLoading'};
+    const btn    = document.getElementById(btns[key]);
+    const loader = document.getElementById(loads[key]);
+    if (btn) btn.disabled = on;
+    if (loader) loader.classList.toggle('show', on);
+  }
+
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  loadData();
+</script>
+<script src="branding-loader.js"></script>
+</body>
+</html>

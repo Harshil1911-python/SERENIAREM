@@ -1,0 +1,1105 @@
+{
+  "properties": [
+    {
+      "property_type": "Apartment",
+      "category": "Own / Buy",
+      "title": "2 BHK IN SURAT",
+      "address": "C-202 ANAND AVENUE SURAT",
+      "city": "SURAT",
+      "bedrooms": "2",
+      "bathrooms": "2",
+      "area_sqft": "1180",
+      "lat": "21.222406",
+      "lng": "72.775790",
+      "sale_price_aed": "",
+      "per_sqft_price_aed": "",
+      "monthly_rent_aed": "",
+      "seller_name": "",
+      "seller_phone": "",
+      "description": "",
+      "amenities": [],
+      "docs_required": [],
+      "id": "EBB101BD",
+      "created_at": "2026-04-14 23:38:26",
+      "photos": [],
+      "videos": [],
+      "availability": "Available",
+      "updated_at": "2026-04-24 13:55:49"
+    },
+    {
+      "property_type": "Studio",
+      "category": "Rent",
+      "title": "studio for rent",
+      "address": "",
+      "city": "",
+      "bedrooms": "",
+      "bathrooms": "",
+      "area_sqft": "",
+      "lat": "25.2048",
+      "lng": "55.2708",
+      "sale_price_aed": "",
+      "per_sqft_price_aed": "",
+      "monthly_rent_aed": "",
+      "seller_name": "",
+      "seller_phone": "",
+      "description": "",
+      "amenities": [],
+      "docs_required": [],
+      "id": "AAC2EFF2",
+      "created_at": "2026-04-14 23:50:54",
+      "photos": [
+        "AAC2EFF2_1000746796.jpg"
+      ],
+      "videos": [],
+      "state": "",
+      "pincode": "",
+      "removed_photos": [],
+      "removed_videos": [],
+      "updated_at": "2026-05-03 02:07:52",
+      "availability": "Sold"
+    },
+    {
+      "property_type": "Apartment",
+      "category": "Own / Buy",
+      "title": "NEW HOME IN SURAT",
+      "address": "SURAT",
+      "city": "STV",
+      "bedrooms": "5",
+      "bathrooms": "5",
+      "area_sqft": "10000",
+      "lat": "29.222313",
+      "lng": "78.775834",
+      "sale_price_aed": "10000000",
+      "per_sqft_price_aed": "900000",
+      "monthly_rent_aed": "8000000",
+      "seller_name": "HARSHIL",
+      "seller_phone": "9339201164",
+      "description": "NICE PROPERTY IN THE HEART OF SURAT",
+      "amenities": [
+        "Elevator",
+        "Parking",
+        "Playground",
+        "Swimming Pool",
+        "Helipad",
+        "Library",
+        "Temple",
+        "Club",
+        "Gym"
+      ],
+      "docs_required": [
+        "Emirates ID",
+        "Title Deed",
+        "Passport Copy",
+        "Form A",
+        "MOU",
+        "NOC",
+        "Service Charge",
+        "Mortgage Clearance",
+        "Original Keys"
+      ],
+      "id": "144AA8FE",
+      "created_at": "2026-04-23 02:55:20",
+      "photos": [
+        "144AA8FE_JESKO_MOCKUP.png",
+        "144AA8FE_america.jpg",
+        "144AA8FE_art_is_life_uc9cdsgn.jpg",
+        "144AA8FE_logos_prices_project_school_.png",
+        "144AA8FE_NEW_DESIGN.jpg"
+      ],
+      "videos": [
+        "144AA8FE_CORD_SET_2.mp4",
+        "144AA8FE_REPHRASE_OF_REEL_2_.mp4"
+      ],
+      "availability": "Available",
+      "updated_at": "2026-04-24 13:55:50"
+    },
+    {
+      "property_type": "Apartment",
+      "category": "Own / Buy",
+      "title": "2 BHK IN SURAT (Copy)",
+      "address": "C-202 ANAND AVENUE SURAT",
+      "city": "SURAT",
+      "bedrooms": "2",
+      "bathrooms": "2",
+      "area_sqft": "1180",
+      "lat": "21.222406",
+      "lng": "72.775790",
+      "sale_price_aed": "",
+      "per_sqft_price_aed": "",
+      "monthly_rent_aed": "",
+      "seller_name": "",
+      "seller_phone": "",
+      "description": "",
+      "amenities": [],
+      "docs_required": [],
+      "id": "41BA5586",
+      "created_at": "2026-04-30 13:06:20",
+      "photos": [],
+      "videos": [],
+      "availability": "Available",
+      "updated_at": "2026-04-30 13:06:20"
+    },
+    {
+      "property_type": "Townhouse",
+      "category": "Own / Buy",
+      "title": "2 BHK IN SURAT (Copy)",
+      "address": "C-202 ANAND AVENUE SURAT",
+      "city": "SURAT",
+      "bedrooms": "2",
+      "bathrooms": "2",
+      "area_sqft": "11809",
+      "lat": "21.208099",
+      "lng": "72.818756",
+      "sale_price_aed": "",
+      "per_sqft_price_aed": "",
+      "monthly_rent_aed": "",
+      "seller_name": "",
+      "seller_phone": "",
+      "description": "",
+      "amenities": [],
+      "docs_required": [],
+      "id": "803A7187",
+      "created_at": "2026-04-30 13:06:48",
+      "photos": [],
+      "videos": [],
+      "availability": "Available",
+      "updated_at": "2026-05-03 02:06:45",
+      "state": "",
+      "pincode": "",
+      "removed_photos": [],
+      "removed_videos": []
+    }
+  ],
+  "clients": [
+    {
+      "id": "E32FEEEA",
+      "type": "buyer",
+      "name": "harshil",
+      "created_at": "2026-04-20 15:22:08"
+    },
+    {
+      "id": "C5E72FF6",
+      "type": "buyer",
+      "name": "sandip",
+      "created_at": "2026-04-20 15:28:04"
+    }
+  ],
+  "employees": [
+    {
+      "emp_name": "HARSHIL",
+      "phone": "",
+      "email": "",
+      "nationality": "",
+      "joining_date": "",
+      "status": "Active",
+      "role": "Agent",
+      "department": "",
+      "salary": "",
+      "currency": "AED",
+      "commission_type": "",
+      "commission_value": "",
+      "notes": "",
+      "assigned_properties": [],
+      "assigned_property_ids": [],
+      "assigned_clients": [],
+      "assigned_client_ids": [],
+      "docs_submitted": [],
+      "id": "70002CCC",
+      "created_at": "2026-04-23 02:57:34",
+      "photo_filename": null,
+      "doc_photo_filenames": [],
+      "doc_folder": "HARSHIL"
+    }
+  ],
+  "finance": [],
+  "sellers": [],
+  "buyers": [
+    {
+      "buyer_name": "harshil",
+      "phone": "9339201164",
+      "email": "harshilkhandhar82@gmail.com",
+      "nationality": "",
+      "intent": "Buy / Own",
+      "budget": "",
+      "currency": "AED",
+      "pref_property_type": "",
+      "pref_city": "",
+      "min_bedrooms": "",
+      "notes": "",
+      "interested_properties": [
+        {
+          "id": "EBB101BD",
+          "title": "2 BHK IN SURAT",
+          "property_type": "Apartment",
+          "city": "SURAT"
+        },
+        {
+          "id": "AAC2EFF2",
+          "title": "studio for rent",
+          "property_type": "Studio",
+          "city": ""
+        }
+      ],
+      "interested_property_ids": [
+        "EBB101BD",
+        "AAC2EFF2"
+      ],
+      "docs_submitted": [],
+      "id": "E32FEEEA",
+      "created_at": "2026-04-20 15:22:08",
+      "photo_filename": null,
+      "doc_photo_filenames": [
+        "doc_20k_dollar_logo_.jpg"
+      ],
+      "doc_folder": "harshil",
+      "updated_at": "2026-04-21 14:34:22"
+    },
+    {
+      "buyer_name": "sandip",
+      "phone": "9330910520",
+      "email": "sandipskhandhar@gmail.com",
+      "nationality": "",
+      "intent": "",
+      "budget": "",
+      "currency": "AED",
+      "pref_property_type": "",
+      "pref_city": "",
+      "min_bedrooms": "",
+      "notes": "",
+      "interested_properties": [
+        {
+          "id": "EBB101BD",
+          "title": "2 BHK IN SURAT",
+          "property_type": "Apartment",
+          "city": "SURAT"
+        },
+        {
+          "id": "AAC2EFF2",
+          "title": "studio for rent",
+          "property_type": "Studio",
+          "city": ""
+        }
+      ],
+      "interested_property_ids": [
+        "EBB101BD",
+        "AAC2EFF2"
+      ],
+      "docs_submitted": [],
+      "id": "C5E72FF6",
+      "created_at": "2026-04-20 15:28:04",
+      "photo_filename": null,
+      "doc_photo_filenames": [],
+      "doc_folder": "sandip"
+    }
+  ],
+  "users": [
+    {
+      "id": "0ACF5612",
+      "name": "Administrator",
+      "username": "admin",
+      "password": "c5da94d5c67e613f10080ac8ebeac497:653a7cabf1744c25a3361573530aa7bdc5dc69901af43e20b5a6925938dfb515",
+      "role": "admin",
+      "created_at": "2026-04-12 12:23:02"
+    },
+    {
+      "id": "5339A73A",
+      "name": "harshil",
+      "username": "harshil",
+      "password": "a93abbe87d5b3231b0ad26e3e029b23d:0ec309b79c0cfa52022a70a48fe1ffe02b2f3304897e92d8cb70e3c877cef7e5",
+      "role": "admin",
+      "created_at": "2026-04-13 11:41:07"
+    },
+    {
+      "id": "A71F08D7",
+      "name": "Serenia",
+      "username": "serenia",
+      "password": "ece8af2872584c898d74ce1985ef570b:d170690964ba9219622fb3f99e9ded5b07b58440e5f3e105240125c47612b344",
+      "role": "admin",
+      "created_at": "2026-04-15 00:59:40"
+    }
+  ],
+  "sessions": {
+    "6e5f99b3f5aabce5b635f16b2e2ac167bb0396a8f056f9e7c58ddfdc59e99797": {
+      "user_id": "9B076BE2",
+      "username": "user",
+      "name": "user",
+      "role": "agent",
+      "created_at": "2026-04-12 12:25:28"
+    },
+    "8695ad6d8ad7af5e8d51be521b363703c73fb7fe8e001a6eb8715a79daf8db57": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-12 12:27:50"
+    },
+    "fa205ae8dacb1a06914e409eab077fc819ee5509e4a1d651d9b292494855c272": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 00:12:01"
+    },
+    "a3c948938d30b749cc62048f5a375f09732d5109304ef1e5010e2be58b90a34d": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 00:52:15"
+    },
+    "0668e4332856ac0f5dce51303915641e961ed233508529e62752be0000477c12": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 10:41:53"
+    },
+    "a2cfbe6f567a1cebeaf9502f7b8b1ac2270d5d9f972d0735ec90b659a27d63d2": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 10:49:46"
+    },
+    "f131e42f1ee3d13271c7b42b25af95e95d5b02393cf2944bc4ec9cb3ed3109f7": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 11:20:57"
+    },
+    "2aa1c1647132736030a6b2ffd95fc03fe8bf54ea8407e1eb72c0befe7c69fc3e": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 11:27:11"
+    },
+    "86d1b4c9001b8f7c65d9483154252a79c8230441d5b8852274be90a5816d88ab": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-13 11:41:35"
+    },
+    "e751bf0e2ed232166b484016c27a93bac5505ec3db75ab13598ef3915e94de69": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-13 11:43:32"
+    },
+    "16ae9500c1712e57676ad8811b4f977ab7989b40c16ee177151fd583a04f48f8": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 12:39:23"
+    },
+    "3f449cb040bf83d46a44e4961529bf6af073699be392c8c7305a536c5d21b5d2": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-13 12:41:37"
+    },
+    "4e7ae073f3cbd3927141b5128173e4f3d5370edfed86d3fbeb9216334442aaa1": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-13 16:17:40"
+    },
+    "ed5c9f2e08d3cf80d7eacd34437467adc1303fea04d6d556c7111080fc3fcd17": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-13 19:17:21"
+    },
+    "4f574e2d69dce7589c500523ac021244d532aef097a3847c271c5a919c87a0fc": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 00:34:30"
+    },
+    "71106053a0c0a26a4d139be00b46a96419ddea03040561153bbee96541dde53a": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-14 00:47:14"
+    },
+    "b73922ac78129b859ba3537b509e2fc8af2294674667683a21e8ee2bbf985d39": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 23:32:12"
+    },
+    "642b6071ddd0909ad86d114c2094b0ffdb334692b7622bbe8be3d9a07e8fe204": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 23:33:59"
+    },
+    "5331f18f23370b8582c08b1311c43fa52dfb9383b940715b5193c11dc0d7fb88": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-14 23:37:32"
+    },
+    "bc3105bfbfbba3381a2af8f1a322b2f1d168b2af27f50147fc17ccdc0488998d": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 23:49:06"
+    },
+    "dc6b9fc8cad90a8d78830790b5b218e3024f78fc2c2c85e6ba7b408f5a60ec02": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 23:56:47"
+    },
+    "1108f6167af36ab02f0b202e2934ecca14bc32bc7ede11f2a03e83429079a18f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-14 23:57:45"
+    },
+    "ab34f29cf05c97675a6b3e5bf4dbf31ca515511ee03e1df515fdc7d4c2348d83": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:00:17"
+    },
+    "f7a45b7dcd0c5ab342dfcd4e184f2fa8cd591c0d0fd42db798a5b0a79d02002c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:00:45"
+    },
+    "368d9251984c4c661912ab024d81a1558ab3b800de5e8763d4540e2e83dfc87c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:03:08"
+    },
+    "9b60e535acf6e237efdcc0a00ca0e60b7a891fe4221720dd87ffbc3e25c54df7": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:03:34"
+    },
+    "549416bce34639f445c57f2228b61093fc616177d0bb6219c0eb7bb1e20bec08": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-15 00:05:07"
+    },
+    "7c14aca3e83acdefece3a5387d88d06f1e378d4e33a06ca585089f02fc53f0f6": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:05:33"
+    },
+    "54c2409a4e2e6f4ca740d675703b7b04e29b3090a3afbd092b15779453cc41a3": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 00:06:20"
+    },
+    "8824cedc9af3db1a17fae21aa9134dfc1bb1a7df0f7ef4025e1c1a73390006fe": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-04-15 00:50:30"
+    },
+    "86562858a3f38f5c3ed8c00a8fecb3fc0e0cc126d9c7e5da2833395750fd0c19": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 01:00:12"
+    },
+    "5c4af26b3ae86f0838289690de5c497538e982e5a58572ddf136462462ee79de": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 01:25:52"
+    },
+    "d67029b9d43c40aa1a996ccb4562a66f05f55fedeffa876897fd7c8ab4d07745": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 01:48:16"
+    },
+    "b8df3e0a582280c4d9b6d3d87859c5080bb7feeabeb853a0962a28b8c4907f5c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 02:56:47"
+    },
+    "e5b482f5e61f49b78c97864addf8324c2a65267fcd54f6d5b2eeebc16652566b": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-15 11:52:02"
+    },
+    "3ab92a0a038d9017603f6b7d7f9a54d0534f262d39fa5a7018c23bc44e202535": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-19 14:39:36"
+    },
+    "82006a72c7b88169202476a095b724484c91f84842d6f6115ae7acf2438829ae": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-19 14:41:21"
+    },
+    "2f1357d3c1b539ee2a956e49de5116f29f0a98d24555600aacc2c28f85e064b6": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 00:36:29"
+    },
+    "4e5ec67f5fb475d22c9f00a694a4f86478affbdc1469bb91e37eea0508556fdb": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 15:14:36"
+    },
+    "0ea965ea5202a8a98dcfa0786f560c79f1b3210559ac9a92662b89745fc7609f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 15:24:18"
+    },
+    "75a09ec59dad7c7ac9e45ce4f4776b1f15a35e98f7e1ec1ec86ef5d713d11fce": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 15:33:10"
+    },
+    "0b99013d214d7cef3aebce821fe78cab06d877bd397d263523775eb175be6c70": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 15:41:16"
+    },
+    "0d122660cb663d27ef8dd05d762ba6a0f7fb3cec26820aa38643cd38a34fc79f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 15:51:03"
+    },
+    "130039b4693f4453594be598bd36527d229fc15a516e6e366e6fb03250ec39f4": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 19:34:45"
+    },
+    "c9812ff332eb0b26519b335a51ca4cc02c494b8e10813f9f5281c906d3aaeb4b": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 19:36:58"
+    },
+    "c4a010b8fc7cbc28989260f677b2b16a2bbcac428bbcdd4ccc5d1d452739abf7": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-20 19:41:22"
+    },
+    "6b544ab80d239896446eadafb47d1e54ed4c2b41a6182047b57d2b09f1a7ce24": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 01:32:51"
+    },
+    "c6eced69a14758e614e1189b4fd593b8020178dafead836b9a0d8493e69eefa2": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 11:50:45"
+    },
+    "0c1e55e600f79cfdff095bbf6dca6c37a42b550cf98145da5981dd48b04d346b": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 11:59:48"
+    },
+    "e54c8ea2a968fe54ca6f10b91b76645758395dac12ee91f13cc7aee754887932": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 12:02:52"
+    },
+    "db7ff33592f1a98f4ae1103037985286510629de1d4ceed769589aac863c5b4f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 14:33:23"
+    },
+    "e6118b4117d0e29c29730c1fe3664a06c385d2d125d0f530f8cbdf730a0fcf8c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 15:54:58"
+    },
+    "5e563bd686ee2a5c8a77c99377b403b2f49c8659ae2ad01a64aa06abd90f1e18": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 15:56:14"
+    },
+    "62297d55c13603f3b8f00da49c2065b60242e9f5a838fd30956c647e35296dd5": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 15:56:40"
+    },
+    "9bed5dbf5e29933778ead3827e80c88a7d4f667664e5426a29dce4da8c18544e": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-21 15:58:18"
+    },
+    "8c7f8e5157c18cd18f5688796de2572fba30ef78d4ba5b6fa7be97994dd384f4": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 02:28:03"
+    },
+    "f9acd8362ad249c4175fd724126a0c0647066cb1f33847d809d5f5375225ec9b": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 02:31:20"
+    },
+    "01c22593cd2c309af873167f21842b05595f50fb4928bab49d41968b8e118006": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 02:45:35"
+    },
+    "371478c965c249284ed5a70c2817dc011df96669a546a5069604d6ff737c48dd": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 02:52:18"
+    },
+    "5833ca8f99140eefe93e49a0b97b4657de9ad438ae6103c228c9593b053e4785": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 03:08:44"
+    },
+    "4d88b5f03853840ea89ae126ca490aefeb731a05dd1f004694c40840e452d907": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 03:11:18"
+    },
+    "2ed5511d977ff7c22d2b51836abfc21e1df389e16ba7e1c3e76e9d83a4e6e6ae": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 07:22:11"
+    },
+    "1bd4a2d282fc4551d9fbdde2d733f3c2c20bdd711eedf690bac05cfde4985eb9": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 07:24:21"
+    },
+    "41760ce93e0abb7947e26b55e9e429d7247ee36fc650379667525973d3bef8c6": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-23 14:41:47"
+    },
+    "21b4d77bd9211b049839c7609c8637c3283d0468708f6637a6b0bacc353dd756": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:02:48"
+    },
+    "d95b9ce2dcc27ea576604b0ae7922cf666f57e0cc184eb241107ab0022390ac6": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:12:40"
+    },
+    "1abf457641a6bdb6b110bad090d958938a4934fc7780e7f8df69f70d7f162775": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:16:19"
+    },
+    "155748adff423f41ec65acddd0bbb79fd0b9e998cc9f8e797c06bf4b1c4cdd41": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:20:16"
+    },
+    "6f11e344f759b08521086e1ac32a9a4782b62c68e5ff39072a0d148602be8e25": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:23:57"
+    },
+    "be110a2dfe9b285b8cb59a895f60fb557bf64a0fbd1194e60bec3bab994317b4": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:27:00"
+    },
+    "2e05ae0c4ca08a563d900a6674cc1e751d8858fb0041b95abd885b257d756631": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 02:29:59"
+    },
+    "fbea7d31190904acadb30e834b6d862fef92e2f202dc78b99013350212b63d8e": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 13:54:25"
+    },
+    "f1f3997ca1f80af7985678e42e4a090d56432420c2629ab3531087ead7346f64": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 14:04:41"
+    },
+    "3e70320f8c1d727a5ce0f84671f7c9e12156412abf5e12f72281edeb7b8f2d1a": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-24 16:11:49"
+    },
+    "608dba3028143743f0bdb9fd09b47eedc8b2ae8f1fc644dec1eac0c396da9d85": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 17:15:15"
+    },
+    "f06d32c7182a546d2d123b74a8a22cf899f614218f4ef3dc192751c75c82fcce": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 18:30:30"
+    },
+    "e3744fb0c9b110969af406f9e96a8e28a8dccc75168b6c236b8f9eb11384dc79": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:40:58"
+    },
+    "fa39957ea9bc111372efa2b47109848fceb0f057c55c675b8d2d3f916efb30c9": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:41:18"
+    },
+    "e6fee677381784947dfec2fa19637ba69428ff23e29dcfcf8cc791edc820feea": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:41:41"
+    },
+    "22d5df2e69ddbb8fa3de6c0b08f15529e24888d55a59222aea88151688ba8593": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:44:19"
+    },
+    "59c33d411dbb2953dc98f4987e163df7ab194707ff7105fd5753177655870628": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:45:11"
+    },
+    "5271521147fad1f3746d9b18c7065340783c879756b29e4ed6c0ca7a90f9dde6": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-25 23:47:37"
+    },
+    "8dce37f2f1f6856424a15703c72b91fac1aaaa010a89f94c601fdc5533b0e890": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-27 15:54:55"
+    },
+    "ab6699c2481d91a1aacbd5acd0aa5aa9771daa1810ba30d29f03550c10b6249f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-29 22:46:38"
+    },
+    "7f915c5f01eff79b458c903c31a7b70282e527c0f496274413709e52c7727a22": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-29 22:49:58"
+    },
+    "5512fc729c0fe89fd2bbc4aa08343a87630216909a58ea0b8ee564920e93e76f": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-29 22:51:04"
+    },
+    "c25dbce76c82838ee3539d574dba76e3ffe0219185c26a4d9b77ce93f081d4be": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-29 22:56:25"
+    },
+    "d8242f29a77d3371299c4afaa3fc6de341dc409b002ad587e09e7809ad6a7a16": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-30 13:05:59"
+    },
+    "99150c64cb6a71c91c282074689242579b8d3ed943c857820b764a9e5d808165": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-04-30 18:27:36"
+    },
+    "8a0415c72c05224e274ac090f95f6b60a168812bf6dcfa95fdff37210ff4b24e": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-02 00:09:02"
+    },
+    "8bbc47055fda4667c3b55446eee478f10864151aafade2bb95382bebae90dc7d": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-03 02:06:20"
+    },
+    "c0472fd302d14ac0880241e972a04d10cd7a441fb7e45c58d62ec6dfa177c2f9": {
+      "user_id": "5339A73A",
+      "username": "harshil",
+      "name": "harshil",
+      "role": "admin",
+      "created_at": "2026-05-03 19:52:17"
+    },
+    "047da5ff137533af77c2aaac4fcb71a26c466c6fcfa35044ab7e0a5b4c1a287c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-03 20:03:45"
+    },
+    "b8808dc2c01bfd37d388a21d6890bbff88c76ae65260879d61cc8276684c5c09": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-03 20:07:15"
+    },
+    "64f81b99114b59e7da07094e8d32915b568e42e7952f5e2421584738edc9089b": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-03 20:10:35"
+    },
+    "3fc33eeac5682fd0c21fbfa55c8f9511846c4819a7b4fb99dd6f94c68118ec7c": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-03 20:32:02"
+    },
+    "f80f2df51d7550eb0e7f19af5950ba9cc8384cb50fcd29e48199ca9a3ecf2361": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-05-26 13:03:01"
+    },
+    "cdf4150f2898e75501a2dff951fb9ab9acf1c14a31773e78a7e640fb2e55b2f0": {
+      "user_id": "0ACF5612",
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "created_at": "2026-07-04 02:45:06"
+    }
+  },
+  "deals": [
+    {
+      "title": "selll",
+      "deal_type": "Sale",
+      "stage": "Closed Won",
+      "property_id": "EBB101BD",
+      "buyer_id": "E32FEEEA",
+      "seller_id": "",
+      "value": "90000000",
+      "currency": "AED",
+      "commission_pct": "3",
+      "commission_amount": "2700000",
+      "close_date": "2008-11-19",
+      "agent_id": "",
+      "notes": "",
+      "id": "61C59C7D",
+      "created_at": "2026-04-20 19:38:25",
+      "updated_at": "2026-04-20 19:38:53"
+    },
+    {
+      "title": "marina",
+      "deal_type": "Sale",
+      "stage": "Closed Won",
+      "property_id": "144AA8FE",
+      "buyer_id": "E32FEEEA",
+      "seller_id": "",
+      "value": "9000000",
+      "currency": "INR",
+      "commission_pct": "4",
+      "commission_amount": "360000",
+      "close_date": "",
+      "agent_id": "70002CCC",
+      "notes": "",
+      "id": "A7DF9448",
+      "created_at": "2026-04-24 02:05:04",
+      "updated_at": "2026-04-24 02:05:09"
+    }
+  ],
+  "viewings": [],
+  "activity_log": [
+    {
+      "time": "2026-04-21 11:51:13",
+      "action": "Created",
+      "entity_type": "Viewing",
+      "entity_id": "85A53D6E",
+      "entity_name": "AAC2EFF2",
+      "user": "Administrator",
+      "role": "admin",
+      "details": ""
+    }
+  ],
+  "payments": [],
+  "client_portal_accounts": [
+    {
+      "id": "6B11A15C",
+      "person_type": "buyer",
+      "person_id": "E32FEEEA",
+      "username": "harshil",
+      "password": "fe6b18fb1a73d1c248fa2326011f79a8:37f2ec16df1071556529a01f7cbe568ebc5cee7f9fcb792397dafdc4de3ac775",
+      "active": true,
+      "created_by": "Administrator",
+      "created_at": "2026-04-25 23:42:37",
+      "last_login": "2026-04-30 13:05:19"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "6DD4A63C",
+      "client_id": "E32FEEEA",
+      "client_type": "buyer",
+      "client_name": "harshil",
+      "created_at": "2026-04-30 13:03:31",
+      "last_message": "hi my nameis",
+      "last_time": "2026-04-30 13:04:45",
+      "unread_agent": 0,
+      "unread_client": 0,
+      "messages": [
+        {
+          "id": "25be5446",
+          "sender_type": "client",
+          "sender_name": "harshil",
+          "text": "hiii",
+          "time": "2026-04-30 13:03:38",
+          "read": false
+        },
+        {
+          "id": "9f23a201",
+          "sender_type": "agent",
+          "sender_name": "Administrator",
+          "text": "hi my nameis",
+          "time": "2026-04-30 13:04:45",
+          "read": false
+        }
+      ]
+    }
+  ]
+}

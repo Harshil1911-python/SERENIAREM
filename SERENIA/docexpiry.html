@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document Expiry – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-h{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+    .add-btn-h:hover{background:#e8e0ff}
+
+    /* ALERTS */
+    .alerts-bar{padding:14px 24px;display:flex;gap:10px;flex-wrap:wrap;background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06)}
+    .alert-chip{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;font-size:.8rem;font-weight:800;cursor:pointer;border:1.5px solid transparent;transition:all .2s}
+    .alert-chip.red{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.3);color:#f87171}
+    .alert-chip.amber{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.25);color:#fbbf24}
+    .alert-chip.yellow{background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.2);color:#facc15}
+    .alert-chip.green{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.2);color:#4ade80}
+    .alert-chip.active{transform:scale(1.03);font-weight:900}
+    .alert-num{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;line-height:1}
+
+    /* FILTER + SEARCH */
+    .toolbar{background:#0f0f23;padding:10px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.06)}
+    .fchip{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:7px;cursor:pointer;transition:all .18s}
+    .fchip:hover{color:#fff}
+    .fchip.active{background:#1400cc;border-color:#1400cc;color:#fff}
+    .fsearch{flex:1;max-width:240px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none}
+    .fsearch::placeholder{color:rgba(255,255,255,.2)}
+    .fsearch:focus{border-color:#818cf8}
+
+    /* TABLE */
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 20px 80px}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;color:#818cf8;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)}
+
+    .exp-table{width:100%;border-collapse:separate;border-spacing:0 5px}
+    .exp-table th{text-align:left;padding:8px 14px;font-size:.68rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.09em}
+    .exp-row{background:#1e1e3a;border-radius:10px;transition:background .18s;cursor:pointer}
+    .exp-row:hover{background:#252545}
+    .exp-row td{padding:12px 14px;font-size:.85rem;font-weight:700;vertical-align:middle}
+    .exp-row td:first-child{border-radius:10px 0 0 10px}
+    .exp-row td:last-child{border-radius:0 10px 10px 0}
+
+    .person-cell{display:flex;align-items:center;gap:10px}
+    .person-avatar{width:30px;height:30px;border-radius:50%;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:#fff;flex-shrink:0;text-transform:uppercase;overflow:hidden}
+    .person-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .person-name{font-weight:800;color:#fff}
+    .person-type{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em}
+
+    .doc-name{color:rgba(255,255,255,.7);font-size:.82rem}
+    .exp-date{font-weight:900}
+    .exp-date.expired{color:#f87171}
+    .exp-date.expires-30{color:#f87171}
+    .exp-date.expires-60{color:#fbbf24}
+    .exp-date.expires-90{color:#facc15}
+    .exp-date.ok{color:#4ade80}
+
+    .days-badge{font-size:.72rem;font-weight:900;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+    .days-badge.expired{background:rgba(220,38,38,.2);color:#f87171}
+    .days-badge.soon{background:rgba(217,119,6,.2);color:#fbbf24}
+    .days-badge.ok{background:rgba(22,163,74,.15);color:#4ade80}
+
+    .edit-exp-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45);font-family:'Nunito',sans-serif;font-weight:800;font-size:.7rem;padding:4px 9px;cursor:pointer;transition:all .2s}
+    .edit-exp-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
+    .empty{text-align:center;padding:40px;color:rgba(255,255,255,.2);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;width:100%;max-width:480px;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.06em;color:#fff;margin-bottom:18px}
+    .field{margin-bottom:13px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none}
+    .field input:focus,.field select:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .modal-btns{display:flex;gap:10px;margin-top:10px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .btn-save{background:#1400cc;color:#fff}.btn-save:hover{background:#2c14ff}
+    .btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+  <div class="header-title">📋 DOCUMENT EXPIRY TRACKER</div>
+  <button class="add-btn-h" onclick="openAdd()">+ ADD EXPIRY</button>
+</div>
+
+<div class="alerts-bar">
+  <div class="alert-chip red" onclick="setFilter('expired',this)" id="aExpired">
+    <div><div class="alert-num" id="nExpired">—</div><div style="font-size:.65rem;margin-top:1px">EXPIRED</div></div>
+    <span style="font-size:1.4rem">🚨</span>
+  </div>
+  <div class="alert-chip amber" onclick="setFilter('30',this)" id="a30">
+    <div><div class="alert-num" id="n30">—</div><div style="font-size:.65rem;margin-top:1px">IN 30 DAYS</div></div>
+    <span style="font-size:1.4rem">⚠️</span>
+  </div>
+  <div class="alert-chip yellow" onclick="setFilter('60',this)" id="a60">
+    <div><div class="alert-num" id="n60">—</div><div style="font-size:.65rem;margin-top:1px">IN 60 DAYS</div></div>
+    <span style="font-size:1.4rem">📅</span>
+  </div>
+  <div class="alert-chip green" onclick="setFilter('ok',this)" id="aOk">
+    <div><div class="alert-num" id="nOk">—</div><div style="font-size:.65rem;margin-top:1px">VALID</div></div>
+    <span style="font-size:1.4rem">✅</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="fchip active" onclick="setType('all',this)">All</button>
+  <button class="fchip" onclick="setType('seller',this)">Sellers</button>
+  <button class="fchip" onclick="setType('buyer',this)">Buyers</button>
+  <button class="fchip" onclick="setType('employee',this)">Employees</button>
+  <input type="text" class="fsearch" id="fsearch" placeholder="🔍 Search name, doc…" oninput="render()"/>
+</div>
+
+<div class="wrap" id="wrap"><div class="empty">Loading…</div></div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Add Document Expiry</div>
+    <input type="hidden" id="editExpId"/>
+    <div class="field"><label>Person Type</label>
+      <select id="ePType" onchange="populatePersonSelect()">
+        <option value="seller">Seller</option>
+        <option value="buyer">Buyer</option>
+        <option value="employee">Employee</option>
+      </select>
+    </div>
+    <div class="field"><label>Person *</label>
+      <select id="ePerson"><option value="">— Select —</option></select>
+    </div>
+    <div class="field"><label>Document Type *</label>
+      <select id="eDocType">
+        <option>Emirates ID</option><option>Passport</option><option>Visa</option>
+        <option>Trade License</option><option>RERA Certificate</option>
+        <option>Employment Contract</option><option>Driving License</option>
+        <option>Aadhaar Card</option><option>PAN Card</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Document Number</label>
+      <input type="text" id="eDocNum" placeholder="e.g. 784-1234-5678910-2"/>
+    </div>
+    <div class="field"><label>Expiry Date *</label>
+      <input type="date" id="eExpDate"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveExpiry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _expiries=[], _sellers=[], _buyers=[], _emps=[];
+  let _filterStatus='all', _filterType='all';
+  const today = new Date().toISOString().slice(0,10);
+
+  function daysUntil(dateStr) {
+    const d = new Date(dateStr+'T00:00:00');
+    const t = new Date(today+'T00:00:00');
+    return Math.ceil((d-t)/(1000*60*60*24));
+  }
+
+  function expiryClass(days) {
+    if (days < 0)   return 'expired';
+    if (days <= 30) return 'expires-30';
+    if (days <= 60) return 'expires-60';
+    if (days <= 90) return 'expires-90';
+    return 'ok';
+  }
+
+  async function load() {
+    try {
+      const [er, sr, br, emr] = await Promise.all([
+        fetch('/get_expiries'), fetch('/get_sellers'),
+        fetch('/get_buyers'),   fetch('/get_employees'),
+      ]);
+      _expiries = await er.json();
+      _sellers  = await sr.json();
+      _buyers   = await br.json();
+      _emps     = await emr.json();
+      updateAlerts();
+      render();
+    } catch { document.getElementById('wrap').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function updateAlerts() {
+    const days = _expiries.map(e => daysUntil(e.expiry_date));
+    document.getElementById('nExpired').textContent = days.filter(d=>d<0).length;
+    document.getElementById('n30').textContent      = days.filter(d=>d>=0&&d<=30).length;
+    document.getElementById('n60').textContent      = days.filter(d=>d>30&&d<=60).length;
+    document.getElementById('nOk').textContent      = days.filter(d=>d>60).length;
+  }
+
+  function setFilter(f, btn) {
+    _filterStatus = f;
+    document.querySelectorAll('.alert-chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function setType(t, btn) {
+    _filterType = t;
+    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function getPerson(type, id) {
+    if (type==='seller')   return _sellers.find(s=>s.id===id);
+    if (type==='buyer')    return _buyers.find(b=>b.id===id);
+    if (type==='employee') return _emps.find(e=>e.id===id);
+    return null;
+  }
+  function getPersonName(type, person) {
+    if (!person) return '?';
+    return person.seller_name || person.buyer_name || person.emp_name || '?';
+  }
+  function getPersonPhoto(type, person) {
+    if (!person || !person.photo_filename) return null;
+    const folder = type==='seller'?'seller_docs':type==='buyer'?'buyer_docs':'emp_docs';
+    const name   = person.seller_name||person.buyer_name||person.emp_name||'unknown';
+    return `/${folder}/${encodeURIComponent(name)}/${person.photo_filename}`;
+  }
+
+  function render() {
+    const q = document.getElementById('fsearch').value.trim().toLowerCase();
+    let list = _expiries.filter(e => {
+      const days = daysUntil(e.expiry_date);
+      const cls  = expiryClass(days);
+      if (_filterType !== 'all' && e.person_type !== _filterType) return false;
+      if (_filterStatus === 'expired' && days >= 0)            return false;
+      if (_filterStatus === '30'      && !(days>=0&&days<=30)) return false;
+      if (_filterStatus === '60'      && !(days>30&&days<=60)) return false;
+      if (_filterStatus === 'ok'      && days <= 60)           return false;
+      if (q) {
+        const person = getPerson(e.person_type, e.person_id);
+        const name   = person ? getPersonName(e.person_type, person).toLowerCase() : '';
+        const blob   = [name, e.doc_type, e.doc_number].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b) => a.expiry_date.localeCompare(b.expiry_date));
+
+    if (!list.length) { document.getElementById('wrap').innerHTML='<div class="empty">No documents found</div>'; return; }
+
+    const rows = list.map(e => {
+      const days   = daysUntil(e.expiry_date);
+      const cls    = expiryClass(days);
+      const person = getPerson(e.person_type, e.person_id);
+      const name   = getPersonName(e.person_type, person);
+      const photo  = getPersonPhoto(e.person_type, person);
+      const badge  = days < 0 ? `EXPIRED ${Math.abs(days)}d ago` : days===0 ? 'EXPIRES TODAY' : `${days}d left`;
+      const badgeCls = days < 0 ? 'expired' : days <= 60 ? 'soon' : 'ok';
+
+      return `<tr class="exp-row" onclick="openEdit('${e.id}')">
+        <td><div class="person-cell">
+          <div class="person-avatar">${photo?`<img src="${photo}" onerror="this.style.display='none'">`:''}${!photo?name.slice(0,2).toUpperCase():''}</div>
+          <div><div class="person-name">${esc(name)}</div><div class="person-type">${e.person_type}</div></div>
+        </div></td>
+        <td><div class="doc-name">${esc(e.doc_type)}</div>${e.doc_number?`<div style="font-size:.7rem;color:rgba(255,255,255,.3)">${esc(e.doc_number)}</div>`:''}</td>
+        <td><span class="exp-date ${cls}">${e.expiry_date}</span></td>
+        <td><span class="days-badge ${badgeCls}">${badge}</span></td>
+        <td><button class="edit-exp-btn" onclick="event.stopPropagation();deleteExpiry('${e.id}')">✕ Remove</button></td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('wrap').innerHTML = `
+      <table class="exp-table">
+        <thead><tr>
+          <th>Person</th><th>Document</th><th>Expiry Date</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  function populatePersonSelect() {
+    const type = document.getElementById('ePType').value;
+    const sel  = document.getElementById('ePerson');
+    const items = type==='seller' ? _sellers.map(s=>({id:s.id,name:s.seller_name}))
+                : type==='buyer'  ? _buyers.map(b=>({id:b.id,name:b.buyer_name}))
+                : _emps.map(e=>({id:e.id,name:e.emp_name}));
+    sel.innerHTML = '<option value="">— Select —</option>' + items.map(i=>`<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  }
+
+  function openAdd() {
+    document.getElementById('editExpId').value='';
+    document.getElementById('modalTitle').textContent='Add Document Expiry';
+    document.getElementById('ePType').value='seller'; populatePersonSelect();
+    document.getElementById('ePerson').value=''; document.getElementById('eDocType').value='Emirates ID';
+    document.getElementById('eDocNum').value=''; document.getElementById('eExpDate').value='';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function openEdit(id) {
+    const e = _expiries.find(x=>x.id===id); if(!e) return;
+    document.getElementById('editExpId').value=id;
+    document.getElementById('modalTitle').textContent='Edit Document Expiry';
+    document.getElementById('ePType').value=e.person_type||'seller';
+    populatePersonSelect();
+    document.getElementById('ePerson').value=e.person_id||'';
+    document.getElementById('eDocType').value=e.doc_type||'Emirates ID';
+    document.getElementById('eDocNum').value=e.doc_number||'';
+    document.getElementById('eExpDate').value=e.expiry_date||'';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  async function saveExpiry() {
+    const personId = document.getElementById('ePerson').value;
+    const expDate  = document.getElementById('eExpDate').value;
+    if (!personId) { showToast('⚠️ Select a person'); return; }
+    if (!expDate)  { showToast('⚠️ Enter expiry date'); return; }
+    const editId = document.getElementById('editExpId').value;
+    const data = {
+      person_type: document.getElementById('ePType').value,
+      person_id:   personId,
+      doc_type:    document.getElementById('eDocType').value,
+      doc_number:  document.getElementById('eDocNum').value.trim(),
+      expiry_date: expDate,
+    };
+    try {
+      const url = editId ? `/update_expiry/${editId}` : '/save_expiry';
+      const res  = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json = await res.json();
+      if (json.success) { closeModal(); await load(); showToast('✅ Saved!'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  async function deleteExpiry(id) {
+    if (!confirm('Remove this document expiry record?')) return;
+    try {
+      const res  = await fetch(`/delete_expiry/${id}`,{method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Removed'); }
+      else showToast('❌ '+json.error);
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  load();
+</script>
+</body>
+</html>

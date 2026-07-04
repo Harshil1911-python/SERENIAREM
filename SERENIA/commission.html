@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Commission Report – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    .filters-bar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .filter-label{color:rgba(255,255,255,.4);font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .fsel{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:7px 14px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none;appearance:none;transition:border-color .2s}
+    .fsel:focus{border-color:#818cf8}
+    .fsel option{background:#0f0f23;color:#fff}
+    .apply-btn{background:#1400cc;color:#fff;border:none;border-radius:9px;padding:8px 20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;cursor:pointer;transition:background .2s}
+    .apply-btn:hover{background:#2c14ff}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 20px 80px;display:flex;flex-direction:column;gap:18px}
+
+    /* KPI */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .kpi{background:#1e1e3a;border-radius:14px;padding:18px 20px;border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden}
+    .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+    .kpi.blue::before{background:#1400cc}.kpi.green::before{background:#16a34a}
+    .kpi.amber::before{background:#d97706}.kpi.purple::before{background:#7c3aed}
+    .kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;line-height:1;margin-bottom:4px}
+    .kpi-label{font-size:.7rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em}
+
+    /* AGENT TABLE */
+    .table-card{background:#1e1e3a;border-radius:16px;border:1px solid rgba(255,255,255,.07);overflow:hidden}
+    .table-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
+    .table-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;color:#818cf8}
+    .print-all-btn{background:rgba(129,140,248,.15);border:1.5px solid rgba(129,140,248,.25);color:#818cf8;font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.05em}
+    .print-all-btn:hover{background:rgba(129,140,248,.25)}
+
+    .comm-table{width:100%;border-collapse:collapse}
+    .comm-table th{text-align:left;padding:10px 16px;font-size:.68rem;font-weight:900;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.09em;border-bottom:1px solid rgba(255,255,255,.06)}
+    .comm-table tr:hover td{background:rgba(255,255,255,.02)}
+    .comm-table td{padding:12px 16px;font-size:.85rem;font-weight:700;border-bottom:1px solid rgba(255,255,255,.04)}
+    .comm-table tr:last-child td{border-bottom:none}
+    .agent-cell{display:flex;align-items:center;gap:10px}
+    .agent-avatar{width:32px;height:32px;border-radius:50%;background:#1400cc;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:#fff;text-transform:uppercase;flex-shrink:0}
+    .agent-name{font-weight:800;color:#fff}
+    .agent-role{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase}
+    .comm-amount{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#4ade80}
+    .bar-wrap{width:100px;background:rgba(255,255,255,.06);border-radius:50px;height:6px;overflow:hidden}
+    .bar-fill{height:100%;background:#1400cc;border-radius:50px}
+    .payslip-btn{background:rgba(20,0,204,.2);border:1px solid rgba(20,0,204,.35);color:#818cf8;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .2s}
+    .payslip-btn:hover{background:rgba(20,0,204,.35);color:#a5b4fc}
+
+    /* DEALS TABLE */
+    .deal-row td{color:rgba(255,255,255,.7)}
+    .deal-stage{font-size:.68rem;font-weight:900;padding:2px 8px;border-radius:5px;text-transform:uppercase}
+
+    /* PAYSLIP MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .payslip-wrap{background:#fff;color:#1a1a2e;border-radius:16px;padding:0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.5)}
+    #payslipContent{padding:32px}
+    .ps-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #1400cc}
+    .ps-company{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em;color:#1400cc}
+    .ps-title{font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#888;margin-top:2px}
+    .ps-period{text-align:right;font-size:.82rem;font-weight:700;color:#666}
+    .ps-agent-box{background:#f4f4f8;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+    .ps-agent-name{font-weight:900;font-size:1rem;color:#1a1a2e}
+    .ps-agent-role{font-size:.75rem;font-weight:700;color:#888;margin-top:2px}
+    .ps-deals{width:100%;border-collapse:collapse;margin-bottom:20px}
+    .ps-deals th{text-align:left;padding:8px 10px;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#888;border-bottom:2px solid #e8e0ff}
+    .ps-deals td{padding:9px 10px;font-size:.82rem;font-weight:700;border-bottom:1px solid #f0ebff;color:#1a1a2e}
+    .ps-total{display:flex;align-items:center;justify-content:space-between;background:#1400cc;color:#fff;border-radius:10px;padding:14px 18px;margin-top:8px}
+    .ps-total-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.07em}
+    .ps-total-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem}
+    .ps-footer{margin-top:24px;padding-top:14px;border-top:1px solid #e8e0ff;display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:#aaa}
+    .ps-sig-line{width:160px;border-top:1px solid #ccc;padding-top:6px;text-align:center;font-size:.7rem;color:#aaa}
+
+    .payslip-actions{padding:12px 20px;background:#f4f4f8;border-top:1px solid #e8e0ff;display:flex;gap:10px}
+    .payslip-actions button{flex:1;border:none;border-radius:9px;padding:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;cursor:pointer}
+    .btn-print{background:#1400cc;color:#fff}.btn-print:hover{background:#2c14ff}
+    .btn-close{background:#e8e0ff;color:#1400cc}
+
+    .empty{text-align:center;padding:40px;color:rgba(255,255,255,.2);font-weight:700}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    @media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='premium.html'">← BACK</button>
+  <div class="header-title">💼 COMMISSION REPORT</div>
+</div>
+
+<div class="filters-bar">
+  <span class="filter-label">Period:</span>
+  <select class="fsel" id="fMonth">
+    <option value="">All Time</option>
+  </select>
+  <select class="fsel" id="fYear">
+    <option value="">All Years</option>
+  </select>
+  <select class="fsel" id="fAgent">
+    <option value="">All Agents</option>
+  </select>
+  <button class="apply-btn" onclick="applyFilters()">Apply</button>
+</div>
+
+<div class="wrap" id="wrap">
+  <div class="empty">Loading…</div>
+</div>
+
+<!-- Payslip Modal -->
+<div class="modal-overlay" id="payslipModal">
+  <div class="payslip-wrap">
+    <div id="payslipContent"></div>
+    <div class="payslip-actions">
+      <button class="btn-close" onclick="document.getElementById('payslipModal').classList.remove('open')">✕ Close</button>
+      <button class="btn-print" onclick="printPayslip()">🖨 Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _deals=[], _emps=[], _branding={company_name:'SERENIA',sender_name:'Real Estate'};
+  let _filtered=[];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  async function load() {
+    try {
+      const [dr,er] = await Promise.all([fetch('/get_deals'),fetch('/get_employees')]);
+      _deals = await dr.json();
+      _emps  = await er.json();
+      populateFilters();
+      applyFilters();
+    } catch { document.getElementById('wrap').innerHTML='<div class="empty">Failed to load</div>'; }
+  }
+
+  function populateFilters() {
+    const years  = [...new Set(_deals.map(d=>(d.updated_at||d.created_at||'').slice(0,4)).filter(Boolean))].sort().reverse();
+    const ysel   = document.getElementById('fYear');
+    years.forEach(y => ysel.insertAdjacentHTML('beforeend',`<option value="${y}">${y}</option>`));
+    const msel   = document.getElementById('fMonth');
+    MONTHS.forEach((m,i) => msel.insertAdjacentHTML('beforeend',`<option value="${i+1}">${m}</option>`));
+    const asel   = document.getElementById('fAgent');
+    _emps.forEach(e => asel.insertAdjacentHTML('beforeend',`<option value="${e.id}">${esc(e.emp_name)}</option>`));
+    // Default to current month
+    const now = new Date();
+    msel.value = now.getMonth()+1;
+    ysel.value = now.getFullYear();
+  }
+
+  function applyFilters() {
+    const month   = document.getElementById('fMonth').value;
+    const year    = document.getElementById('fYear').value;
+    const agentId = document.getElementById('fAgent').value;
+
+    _filtered = _deals.filter(d => {
+      if (d.stage !== 'Closed Won') return false;
+      const date = (d.updated_at||d.created_at||'');
+      if (year  && !date.startsWith(year)) return false;
+      if (month && date.slice(5,7) !== String(month).padStart(2,'0')) return false;
+      if (agentId && d.agent_id !== agentId) return false;
+      return true;
+    });
+
+    renderReport();
+  }
+
+  function getCommission(deal) {
+    if (deal.commission_amount) return +deal.commission_amount;
+    if (deal.commission_pct && deal.value) return +deal.value * +deal.commission_pct / 100;
+    return 0;
+  }
+
+  function renderReport() {
+    const totalValue = _filtered.reduce((s,d) => s+(+d.value||0), 0);
+    const totalComm  = _filtered.reduce((s,d) => s+getCommission(d), 0);
+
+    // Per agent
+    const agentMap = {};
+    _filtered.forEach(d => {
+      const key = d.agent_id || '__unassigned__';
+      if (!agentMap[key]) agentMap[key] = {deals:[], totalValue:0, totalComm:0};
+      agentMap[key].deals.push(d);
+      agentMap[key].totalValue += +d.value||0;
+      agentMap[key].totalComm  += getCommission(d);
+    });
+
+    const agentRows = Object.entries(agentMap).sort((a,b) => b[1].totalComm - a[1].totalComm);
+    const maxComm   = Math.max(...agentRows.map(([,v]) => v.totalComm), 1);
+    const currency  = _filtered[0]?.currency || 'AED';
+    const fmt = n => n ? `${currency} ${Number(n).toLocaleString()}` : `${currency} 0`;
+
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = `
+      <div class="kpi-row">
+        ${kpi('blue',  _filtered.length,     'Closed Deals')}
+        ${kpi('green', fmt(totalValue),       'Total Deal Value')}
+        ${kpi('amber', fmt(totalComm),        'Total Commission')}
+        ${kpi('purple', agentRows.length,    'Agents Active')}
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Agent Commission Breakdown</div>
+          <button class="print-all-btn" onclick="printAll()">🖨 Print All Payslips</button>
+        </div>
+        <table class="comm-table">
+          <thead><tr>
+            <th>Agent</th><th>Deals Closed</th><th>Deal Value</th><th>Commission</th><th>Share</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${agentRows.map(([agentId, data]) => {
+              const emp = _emps.find(e=>e.id===agentId);
+              const name = emp ? emp.emp_name : 'Unassigned';
+              const role = emp ? emp.role||'Agent' : '';
+              const pct  = Math.round(data.totalComm/maxComm*100);
+              return `<tr>
+                <td><div class="agent-cell">
+                  <div class="agent-avatar">${name.slice(0,2).toUpperCase()}</div>
+                  <div><div class="agent-name">${esc(name)}</div><div class="agent-role">${esc(role)}</div></div>
+                </div></td>
+                <td style="color:rgba(255,255,255,.7)">${data.deals.length}</td>
+                <td style="color:#818cf8;font-family:'Bebas Neue',sans-serif;font-size:.95rem">${fmt(data.totalValue)}</td>
+                <td><span class="comm-amount">${fmt(data.totalComm)}</span></td>
+                <td><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></td>
+                <td><button class="payslip-btn" onclick="showPayslip('${agentId}')">📄 Payslip</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">All Closed Deals This Period</div></div>
+        <table class="comm-table">
+          <thead><tr><th>Deal</th><th>Agent</th><th>Value</th><th>Commission</th><th>Date</th></tr></thead>
+          <tbody>
+            ${_filtered.map(d => {
+              const emp  = _emps.find(e=>e.id===d.agent_id);
+              return `<tr class="deal-row">
+                <td style="color:#fff;font-weight:800">${esc(d.title||d.id)}</td>
+                <td>${esc(emp?emp.emp_name:'Unassigned')}</td>
+                <td style="color:#818cf8;font-family:'Bebas Neue',sans-serif">${fmt(d.value)}</td>
+                <td style="color:#4ade80;font-family:'Bebas Neue',sans-serif">${fmt(getCommission(d))}</td>
+                <td style="color:rgba(255,255,255,.4);font-size:.78rem">${(d.updated_at||d.created_at||'').slice(0,10)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  function kpi(color, val, label) {
+    return `<div class="kpi ${color}"><div class="kpi-val">${val}</div><div class="kpi-label">${label}</div></div>`;
+  }
+
+  function showPayslip(agentId) {
+    const emp   = _emps.find(e=>e.id===agentId);
+    const name  = emp ? emp.emp_name : 'Unassigned';
+    const role  = emp ? emp.role||'Agent' : '';
+    const deals = _filtered.filter(d=>d.agent_id===agentId);
+    const totalComm = deals.reduce((s,d)=>s+getCommission(d),0);
+    const totalVal  = deals.reduce((s,d)=>s+(+d.value||0),0);
+    const currency  = deals[0]?.currency||'AED';
+    const fmt = n => `${currency} ${Number(n).toLocaleString()}`;
+    const month = MONTHS[new Date().getMonth()];
+    const year  = new Date().getFullYear();
+    const company = _branding.company_name||'SERENIA';
+
+    document.getElementById('payslipContent').innerHTML = `
+      <div class="ps-header">
+        <div>
+          <div class="ps-company">${esc(company)}</div>
+          <div class="ps-title">Commission Payslip</div>
+        </div>
+        <div class="ps-period">${month} ${year}<br><span style="color:#aaa;font-size:.72rem">Generated ${new Date().toLocaleDateString()}</span></div>
+      </div>
+      <div class="ps-agent-box">
+        <div>
+          <div class="ps-agent-name">${esc(name)}</div>
+          <div class="ps-agent-role">${esc(role)}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.72rem;font-weight:700;color:#888;text-transform:uppercase">Total Commission</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#1400cc">${fmt(totalComm)}</div>
+        </div>
+      </div>
+      <table class="ps-deals">
+        <thead><tr><th>Deal</th><th>Deal Value</th><th>Commission</th></tr></thead>
+        <tbody>
+          ${deals.map(d=>`<tr>
+            <td>${esc(d.title||d.id)}</td>
+            <td>${fmt(d.value||0)}</td>
+            <td style="color:#1400cc;font-weight:800">${fmt(getCommission(d))}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="ps-total">
+        <div>
+          <div class="ps-total-label">Total Deals: ${deals.length} · Total Value: ${fmt(totalVal)}</div>
+        </div>
+        <div class="ps-total-val">${fmt(totalComm)}</div>
+      </div>
+      <div class="ps-footer">
+        <div style="font-size:.72rem;color:#aaa">${esc(company)} · ${new Date().toLocaleDateString()}</div>
+        <div class="ps-sig-line">Authorised Signature</div>
+      </div>`;
+
+    document.getElementById('payslipModal').classList.add('open');
+  }
+
+  function printPayslip() {
+    const win = window.open('','_blank','width=700,height=800');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+      <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Nunito',sans-serif;padding:32px;color:#1a1a2e}
+      ${document.querySelector('style').innerText}
+      </style></head><body>${document.getElementById('payslipContent').innerHTML}</body></html>`);
+    win.document.close();
+    setTimeout(()=>win.print(),500);
+  }
+
+  function printAll() {
+    const agents = [...new Set(_filtered.map(d=>d.agent_id||'__unassigned__'))];
+    if (!agents.length) { showToast('No agents to print'); return; }
+    showToast('Opening payslips…');
+    agents.forEach((id,i) => setTimeout(()=>showPayslip(id),i*200));
+  }
+
+  function showToast(m,d=3500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compare Properties – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+
+    /* SELECTOR BAR */
+    .selector-bar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.07);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .selector-label{font-size:.75rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+    .prop-select{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;outline:none;appearance:none;-webkit-appearance:none;min-width:200px;flex:1;max-width:260px;transition:border-color .2s}
+    .prop-select:focus{border-color:#818cf8}
+    .prop-select option{background:#0f0f23;color:#fff}
+    .add-slot-btn{background:rgba(129,140,248,.1);border:1.5px solid rgba(129,140,248,.2);color:#818cf8;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;padding:9px 16px;border-radius:10px;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .add-slot-btn:hover{background:rgba(129,140,248,.2)}
+    .add-slot-btn:disabled{opacity:.4;cursor:not-allowed}
+    .clear-btn{background:rgba(220,38,38,.1);border:1.5px solid rgba(220,38,38,.2);color:#f87171;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;padding:9px 14px;border-radius:10px;cursor:pointer;transition:all .2s}
+    .clear-btn:hover{background:rgba(220,38,38,.2)}
+
+    /* COMPARISON TABLE */
+    .compare-wrap{overflow-x:auto;padding:20px;padding-bottom:80px}
+    .compare-table{border-collapse:separate;border-spacing:0;min-width:600px;width:100%}
+
+    /* PHOTO ROW */
+    .photo-cell{background:#1e1e3a;padding:0;border-radius:16px 16px 0 0;overflow:hidden;vertical-align:top;border:1px solid rgba(255,255,255,.06);border-bottom:none;width:0}
+    .prop-header{padding:16px;display:flex;flex-direction:column;gap:8px}
+    .prop-photo{width:100%;height:160px;object-fit:cover;display:block;background:#252545}
+    .prop-photo.placeholder{display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,255,255,.15);height:160px;background:#252545}
+    .prop-id-tag{font-size:.65rem;font-weight:900;color:#818cf8;letter-spacing:.1em;text-transform:uppercase}
+    .prop-title-tag{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:#fff;letter-spacing:.04em;line-height:1.2}
+    .prop-sub-tag{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4)}
+    .prop-price-tag{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#818cf8}
+    .remove-prop-btn{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.25);color:#f87171;border-radius:7px;padding:4px 10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;cursor:pointer;margin-top:4px;transition:background .2s}
+    .remove-prop-btn:hover{background:rgba(220,38,38,.3)}
+
+    /* LABEL COLUMN */
+    .label-col{width:160px;min-width:140px}
+    .label-cell{background:#0f0f23;padding:12px 16px;font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;border:1px solid rgba(255,255,255,.04);border-right:2px solid rgba(255,255,255,.08);vertical-align:middle;white-space:nowrap}
+    .label-cell.section-header{background:#1400cc22;color:#818cf8;font-size:.75rem;border-left:3px solid #1400cc}
+
+    /* VALUE CELLS */
+    .val-cell{background:#1e1e3a;padding:12px 16px;font-size:.9rem;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.04);vertical-align:middle;text-align:center;transition:background .2s}
+    .val-cell.highlight{background:rgba(20,0,204,.2);color:#a5b4fc}
+    .val-cell.best{background:rgba(74,222,128,.1);color:#4ade80}
+    .val-cell.worst{background:rgba(248,113,113,.08);color:rgba(248,113,113,.7)}
+    .val-cell.empty{color:rgba(255,255,255,.2);font-size:.78rem;font-weight:700}
+
+    /* SECTION DIVIDER */
+    tr.section-row td{padding-top:0;padding-bottom:0;height:4px;background:#0a0a1a;border:none}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:80px 40px;color:rgba(255,255,255,.2)}
+    .empty-state .big-icon{font-size:4rem;margin-bottom:16px}
+    .empty-state p{font-weight:800;font-size:1.1rem;letter-spacing:.04em;text-transform:uppercase}
+    .empty-state small{font-size:.8rem;font-weight:700;color:rgba(255,255,255,.15);display:block;margin-top:8px}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='prop.html'">← BACK</button>
+  <div class="header-title">⚖️ COMPARE PROPERTIES</div>
+</div>
+
+<!-- Property selector bar -->
+<div class="selector-bar">
+  <span class="selector-label">Compare:</span>
+  <div id="selectorsWrap" style="display:flex;gap:10px;flex-wrap:wrap;flex:1;align-items:center"></div>
+  <button class="add-slot-btn" id="addSlotBtn" onclick="addSlot()">+ Add Property</button>
+  <button class="clear-btn" onclick="clearAll()">✕ Clear All</button>
+</div>
+
+<div class="compare-wrap" id="compareWrap">
+  <div class="empty-state">
+    <div class="big-icon">⚖️</div>
+    <p>Select properties to compare</p>
+    <small>Use the dropdowns above to add up to 4 properties side by side</small>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _allProps = [];
+  let _slots    = [null]; // array of selected property IDs (null = empty slot)
+  const MAX_SLOTS = 4;
+
+  async function load() {
+    try {
+      const res = await fetch('/get_properties');
+      _allProps = await res.json();
+      renderSelectors();
+      renderComparison();
+    } catch { showToast('❌ Failed to load properties'); }
+  }
+
+  function renderSelectors() {
+    const wrap = document.getElementById('selectorsWrap');
+    wrap.innerHTML = _slots.map((id, i) => `
+      <select class="prop-select" onchange="selectProp(${i}, this.value)">
+        <option value="">— Property ${i+1} —</option>
+        ${_allProps.map(p => {
+          const selected = p.id === id ? 'selected' : '';
+          return `<option value="${p.id}" ${selected}>${esc(p.title||p.id)} · ${esc(p.city||'')}</option>`;
+        }).join('')}
+      </select>`
+    ).join('');
+    document.getElementById('addSlotBtn').disabled = _slots.length >= MAX_SLOTS;
+  }
+
+  function addSlot() {
+    if (_slots.length >= MAX_SLOTS) return;
+    _slots.push(null);
+    renderSelectors();
+    renderComparison();
+  }
+
+  function selectProp(idx, id) {
+    _slots[idx] = id || null;
+    renderComparison();
+  }
+
+  function clearAll() {
+    _slots = [null];
+    renderSelectors();
+    renderComparison();
+  }
+
+  function removeFromComparison(id) {
+    const idx = _slots.indexOf(id);
+    if (idx > -1) {
+      if (_slots.length > 1) _slots.splice(idx, 1);
+      else _slots[idx] = null;
+    }
+    renderSelectors();
+    renderComparison();
+  }
+
+  function renderComparison() {
+    const selected = _slots.map(id => id ? _allProps.find(p => p.id === id) : null).filter(Boolean);
+    const wrap = document.getElementById('compareWrap');
+
+    if (!selected.length) {
+      wrap.innerHTML = `<div class="empty-state"><div class="big-icon">⚖️</div><p>Select properties to compare</p><small>Use the dropdowns above to add up to 4 properties side by side</small></div>`;
+      return;
+    }
+
+    // Helper
+    const fmt = n => n ? Number(n).toLocaleString() : null;
+    const cur = p => p.currency === 'INR' ? '₹' : 'AED';
+
+    // Find best values for highlight
+    const bestPrice   = Math.min(...selected.filter(p=>p.sale_price_aed||p.sale_price_inr).map(p=>+(p.sale_price_aed||p.sale_price_inr)));
+    const bestArea    = Math.max(...selected.filter(p=>p.area_sqft).map(p=>+p.area_sqft));
+    const bestBeds    = Math.max(...selected.filter(p=>p.bedrooms).map(p=>+p.bedrooms));
+    const bestRent    = Math.min(...selected.filter(p=>p.monthly_rent_aed||p.monthly_rent_inr).map(p=>+(p.monthly_rent_aed||p.monthly_rent_inr)));
+
+    const colW = Math.min(260, Math.floor((window.innerWidth - 200) / selected.length));
+
+    // Build table HTML
+    let html = `<table class="compare-table">`;
+
+    // PHOTO / HEADER ROW
+    html += `<tr>
+      <td class="label-col label-cell" style="border-radius:16px 0 0 0;border-bottom:none"></td>
+      ${selected.map(p => {
+        const photoSrc = p.photos&&p.photos.length ? `/photos/${p.photos[0]}` : null;
+        const salePrice = p.sale_price_aed || p.sale_price_inr;
+        const rentPrice = p.monthly_rent_aed || p.monthly_rent_inr;
+        return `<td class="photo-cell" style="min-width:${colW}px">
+          ${photoSrc
+            ? `<img class="prop-photo" src="${photoSrc}" loading="lazy" onerror="this.style.display='none'">`
+            : `<div class="prop-photo placeholder">🏠</div>`}
+          <div class="prop-header">
+            <div class="prop-id-tag">#${esc(p.id)}</div>
+            <div class="prop-title-tag">${esc(p.title||'Untitled')}</div>
+            <div class="prop-sub-tag">${esc([p.city, p.state].filter(Boolean).join(', ')||'—')}</div>
+            ${salePrice ? `<div class="prop-price-tag">${cur(p)} ${fmt(salePrice)}</div>` : ''}
+            ${rentPrice ? `<div class="prop-price-tag" style="font-size:.85rem;color:#4ade80">${cur(p)} ${fmt(rentPrice)}/mo</div>` : ''}
+            <button class="remove-prop-btn" onclick="removeFromComparison('${p.id}')">✕ Remove</button>
+          </div>
+        </td>`;
+      }).join('')}
+    </tr>`;
+
+    // Helper to add row
+    const row = (label, vals, isSection=false, getBest=null) => {
+      if (isSection) {
+        html += `<tr class="section-row"><td colspan="${selected.length+1}"></td></tr>
+          <tr><td class="label-cell section-header">${label}</td>${selected.map(()=>`<td class="val-cell" style="background:#1400cc15;border-color:rgba(20,0,204,.1)"></td>`).join('')}</tr>`;
+        return;
+      }
+      const values = vals(selected);
+      const bestVal = getBest ? getBest(values) : null;
+      html += `<tr><td class="label-cell">${label}</td>${values.map(v => {
+        const isEmpty = !v || v === '—';
+        let cls = isEmpty ? 'empty' : '';
+        if (getBest && !isEmpty) {
+          if (v === bestVal) cls = 'best';
+        }
+        return `<td class="val-cell ${cls}">${isEmpty ? '—' : v}</td>`;
+      }).join('')}</tr>`;
+    };
+
+    // ROWS
+    row('Overview', null, true);
+    row('Type',      ps => ps.map(p => p.property_type||'—'));
+    row('Category',  ps => ps.map(p => p.category||'—'));
+    row('Region',    ps => ps.map(p => p.region||'UAE'));
+    row('Address',   ps => ps.map(p => p.address||'—'));
+
+    row('Size & Layout', null, true);
+    row('Bedrooms',   ps => ps.map(p => p.bedrooms||'—'), false, vals => String(Math.max(...vals.filter(v=>v!=='—').map(Number))));
+    row('Bathrooms',  ps => ps.map(p => p.bathrooms||'—'), false, vals => String(Math.max(...vals.filter(v=>v!=='—').map(Number))));
+    row('Area (sqft)',ps => ps.map(p => p.area_sqft ? Number(p.area_sqft).toLocaleString()+' sqft' : '—'), false,
+      vals => { const nums = vals.filter(v=>v!=='—').map(v=>+v.replace(/[^0-9]/g,'')); return nums.length ? Number(Math.max(...nums)).toLocaleString()+' sqft' : null; });
+    row('Carpet Area',ps => ps.map(p => p.carpet_area_sqft ? p.carpet_area_sqft+' sqft' : '—'));
+    row('Floor',      ps => ps.map(p => p.floor||'—'));
+
+    row('Pricing', null, true);
+    row('Sale Price', ps => ps.map(p => {
+      const v = p.sale_price_aed || p.sale_price_inr;
+      return v ? `${cur(p)} ${fmt(v)}` : '—';
+    }), false, vals => {
+      const prices = vals.filter(v=>v!=='—').map(v=>+v.replace(/[^0-9]/g,''));
+      if (!prices.length) return null;
+      const minPrice = Math.min(...prices);
+      return vals.find(v => v!=='—' && +v.replace(/[^0-9]/g,'') === minPrice) || null;
+    });
+    row('Monthly Rent', ps => ps.map(p => {
+      const v = p.monthly_rent_aed || p.monthly_rent_inr;
+      return v ? `${cur(p)} ${fmt(v)}/mo` : '—';
+    }), false, vals => {
+      const prices = vals.filter(v=>v!=='—').map(v=>+v.replace(/[^0-9]/g,''));
+      if (!prices.length) return null;
+      const minPrice = Math.min(...prices);
+      return vals.find(v => v!=='—' && +v.replace(/[^0-9]/g,'') === minPrice) || null;
+    });
+    row('Per Sqft', ps => ps.map(p => {
+      const v = p.per_sqft_price_aed || p.per_sqft_price_inr;
+      return v ? `${cur(p)} ${fmt(v)}` : '—';
+    }));
+    row('Security Deposit', ps => ps.map(p => p.security_deposit_inr ? `₹ ${fmt(p.security_deposit_inr)}` : '—'));
+    row('Maintenance', ps => ps.map(p => p.maintenance_inr ? `₹ ${fmt(p.maintenance_inr)}/mo` : '—'));
+
+    row('Seller Info', null, true);
+    row('Seller',    ps => ps.map(p => p.seller_name||'—'));
+    row('Phone',     ps => ps.map(p => p.seller_phone||'—'));
+
+    row('Amenities', null, true);
+    // Show all unique amenities as rows
+    const allAmenities = [...new Set(selected.flatMap(p => p.amenities||[]))].sort();
+    if (allAmenities.length) {
+      allAmenities.forEach(a => {
+        row(a, ps => ps.map(p => (p.amenities||[]).includes(a) ? '✅' : '❌'));
+      });
+    } else {
+      row('(none)', ps => ps.map(() => '—'));
+    }
+
+    row('Location', null, true);
+    row('City',      ps => ps.map(p => p.city||'—'));
+    row('State',     ps => ps.map(p => p.state||'—'));
+    row('PIN / ZIP', ps => ps.map(p => p.pincode||'—'));
+    row('Coordinates', ps => ps.map(p => p.lat&&p.lng ? `${parseFloat(p.lat).toFixed(4)}, ${parseFloat(p.lng).toFixed(4)}` : '—'));
+
+    html += `</table>`;
+    wrap.innerHTML = html;
+  }
+
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  // Handle URL params — ?ids=A,B,C
+  const urlIds = new URLSearchParams(window.location.search).get('ids');
+  if (urlIds) _slots = urlIds.split(',').slice(0, MAX_SLOTS);
+
+  load();
+</script>
+</body>
+</html>

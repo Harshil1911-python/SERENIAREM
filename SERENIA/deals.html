@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deal Tracker – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#0a0a1a;color:#e2e8f0}
+
+    .header{background:#1400cc;display:flex;align-items:center;gap:14px;padding:13px 24px;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(20,0,204,.4)}
+    .back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:9px;cursor:pointer;transition:background .2s}
+    .back-btn:hover{background:rgba(255,255,255,.25)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;letter-spacing:.07em;flex:1}
+    .add-btn-header{background:#fff;color:#1400cc;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+    .add-btn-header:hover{background:#e8e0ff}
+
+    /* STATS BAR */
+    .stats-bar{background:#0f0f23;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 24px;display:flex;gap:20px;overflow-x:auto;scrollbar-width:none}
+    .stats-bar::-webkit-scrollbar{display:none}
+    .sbar-item{display:flex;flex-direction:column;align-items:center;flex-shrink:0;min-width:80px}
+    .sbar-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#fff;line-height:1}
+    .sbar-label{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+
+    /* KANBAN */
+    .kanban-wrap{padding:16px 20px 80px;overflow-x:auto;display:flex;gap:14px;min-height:calc(100vh - 120px);align-items:flex-start}
+
+    .column{width:280px;min-width:280px;background:#1e1e3a;border-radius:16px;display:flex;flex-direction:column;max-height:calc(100vh - 150px);border:1px solid rgba(255,255,255,.06)}
+    .col-header{padding:14px 16px 10px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px}
+    .col-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .col-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.06em;flex:1}
+    .col-count{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:.72rem;font-weight:900;padding:2px 8px;border-radius:5px}
+
+    .col-cards{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;min-height:80px;transition:background .15s}
+    .col-cards.drag-over{background:rgba(129,140,248,.08);border-radius:10px}
+
+    /* DEAL CARD */
+    .deal-card{background:#252545;border-radius:12px;padding:14px;border:1.5px solid rgba(255,255,255,.06);cursor:grab;transition:all .2s;position:relative}
+    .deal-card:hover{border-color:rgba(129,140,248,.4);background:#2a2a50;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+    .deal-card.dragging{opacity:.4;transform:scale(.97);cursor:grabbing;border-color:#818cf8}
+    .deal-card.drag-placeholder{background:rgba(129,140,248,.08);border:2px dashed rgba(129,140,248,.3);border-radius:12px;height:80px}
+    .drag-hint{text-align:center;padding:10px;font-size:.7rem;font-weight:800;color:rgba(255,255,255,.15);text-transform:uppercase;letter-spacing:.07em}
+    .dc-id{font-size:.62rem;font-weight:900;color:rgba(255,255,255,.25);letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px}
+    .dc-title{font-weight:800;font-size:.9rem;color:#fff;margin-bottom:6px;line-height:1.3}
+    .dc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+    .dc-tag{font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+    .dc-tag.type{background:rgba(20,0,204,.3);color:#818cf8}
+    .dc-tag.prop{background:rgba(129,140,248,.12);color:#a5b4fc}
+    .dc-tag.buyer{background:rgba(10,124,62,.2);color:#4ade80}
+    .dc-tag.seller{background:rgba(124,58,237,.2);color:#c4b5fd}
+    .dc-value{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#818cf8;margin-bottom:6px}
+    .dc-commission{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);margin-bottom:8px}
+    .dc-meta{display:flex;align-items:center;justify-content:space-between;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.3)}
+    .dc-stage-btn{font-size:.65rem;font-weight:900;padding:3px 8px;border:none;border-radius:5px;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;transition:all .2s}
+    .dc-delete{position:absolute;top:8px;right:8px;background:rgba(220,38,38,.2);border:none;border-radius:5px;color:#f87171;font-size:.72rem;padding:3px 7px;cursor:pointer;opacity:0;transition:opacity .2s}
+    .deal-card:hover .dc-delete{opacity:1}
+
+    /* STAGE COLORS */
+    .stage-inquiry    {--sc:#818cf8;--sbg:rgba(129,140,248,.15)}
+    .stage-viewing    {--sc:#fbbf24;--sbg:rgba(251,191,36,.15)}
+    .stage-negotiation{--sc:#fb923c;--sbg:rgba(251,146,60,.15)}
+    .stage-docs       {--sc:#22d3ee;--sbg:rgba(34,211,238,.15)}
+    .stage-closed     {--sc:#4ade80;--sbg:rgba(74,222,128,.15)}
+    .stage-lost       {--sc:#f87171;--sbg:rgba(248,113,113,.15)}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#1e1e3a;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.6);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:#fff;margin-bottom:22px}
+
+    .field{margin-bottom:14px}
+    .field label{display:block;color:rgba(255,255,255,.45);font-size:.7rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;resize:vertical}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.2)}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#818cf8}
+    .field select option{background:#1e1e3a;color:#fff}
+    .field textarea{min-height:70px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    .modal-btns{display:flex;gap:10px;margin-top:8px}
+    .modal-btns button{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer}
+    .modal-btns .save{background:#1400cc;color:#fff;transition:background .2s}
+    .modal-btns .save:hover{background:#2c14ff}
+    .modal-btns .cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f0f23;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 28px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    .empty-col{text-align:center;padding:24px 16px;color:rgba(255,255,255,.2);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='home.html'">← BACK</button>
+  <div class="header-title">🤝 DEAL TRACKER</div>
+  <button class="add-btn-header" onclick="openAddModal()">+ NEW DEAL</button>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar" id="statsBar">
+  <div class="sbar-item"><div class="sbar-val" id="sTotal">—</div><div class="sbar-label">Total Deals</div></div>
+  <div class="sbar-item"><div class="sbar-val" id="sClosed" style="color:#4ade80">—</div><div class="sbar-label">Closed</div></div>
+  <div class="sbar-item"><div class="sbar-val" id="sLost" style="color:#f87171">—</div><div class="sbar-label">Lost</div></div>
+  <div class="sbar-item"><div class="sbar-val" id="sValue" style="color:#818cf8">—</div><div class="sbar-label">Total Value</div></div>
+  <div class="sbar-item"><div class="sbar-val" id="sComm" style="color:#fbbf24">—</div><div class="sbar-label">Commission</div></div>
+</div>
+
+<div class="kanban-wrap" id="kanbanWrap">
+  <div style="color:rgba(255,255,255,.3);padding:40px;font-weight:800;text-transform:uppercase;letter-spacing:.07em">Loading…</div>
+</div>
+
+<!-- Add/Edit Deal Modal -->
+<div class="modal-overlay" id="dealModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">New Deal</div>
+    <input type="hidden" id="editId"/>
+
+    <div class="field">
+      <label>Deal Title *</label>
+      <input type="text" id="dTitle" placeholder="e.g. 3BHK Sale — Dubai Marina"/>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Deal Type</label>
+        <select id="dType">
+          <option>Sale</option><option>Rental</option><option>Lease</option><option>Investment</option><option>Commercial</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Stage</label>
+        <select id="dStage">
+          <option>Inquiry</option><option>Viewing</option><option>Negotiation</option>
+          <option>Documentation</option><option>Closed Won</option><option>Closed Lost</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Property</label>
+      <select id="dProp"><option value="">— Select property —</option></select>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Buyer</label>
+        <select id="dBuyer"><option value="">— Select buyer —</option></select>
+      </div>
+      <div class="field">
+        <label>Seller</label>
+        <select id="dSeller"><option value="">— Select seller —</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Deal Value</label>
+        <input type="number" id="dValue" placeholder="e.g. 2500000"/>
+      </div>
+      <div class="field">
+        <label>Currency</label>
+        <select id="dCurrency"><option>AED</option><option>INR</option><option>USD</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Commission %</label>
+        <input type="number" id="dCommPct" step="0.1" placeholder="e.g. 2"/>
+      </div>
+      <div class="field">
+        <label>Commission Amount</label>
+        <input type="number" id="dCommAmt" placeholder="Auto-calculated"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Expected Close Date</label>
+        <input type="date" id="dCloseDate"/>
+      </div>
+      <div class="field">
+        <label>Assigned Agent</label>
+        <select id="dAgent"><option value="">— Select agent —</option></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <textarea id="dNotes" placeholder="Deal notes, conditions, remarks…"></textarea>
+    </div>
+
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+      <button class="save"   onclick="saveDeal()">Save Deal</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const STAGES = [
+    {key:'Inquiry',       label:'Inquiry',       color:'#818cf8', dot:'#818cf8'},
+    {key:'Viewing',       label:'Viewing',        color:'#fbbf24', dot:'#fbbf24'},
+    {key:'Negotiation',   label:'Negotiation',    color:'#fb923c', dot:'#fb923c'},
+    {key:'Documentation', label:'Documentation',  color:'#22d3ee', dot:'#22d3ee'},
+    {key:'Closed Won',    label:'Closed Won',     color:'#4ade80', dot:'#4ade80'},
+    {key:'Closed Lost',   label:'Closed Lost',    color:'#f87171', dot:'#f87171'},
+  ];
+
+  let _deals=[], _props=[], _buyers=[], _sellers=[], _emps=[];
+
+  async function load() {
+    try {
+      const [dr,pr,br,sr,er] = await Promise.all([
+        fetch('/get_deals'), fetch('/get_properties'),
+        fetch('/get_buyers'), fetch('/get_sellers'), fetch('/get_employees'),
+      ]);
+      _deals   = await dr.json();
+      _props   = await pr.json();
+      _buyers  = await br.json();
+      _sellers = await sr.json();
+      _emps    = await er.json();
+      renderKanban();
+      renderStats();
+    } catch(e) {
+      document.getElementById('kanbanWrap').innerHTML =
+        '<div style="color:#f87171;padding:40px;font-weight:800">Failed to load deals</div>';
+    }
+  }
+
+  function renderStats() {
+    const closed  = _deals.filter(d=>d.stage==='Closed Won');
+    const lost    = _deals.filter(d=>d.stage==='Closed Lost');
+    const totalVal = _deals.reduce((s,d)=>s+(+d.value||0),0);
+    const totalComm = _deals.reduce((s,d)=>{
+      if (d.commission_amount) return s+(+d.commission_amount||0);
+      if (d.commission_pct && d.value) return s+(+d.value*(+d.commission_pct/100));
+      return s;
+    },0);
+    document.getElementById('sTotal').textContent  = _deals.length;
+    document.getElementById('sClosed').textContent = closed.length;
+    document.getElementById('sLost').textContent   = lost.length;
+    document.getElementById('sValue').textContent  = totalVal > 1e6
+      ? (totalVal/1e6).toFixed(1)+'M'
+      : totalVal > 1e3 ? (totalVal/1e3).toFixed(0)+'K' : totalVal;
+    document.getElementById('sComm').textContent   = totalComm > 1e6
+      ? (totalComm/1e6).toFixed(1)+'M'
+      : totalComm > 1e3 ? (totalComm/1e3).toFixed(0)+'K' : Math.round(totalComm);
+  }
+
+  function renderKanban() {
+    const wrap = document.getElementById('kanbanWrap');
+    wrap.innerHTML = STAGES.map(stage => {
+      const cards = _deals.filter(d => (d.stage||'Inquiry') === stage.key);
+      return `
+        <div class="column">
+          <div class="col-header">
+            <div class="col-dot" style="background:${stage.dot}"></div>
+            <div class="col-title" style="color:${stage.color}">${stage.label}</div>
+            <div class="col-count" id="cnt_${stage.key.replace(/\s/g,'_')}">${cards.length}</div>
+          </div>
+          <div class="col-cards" id="col_${stage.key.replace(/\s/g,'_')}"
+            data-stage="${stage.key}"
+            ondragover="onDragOver(event)"
+            ondragleave="onDragLeave(event)"
+            ondrop="onDrop(event)">
+            ${cards.length
+              ? cards.map(d => renderCard(d, stage)).join('')
+              : '<div class="drag-hint">Drop cards here</div>'}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderCard(d, stage) {
+    const prop   = _props.find(p=>p.id===d.property_id);
+    const buyer  = _buyers.find(b=>b.id===d.buyer_id);
+    const seller = _sellers.find(s=>s.id===d.seller_id);
+    const cur    = d.currency||'AED';
+    const val    = d.value ? `${cur} ${Number(d.value).toLocaleString()}` : '';
+    const comm   = d.commission_amount
+      ? `${cur} ${Number(d.commission_amount).toLocaleString()} commission`
+      : d.commission_pct ? `${d.commission_pct}% commission` : '';
+    const idx    = STAGES.findIndex(s=>s.key===stage.key);
+    const next   = STAGES[idx+1];
+    const prev   = STAGES[idx-1];
+
+    return `
+      <div class="deal-card"
+        draggable="true"
+        data-id="${d.id}"
+        ondragstart="onDragStart(event,'${d.id}')"
+        ondragend="onDragEnd(event)"
+        onclick="openEditModal('${d.id}')">
+        <button class="dc-delete" onclick="event.stopPropagation();deleteDeal('${d.id}')">✕</button>
+        <div class="dc-id"># ${esc(d.id)}</div>
+        <div class="dc-title">${esc(d.title||'Untitled Deal')}</div>
+        <div class="dc-tags">
+          ${d.deal_type?`<span class="dc-tag type">${esc(d.deal_type)}</span>`:''}
+          ${prop?`<span class="dc-tag prop">${esc(prop.title||prop.id)}</span>`:''}
+          ${buyer?`<span class="dc-tag buyer">${esc(buyer.buyer_name)}</span>`:''}
+          ${seller?`<span class="dc-tag seller">${esc(seller.seller_name)}</span>`:''}
+        </div>
+        ${val?`<div class="dc-value">${val}</div>`:''}
+        ${comm?`<div class="dc-commission">${esc(comm)}</div>`:''}
+        <div class="dc-meta">
+          <span>${d.close_date||'No close date'}</span>
+          <div style="display:flex;gap:4px">
+            ${prev?`<button class="dc-stage-btn" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)" onclick="event.stopPropagation();moveStage('${d.id}','${prev.key}')">← ${prev.label.split(' ')[0]}</button>`:''}
+            ${next?`<button class="dc-stage-btn" style="background:${next.dot}22;color:${next.dot}" onclick="event.stopPropagation();moveStage('${d.id}','${next.key}')">${next.label.split(' ')[0]} →</button>`:''}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ── DRAG & DROP ──
+  let _draggingId = null;
+
+  function onDragStart(e, dealId) {
+    _draggingId = dealId;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dealId);
+    setTimeout(() => {
+      const el = document.querySelector(`.deal-card[data-id="${dealId}"]`);
+      if (el) el.classList.add('dragging');
+    }, 0);
+  }
+
+  function onDragEnd(e) {
+    document.querySelectorAll('.deal-card').forEach(el => el.classList.remove('dragging'));
+    document.querySelectorAll('.col-cards').forEach(el => el.classList.remove('drag-over'));
+    _draggingId = null;
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  function onDragLeave(e) {
+    // Only remove if leaving the column itself, not a child
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+  }
+
+  async function onDrop(e) {
+    e.preventDefault();
+    const col   = e.currentTarget;
+    col.classList.remove('drag-over');
+    const newStage = col.dataset.stage;
+    const dealId   = _draggingId || e.dataTransfer.getData('text/plain');
+    if (!dealId || !newStage) return;
+
+    const deal = _deals.find(d => d.id === dealId);
+    if (!deal || deal.stage === newStage) return;
+
+    // Optimistic UI update
+    deal.stage = newStage;
+    renderKanban();
+    renderStats();
+
+    try {
+      const res  = await fetch(`/update_deal_stage/${dealId}`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({stage: newStage}),
+      });
+      const json = await res.json();
+      if (!json.success) {
+        showToast('❌ ' + (json.error||'Error'));
+        await load(); // revert on error
+      } else {
+        showToast(`✅ Moved to ${newStage}`);
+      }
+    } catch {
+      showToast('❌ Server error');
+      await load();
+    }
+  }
+
+  async function moveStage(id, stage) {
+    const deal = _deals.find(d => d.id === id);
+    if (deal) deal.stage = stage;
+    renderKanban(); renderStats();
+    try {
+      const res  = await fetch(`/update_deal_stage/${id}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stage})});
+      const json = await res.json();
+      if (!json.success) { showToast('❌ '+(json.error||'Error')); await load(); }
+      else showToast(`✅ Moved to ${stage}`);
+    } catch { showToast('❌ Server error'); await load(); }
+  }
+
+  async function deleteDeal(id) {
+    if (!confirm('Delete this deal?')) return;
+    try {
+      const res  = await fetch(`/delete_deal/${id}`,{method:'DELETE'});
+      const json = await res.json();
+      if (json.success) { await load(); showToast('✅ Deal deleted'); }
+      else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function openAddModal() {
+    document.getElementById('editId').value  = '';
+    document.getElementById('modalTitle').textContent = 'New Deal';
+    clearForm();
+    populateDropdowns();
+    document.getElementById('dealModal').classList.add('open');
+  }
+
+  function openEditModal(id) {
+    const d = _deals.find(x=>x.id===id); if (!d) return;
+    document.getElementById('editId').value = id;
+    document.getElementById('modalTitle').textContent = 'Edit Deal';
+    populateDropdowns();
+    document.getElementById('dTitle').value     = d.title||'';
+    document.getElementById('dType').value      = d.deal_type||'Sale';
+    document.getElementById('dStage').value     = d.stage||'Inquiry';
+    document.getElementById('dProp').value      = d.property_id||'';
+    document.getElementById('dBuyer').value     = d.buyer_id||'';
+    document.getElementById('dSeller').value    = d.seller_id||'';
+    document.getElementById('dValue').value     = d.value||'';
+    document.getElementById('dCurrency').value  = d.currency||'AED';
+    document.getElementById('dCommPct').value   = d.commission_pct||'';
+    document.getElementById('dCommAmt').value   = d.commission_amount||'';
+    document.getElementById('dCloseDate').value = d.close_date||'';
+    document.getElementById('dAgent').value     = d.agent_id||'';
+    document.getElementById('dNotes').value     = d.notes||'';
+    document.getElementById('dealModal').classList.add('open');
+  }
+
+  function clearForm() {
+    ['dTitle','dValue','dCommPct','dCommAmt','dCloseDate','dNotes'].forEach(id=>document.getElementById(id).value='');
+    ['dType','dStage','dCurrency'].forEach(id=>document.getElementById(id).selectedIndex=0);
+    ['dProp','dBuyer','dSeller','dAgent'].forEach(id=>document.getElementById(id).value='');
+  }
+
+  function populateDropdowns() {
+    const propSel   = document.getElementById('dProp');
+    const buyerSel  = document.getElementById('dBuyer');
+    const sellerSel = document.getElementById('dSeller');
+    const agentSel  = document.getElementById('dAgent');
+
+    const cur = {prop: propSel.value, buyer: buyerSel.value, seller: sellerSel.value, agent: agentSel.value};
+
+    propSel.innerHTML   = '<option value="">— Select property —</option>' +
+      _props.map(p=>`<option value="${p.id}">${esc(p.title||p.id)} (${p.city||'?'})</option>`).join('');
+    buyerSel.innerHTML  = '<option value="">— Select buyer —</option>' +
+      _buyers.map(b=>`<option value="${b.id}">${esc(b.buyer_name)}</option>`).join('');
+    sellerSel.innerHTML = '<option value="">— Select seller —</option>' +
+      _sellers.map(s=>`<option value="${s.id}">${esc(s.seller_name)}</option>`).join('');
+    agentSel.innerHTML  = '<option value="">— Select agent —</option>' +
+      _emps.map(e=>`<option value="${e.id}">${esc(e.emp_name)} (${e.role||'Agent'})</option>`).join('');
+
+    propSel.value = cur.prop; buyerSel.value = cur.buyer;
+    sellerSel.value = cur.seller; agentSel.value = cur.agent;
+  }
+
+  // Auto-calculate commission amount
+  document.addEventListener('input', e => {
+    if (e.target.id === 'dValue' || e.target.id === 'dCommPct') {
+      const val = parseFloat(document.getElementById('dValue').value);
+      const pct = parseFloat(document.getElementById('dCommPct').value);
+      if (!isNaN(val) && !isNaN(pct)) {
+        document.getElementById('dCommAmt').value = Math.round(val * pct / 100);
+      }
+    }
+  });
+
+  async function saveDeal() {
+    const title = document.getElementById('dTitle').value.trim();
+    if (!title) { showToast('⚠️ Enter a deal title'); return; }
+
+    const editId = document.getElementById('editId').value;
+    const data = {
+      title:             title,
+      deal_type:         document.getElementById('dType').value,
+      stage:             document.getElementById('dStage').value,
+      property_id:       document.getElementById('dProp').value,
+      buyer_id:          document.getElementById('dBuyer').value,
+      seller_id:         document.getElementById('dSeller').value,
+      value:             document.getElementById('dValue').value,
+      currency:          document.getElementById('dCurrency').value,
+      commission_pct:    document.getElementById('dCommPct').value,
+      commission_amount: document.getElementById('dCommAmt').value,
+      close_date:        document.getElementById('dCloseDate').value,
+      agent_id:          document.getElementById('dAgent').value,
+      notes:             document.getElementById('dNotes').value.trim(),
+    };
+
+    try {
+      const url = editId ? `/update_deal/${editId}` : '/save_deal';
+      const res  = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json = await res.json();
+      if (json.success) {
+        closeModal();
+        await load();
+        showToast(editId ? '✅ Deal updated!' : '✅ Deal created!');
+      } else showToast('❌ '+(json.error||'Error'));
+    } catch { showToast('❌ Server error'); }
+  }
+
+  function closeModal() { document.getElementById('dealModal').classList.remove('open'); }
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Buyer – SERENIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif}
+    body{background:#D9C8E8}
+    .page-header{background:#D4A8E8;text-align:center;padding:26px 20px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(91,33,245,.12)}
+    .page-header h1{font-size:2.4rem;font-weight:900;letter-spacing:.06em;color:#1a1a2e;text-transform:uppercase}
+    .back-btn{position:absolute;left:24px;top:50%;transform:translateY(-50%);background:#5B21F5;color:#fff;border:none;border-radius:12px;padding:10px 22px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:background .2s,transform .15s}
+    .back-btn:hover{background:#6B31FF;transform:translateY(-50%) scale(1.05)}
+    .scroll-wrap{max-width:900px;margin:0 auto;padding:32px 24px 80px;display:flex;flex-direction:column;gap:26px}
+    .card{background:#9B6DBF;border-radius:24px;padding:34px 38px;box-shadow:0 8px 32px rgba(91,33,245,.18);animation:fadeUp .5s ease both}
+    .card:nth-child(2){animation-delay:.08s}
+    .card:nth-child(3){animation-delay:.16s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    .card-title{color:#fff;font-weight:900;font-size:1.15rem;letter-spacing:.07em;text-transform:uppercase;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid rgba(255,255,255,.2)}
+    .form-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .form-row:last-child{margin-bottom:0}
+    .form-row label{color:#fff;font-weight:900;font-size:1rem;letter-spacing:.05em;text-transform:uppercase;min-width:220px;flex-shrink:0}
+    .form-row input,.form-row select,.form-row textarea{flex:1;background:#E8DFF0;border:none;border-radius:50px;padding:13px 20px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#1a1a2e;outline:none;transition:box-shadow .2s;appearance:none;-webkit-appearance:none}
+    .form-row textarea{border-radius:16px;resize:vertical;min-height:52px}
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{box-shadow:0 0 0 3px rgba(91,33,245,.35);background:#f0e8ff}
+    .select-wrap{flex:1;position:relative}
+    .select-wrap select{width:100%;padding-right:44px;cursor:pointer}
+    .select-wrap .arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:#7B4FA0}
+    .photo-upload-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .photo-upload-row .field-label{color:#fff;font-weight:900;font-size:1rem;letter-spacing:.05em;text-transform:uppercase;min-width:220px;flex-shrink:0}
+    .photo-preview{width:96px;height:96px;border-radius:50%;border:3px solid rgba(255,255,255,.4);background:#7B4FA0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;overflow:hidden;flex-shrink:0}
+    .photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .photo-change-btn{background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer}
+    /* Multi prop selector */
+    .prop-selector{background:#E8DFF0;border-radius:16px;padding:20px 24px}
+    .prop-selector-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .prop-selector-header h3{font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:.06em;color:#1a1a2e}
+    .prop-search{background:#fff;border:none;border-radius:50px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:#1a1a2e;outline:none;width:170px}
+    .prop-list{max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:#9B6DBF transparent}
+    .prop-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;border:2px solid transparent;transition:all .18s}
+    .prop-item:hover{background:#f0e8ff}
+    .prop-item.selected{border-color:#5B21F5;background:#ede5ff}
+    .prop-item input[type="checkbox"]{width:16px;height:16px;accent-color:#5B21F5;cursor:pointer;flex-shrink:0}
+    .prop-item-id{font-size:.65rem;font-weight:900;color:#5B21F5;letter-spacing:.08em;text-transform:uppercase}
+    .prop-item-title{font-size:.88rem;font-weight:800;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .prop-item-sub{font-size:.72rem;font-weight:700;color:#888}
+    .ms-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .chip{display:flex;align-items:center;gap:5px;background:#5B21F5;color:#fff;border-radius:50px;padding:4px 12px;font-size:.75rem;font-weight:800}
+    .chip .crm{cursor:pointer;opacity:.7}
+    .chip .crm:hover{opacity:1}
+    .check-panel{background:#E8DFF0;border-radius:16px;padding:20px 24px}
+    .check-panel h3{font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:.06em;color:#1a1a2e;margin-bottom:12px}
+    .check-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin-bottom:12px}
+    .check-item{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .check-item input[type="checkbox"]{width:17px;height:17px;accent-color:#5B21F5;cursor:pointer;flex-shrink:0}
+    .check-item span{font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:#5B21F5}
+    .doc-thumb-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .doc-thumb{width:72px;height:56px;border-radius:8px;overflow:hidden;position:relative;flex-shrink:0}
+    .doc-thumb img{width:100%;height:100%;object-fit:cover}
+    .doc-thumb .rm{position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .add-btn{display:inline-flex;align-items:center;gap:8px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:background .2s,transform .15s;margin-top:8px}
+    .add-btn:hover{background:#333;transform:scale(1.04)}
+    .add-btn .plus{width:20px;height:20px;background:#9B6DBF;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900}
+    .submit-wrap{text-align:center;padding:8px 0}
+    .submit-btn{background:#5B21F5;color:#fff;font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:60px;padding:20px 90px;cursor:pointer;box-shadow:0 0 28px rgba(91,33,245,.5);transition:background .2s,transform .15s}
+    .submit-btn:hover{background:#6B31FF;transform:translateY(-3px) scale(1.03)}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;padding:14px 32px;border-radius:60px;box-shadow:0 8px 28px rgba(0,0,0,.25);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;z-index:999;white-space:nowrap}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#9B6DBF;border-radius:20px;padding:28px 32px;min-width:300px;box-shadow:0 12px 48px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:12px}
+    .modal-box h3{color:#fff;font-weight:900;font-size:1.1rem;text-transform:uppercase}
+    .modal-box input{background:#E8DFF0;border:none;border-radius:50px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;color:#1a1a2e}
+    .modal-btns{display:flex;gap:10px}
+    .modal-btns button{flex:1;border:none;border-radius:50px;padding:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer}
+    .modal-btns .confirm{background:#5B21F5;color:#fff}
+    .modal-btns .cancel{background:#E8DFF0;color:#1a1a2e}
+    .loading{text-align:center;padding:80px;color:#7B4FA0;font-weight:900;font-size:1.2rem}
+    @media(max-width:640px){.form-row{flex-direction:column;align-items:flex-start}.form-row label{min-width:unset}.check-list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="page-header">
+  <button class="back-btn" onclick="history.back()">← BACK</button>
+  <h1>EDIT BUYER</h1>
+</div>
+<div class="scroll-wrap" id="scrollWrap"><div class="loading">Loading buyer…</div></div>
+<div id="toast"></div>
+<div class="modal-overlay" id="addDocModal">
+  <div class="modal-box"><h3>Add Document</h3>
+    <input type="text" id="addDocInput" placeholder="Document name…"/>
+    <div class="modal-btns">
+      <button class="cancel" onclick="document.getElementById('addDocModal').classList.remove('open')">Cancel</button>
+      <button class="confirm" onclick="saveDocItem()">Add</button>
+    </div>
+  </div>
+</div>
+<script>
+  const params  = new URLSearchParams(window.location.search);
+  const buyerId = params.get('id');
+  let _buyer=null, _photoFile=null, _newDocPhotos=[], _allProps=[], _selProps=new Set();
+
+  async function load(){
+    if(!buyerId) return;
+    try{
+      const [br,pr]=await Promise.all([fetch('/get_buyers'),fetch('/get_properties')]);
+      const buyers=await br.json(); _allProps=await pr.json();
+      _buyer=buyers.find(b=>b.id===buyerId);
+      if(!_buyer){document.getElementById('scrollWrap').innerHTML='<div class="loading">Buyer not found</div>';return;}
+      // Pre-select existing properties
+      (_buyer.interested_property_ids||[]).forEach(id=>_selProps.add(id));
+      renderForm();
+    }catch{document.getElementById('scrollWrap').innerHTML='<div class="loading">Error loading</div>';}
+  }
+
+  function renderPropList(){
+    const q=document.getElementById('propSearch')?document.getElementById('propSearch').value.trim().toLowerCase():'';
+    const filtered=q?_allProps.filter(p=>[p.id,p.title,p.city,p.property_type].join(' ').toLowerCase().includes(q)):_allProps;
+    const list=document.getElementById('propList');
+    if(!list) return;
+    list.innerHTML=filtered.map(p=>{
+      const sel=_selProps.has(p.id);
+      const cur=p.currency==='INR'?'₹':'AED';
+      const price=p.sale_price_aed||p.sale_price_inr||p.monthly_rent_aed||p.monthly_rent_inr;
+      return `<div class="prop-item ${sel?'selected':''}" onclick="toggleProp('${p.id}')">
+        <input type="checkbox" ${sel?'checked':''} onclick="event.stopPropagation();toggleProp('${p.id}')"/>
+        <div style="flex:1;min-width:0">
+          <div class="prop-item-id">#${p.id}</div>
+          <div class="prop-item-title">${esc(p.title||'Untitled')}</div>
+          <div class="prop-item-sub">${esc([p.property_type,p.city].filter(Boolean).join(' · '))}</div>
+        </div>
+        <div style="font-size:.8rem;font-weight:800;color:#5B21F5;flex-shrink:0">${price?`${cur} ${Number(price).toLocaleString()}`:''}</div>
+      </div>`;
+    }).join('');
+    updateChips();
+  }
+
+  function toggleProp(id){_selProps.has(id)?_selProps.delete(id):_selProps.add(id);renderPropList();}
+  function updateChips(){
+    const c=document.getElementById('propChips');if(!c) return;
+    c.innerHTML=[..._selProps].map(id=>{
+      const p=_allProps.find(x=>x.id===id);
+      return `<div class="chip">${esc(p?p.title||p.id:id)}<span class="crm" onclick="toggleProp('${id}')">✕</span></div>`;
+    }).join('');
+  }
+
+  function renderForm(){
+    const b=_buyer;
+    const photoSrc=b.photo_filename?`/buyer_docs/${encodeURIComponent(b.buyer_name)}/${b.photo_filename}`:null;
+    const docPhotos=(b.doc_photo_filenames||[]).map((f,i)=>`
+      <div class="doc-thumb"><img src="/buyer_docs/${encodeURIComponent(b.buyer_name)}/${f}"/>
+      <button class="rm" onclick="this.parentElement.remove()">✕</button></div>`).join('');
+    const allDocs=['Emirates ID','Aadhaar Card','PAN Card','Passport Copy','Proof of Funds','Bank Statement','Loan Pre-approval','NOC','Form B','MOU'];
+    const docHTML=[...new Set([...allDocs,...(b.docs_submitted||[])])].map(d=>`
+      <label class="check-item"><input type="checkbox" value="${d}" ${(b.docs_submitted||[]).includes(d)?'checked':''}/><span>${d.toUpperCase()}</span></label>`).join('');
+    const intents=['Buy / Own','Rent','Lease','Investment','Commercial Buy','Commercial Rent','Other'];
+
+    document.getElementById('scrollWrap').innerHTML=`
+      <div class="card">
+        <div class="card-title">Personal Information</div>
+        <div class="photo-upload-row">
+          <label class="field-label">Photo:</label>
+          <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
+            ${photoSrc?`<img src="${photoSrc}"/>`:'👤'}
+          </div>
+          <button class="photo-change-btn" onclick="document.getElementById('photoInput').click()">Change Photo</button>
+          <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)"/>
+        </div>
+        <div class="form-row"><label>Full Name:</label><input type="text" id="buyerName" value="${esc(b.buyer_name||'')}"/></div>
+        <div class="form-row"><label>Phone:</label><input type="tel" id="phone" value="${esc(b.phone||'')}"/></div>
+        <div class="form-row"><label>Email:</label><input type="email" id="email" value="${esc(b.email||'')}"/></div>
+        <div class="form-row"><label>Nationality:</label><input type="text" id="nationality" value="${esc(b.nationality||'')}"/></div>
+        <div class="form-row"><label>Intent:</label>
+          <div class="select-wrap"><select id="intent">
+            ${intents.map(i=>`<option ${b.intent===i?'selected':''}>${i}</option>`).join('')}
+            ${b.intent&&!intents.includes(b.intent)?`<option selected>${b.intent}</option>`:''}
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Budget:</label><input type="number" id="budget" value="${b.budget||''}"/></div>
+        <div class="form-row"><label>Currency:</label>
+          <div class="select-wrap"><select id="currency">
+            <option ${b.currency==='AED'?'selected':''}>AED</option>
+            <option ${b.currency==='INR'?'selected':''}>INR</option>
+          </select><span class="arrow">▼</span></div>
+        </div>
+        <div class="form-row"><label>Preferred Type:</label><input type="text" id="prefType" value="${esc(b.pref_property_type||'')}"/></div>
+        <div class="form-row"><label>Preferred City:</label><input type="text" id="prefCity" value="${esc(b.pref_city||'')}"/></div>
+        <div class="form-row"><label>Min Bedrooms:</label><input type="number" id="minBeds" value="${b.min_bedrooms||''}"/></div>
+        <div class="form-row"><label>Notes:</label><textarea id="notes">${esc(b.notes||'')}</textarea></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Interested Properties</div>
+        <div class="prop-selector">
+          <div class="prop-selector-header">
+            <h3>Select Properties</h3>
+            <input type="text" class="prop-search" id="propSearch" placeholder="🔍 Search…" oninput="renderPropList()"/>
+          </div>
+          <div class="prop-list" id="propList"></div>
+          <div class="ms-chips" id="propChips"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Documents</div>
+        <div class="check-panel">
+          <div class="check-list" id="docsList">${docHTML}</div>
+          <button class="add-btn" onclick="document.getElementById('addDocInput').value='';document.getElementById('addDocModal').classList.add('open')">Add <span class="plus">+</span></button>
+        </div>
+        <div class="card-title" style="margin-top:20px">Document Photos</div>
+        <div class="doc-thumb-grid" id="docPhotoGrid">${docPhotos}</div>
+        <button class="add-btn" onclick="document.getElementById('docPhotoInput').click()">Add Doc Photos <span class="plus">+</span></button>
+        <input type="file" id="docPhotoInput" accept="image/*" multiple style="display:none" onchange="handleDocPhotos(this)"/>
+      </div>
+
+      <div class="submit-wrap">
+        <button class="submit-btn" id="saveBtn" onclick="saveChanges()">SAVE CHANGES</button>
+      </div>`;
+
+    renderPropList();
+  }
+
+  function handlePhoto(input){const f=input.files[0];if(!f)return;_photoFile=f;const r=new FileReader();r.onload=e=>{document.getElementById('photoPreview').innerHTML=`<img src="${e.target.result}"/>`;};r.readAsDataURL(f);}
+  function handleDocPhotos(input){Array.from(input.files).forEach(f=>{_newDocPhotos.push(f);const div=document.createElement('div');div.className='doc-thumb';const img=document.createElement('img');const r=new FileReader();r.onload=e=>{img.src=e.target.result;};r.readAsDataURL(f);const btn=document.createElement('button');btn.className='rm';btn.textContent='✕';const i=_newDocPhotos.length-1;btn.onclick=()=>{_newDocPhotos.splice(i,1);div.remove();};div.appendChild(img);div.appendChild(btn);document.getElementById('docPhotoGrid').appendChild(div);});input.value='';}
+  function saveDocItem(){const val=document.getElementById('addDocInput').value.trim();if(!val)return;const label=document.createElement('label');label.className='check-item';label.innerHTML=`<input type="checkbox" value="${val}" checked/><span>${val.toUpperCase()}</span>`;document.getElementById('docsList').appendChild(label);document.getElementById('addDocModal').classList.remove('open');}
+  function getChecked(id){return[...document.querySelectorAll(`#${id} input[type="checkbox"]:checked`)].map(c=>c.value)}
+  function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+  function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+  async function saveChanges(){
+    const selPropsArr=[..._selProps].map(id=>{const p=_allProps.find(x=>x.id===id);return p?{id:p.id,title:p.title,property_type:p.property_type,city:p.city}:{id};});
+    const data={
+      buyer_name:document.getElementById('buyerName').value.trim(),
+      phone:document.getElementById('phone').value.trim(),
+      email:document.getElementById('email').value.trim(),
+      nationality:document.getElementById('nationality').value.trim(),
+      intent:document.getElementById('intent').value,
+      budget:document.getElementById('budget').value,
+      currency:document.getElementById('currency').value,
+      pref_property_type:document.getElementById('prefType').value.trim(),
+      pref_city:document.getElementById('prefCity').value.trim(),
+      min_bedrooms:document.getElementById('minBeds').value,
+      notes:document.getElementById('notes').value.trim(),
+      docs_submitted:getChecked('docsList'),
+      interested_properties:selPropsArr,
+      interested_property_ids:[..._selProps],
+    };
+    const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='SAVING…';
+    const fd=new FormData();fd.append('data',JSON.stringify(data));
+    if(_photoFile)fd.append('buyer_photo',_photoFile);
+    _newDocPhotos.forEach(f=>fd.append('doc_photos',f));
+    try{
+      const res=await fetch(`/update_buyer/${buyerId}`,{method:'POST',body:fd});
+      const json=await res.json();
+      if(json.success){showToast('✅ Buyer updated!',3000);setTimeout(()=>window.location.href=`buyerdet.html?id=${buyerId}`,1500);}
+      else{showToast('❌ '+(json.error||'Error'));btn.disabled=false;btn.textContent='SAVE CHANGES';}
+    }catch{showToast('❌ Server error');btn.disabled=false;btn.textContent='SAVE CHANGES';}
+  }
+  load();
+</script>
+</body>
+</html>
